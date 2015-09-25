@@ -65,7 +65,7 @@ class ImagoVirtualList extends Directive
             findIndex = ->
               for chunk, indexChunk in chunks
                 for item, indexItem in chunk
-                  continue unless item._id is scope.visibleProvider[i]._id
+                  continue unless item.id is scope.visibleProvider[i].id
                   idx =
                     chunk  : indexChunk
                     inside : indexItem

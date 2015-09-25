@@ -78,7 +78,7 @@ ImagoVirtualList = (function() {
                 chunk = chunks[indexChunk];
                 for (indexItem = k = 0, len1 = chunk.length; k < len1; indexItem = ++k) {
                   item = chunk[indexItem];
-                  if (item._id !== scope.visibleProvider[i]._id) {
+                  if (item.id !== scope.visibleProvider[i].id) {
                     continue;
                   }
                   idx = {
