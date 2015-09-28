@@ -3,6 +3,7 @@
     ng-class="{'message': cart.imagoCart.newmessages}"
     ng-mouseenter="cart.imagoCart.show = true"
     ng-click="cart.imagoCart.show = !cart.imagoCart.show"
+    analytics-on="click" analytics-event="Show Cart {{cart.imagoCart.show}}"
     )
     .counter(ng-bind="cart.imagoCart.itemsLength")
 
@@ -27,4 +28,5 @@
       ng-show="cart.imagoCart.cart.items.length"
       type="submit"
       ng-click="cart.imagoCart.checkout()"
+      analytics-on="click" analytics-event="Go to Checkout"
       ) checkout
