@@ -63,7 +63,7 @@ ImagoVirtualList = (function() {
           return self.updateDisplayList();
         };
         self.updateDisplayList = function() {
-          var cellsToCreate, chunks, data, findIndex, firstCell, i, idx, l;
+          var browserKey, cellsToCreate, chunks, data, findIndex, firstCell, i, idx, l;
           firstCell = Math.max(Math.round(self.scrollTop / masterDiv.clientHeight) - (Math.round($window.innerHeight / masterDiv.clientHeight)), 0);
           cellsToCreate = Math.min(firstCell + self.numberOfCells, self.numberOfCells);
           data = firstCell * self.itemsPerRow;
@@ -71,6 +71,7 @@ ImagoVirtualList = (function() {
           chunks = _.chunk(scope.visibleProvider, self.itemsPerRow);
           i = 0;
           l = scope.visibleProvider.length;
+          browserKey = (typeof bowser !== "undefined" && bowser !== null ? bowser.safari : void 0) <= 8 ? '-webkit-transform' : 'transform';
           while (i < l) {
             findIndex = function() {
               var chunk, idx, indexChunk, indexItem, item, j, k, len, len1;
@@ -90,9 +91,8 @@ ImagoVirtualList = (function() {
               }
             };
             idx = findIndex();
-            scope.visibleProvider[i].styles = {
-              'transform': "translate(" + ((masterDiv.clientWidth * idx.inside) + 'px') + ", " + ((firstCell + idx.chunk) * masterDiv.clientHeight + 'px') + ")"
-            };
+            scope.visibleProvider[i].styles = {};
+            scope.visibleProvider[i].styles[browserKey] = "translate(" + ((masterDiv.clientWidth * idx.inside) + 'px') + ", " + ((firstCell + idx.chunk) * masterDiv.clientHeight + 'px') + ")";
             i++;
           }
           if (scope.imagovirtuallist.scroll) {
