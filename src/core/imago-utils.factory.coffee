@@ -34,8 +34,6 @@ class imagoUtils extends Factory
       SYMBOLS:
         EUR     : '&euro;'
         USD     : '$'
-        SEK     : 'SEK'
-        CHF     : 'CHF'
         YEN     : '&yen;'
         GBP     : '&pound;'
         GENERIC : '&curren;'
@@ -944,21 +942,6 @@ class imagoUtils extends Factory
           evt = new Event(name)
           window.dispatchEvent(evt)
 
-      getAssetKind: (id) ->
-        if id.indexOf('Collection-') is 0
-          kind = 'collection'
-        else if id.indexOf('Proxy-') is 0
-          kind = 'Proxy'
-        else if id.indexOf('Order-') is 0
-          kind = 'Order'
-        else if id.indexOf('Generic') is 0
-          kind = 'Generic'
-        else if id.match /[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/
-          kind = 'image'
-        else if id.match /[0-9a-z]{56}/
-          kind = 'video'
-        return kind
-
       getKeyName: (e) ->
         KEYS[e.which]
 
@@ -975,7 +958,7 @@ class imagoUtils extends Factory
         msg.replace(/(\r\n\r\n|\r\n|\n|\r)/gm, "<br>")
 
       getCurrencySymbol: (currency) ->
-        @SYMBOLS[currency] or @SYMBOLS.GENERIC
+        @SYMBOLS[currency] or currency
 
       getCurrency: (country) ->
         CURRENCY_MAPPING[country]

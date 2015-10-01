@@ -1118,8 +1118,6 @@ imagoUtils = (function() {
       SYMBOLS: {
         EUR: '&euro;',
         USD: '$',
-        SEK: 'SEK',
-        CHF: 'CHF',
         YEN: '&yen;',
         GBP: '&pound;',
         GENERIC: '&curren;'
@@ -1786,23 +1784,6 @@ imagoUtils = (function() {
           return window.dispatchEvent(evt);
         }
       },
-      getAssetKind: function(id) {
-        var kind;
-        if (id.indexOf('Collection-') === 0) {
-          kind = 'collection';
-        } else if (id.indexOf('Proxy-') === 0) {
-          kind = 'Proxy';
-        } else if (id.indexOf('Order-') === 0) {
-          kind = 'Order';
-        } else if (id.indexOf('Generic') === 0) {
-          kind = 'Generic';
-        } else if (id.match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/)) {
-          kind = 'image';
-        } else if (id.match(/[0-9a-z]{56}/)) {
-          kind = 'video';
-        }
-        return kind;
-      },
       getKeyName: function(e) {
         return KEYS[e.which];
       },
@@ -1825,7 +1806,7 @@ imagoUtils = (function() {
         return msg.replace(/(\r\n\r\n|\r\n|\n|\r)/gm, "<br>");
       },
       getCurrencySymbol: function(currency) {
-        return this.SYMBOLS[currency] || this.SYMBOLS.GENERIC;
+        return this.SYMBOLS[currency] || currency;
       },
       getCurrency: function(country) {
         return CURRENCY_MAPPING[country];
