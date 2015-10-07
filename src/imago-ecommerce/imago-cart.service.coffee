@@ -175,7 +175,7 @@ class imagoCart extends Service
     url = "https://#{tenant}.imago.io/account/checkout/#{@cart._id}"
 
     decorated = ''
-    ga (tracker) =>
+    ga? (tracker) =>
       linker = new (@$window.gaplugins.Linker)(tracker)
       decorated = linker.decorate(url, true)
 
