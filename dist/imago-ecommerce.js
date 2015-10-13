@@ -479,7 +479,7 @@ imagoCart = (function() {
   };
 
   imagoCart.prototype.calculate = function() {
-    var i, item, len, ref, results;
+    var i, item, len, ref, ref1, results;
     this.itemsLength = 0;
     this.subtotal = 0;
     if (!this.cart.items.length) {
@@ -492,7 +492,7 @@ imagoCart = (function() {
     for (i = 0, len = ref.length; i < len; i++) {
       item = ref[i];
       this.itemsLength += item.qty;
-      if (!(item.qty && item.price[this.currency])) {
+      if (!(item.qty && ((ref1 = item.price) != null ? ref1[this.currency] : void 0))) {
         continue;
       }
       results.push(this.subtotal += item.qty * item.price[this.currency]);

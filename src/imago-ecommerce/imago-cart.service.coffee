@@ -164,7 +164,7 @@ class imagoCart extends Service
 
     for item in @cart.items
       @itemsLength += item.qty
-      continue unless item.qty and item.price[@currency]
+      continue unless item.qty and item.price?[@currency]
       @subtotal += item.qty * item.price[@currency]
 
 

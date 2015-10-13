@@ -73,8 +73,8 @@ class ImagoVirtualList extends Directive
                   return idx
 
             idx = findIndex()
-            # scope.visibleProvider[i].styles = 'transform': "translate3d(#{(masterDiv.clientWidth * idx.inside) + 'px'}, #{(firstCell + idx.chunk) * masterDiv.clientHeight + 'px'}, 0)"
             scope.visibleProvider[i].styles = {}
+            # scope.visibleProvider[i].styles[browserKey] = "translate3d(#{(masterDiv.clientWidth * idx.inside) + 'px'}, #{(firstCell + idx.chunk) * masterDiv.clientHeight + 'px'}, 0)"
             scope.visibleProvider[i].styles[browserKey] = "translate(#{(masterDiv.clientWidth * idx.inside) + 'px'}, #{(firstCell + idx.chunk) * masterDiv.clientHeight + 'px'})"
             i++
           scope.scroll() if scope.imagovirtuallist.scroll
