@@ -2021,19 +2021,21 @@ NotSupported = (function() {
 NotSupportedController = (function() {
   function NotSupportedController($scope, $element, $attrs) {
     var browser, browserVersion, i, key, len, option, options, settings, version;
+    $scope.mobile = bowser.mobile;
     options = {
       ie: 9,
       firefox: 32,
       chrome: 30,
       safari: 6,
-      opera: 23
+      opera: 23,
+      android: 4.3
     };
     settings = $scope.$eval($attrs.notSupported);
     if (_.isArray(settings)) {
       for (i = 0, len = settings.length; i < len; i++) {
         option = settings[i];
         version = option.match(/\d+/g);
-        version = parseInt(version);
+        version = Number(version);
         if (!_.isNaN(version)) {
           continue;
         }
@@ -2044,7 +2046,7 @@ NotSupportedController = (function() {
         }
       }
     }
-    browserVersion = parseInt(bowser.version);
+    browserVersion = Number(bowser.version);
     for (browser in options) {
       version = options[browser];
       if (bowser.msie && browser === 'ie') {
@@ -2053,7 +2055,13 @@ NotSupportedController = (function() {
         } else if (_.isNaN(version)) {
           this.invalid = true;
         }
-      } else if (bowser.chrome && browser === 'chrome') {
+      } else if (bowser.chrome && browser === 'chrome' && !bowser.android) {
+        if (browserVersion <= version) {
+          this.invalid = true;
+        } else if (_.isNaN(version)) {
+          this.invalid = true;
+        }
+      } else if (bowser.android && browser === 'android') {
         if (browserVersion <= version) {
           this.invalid = true;
         } else if (_.isNaN(version)) {
@@ -2137,4 +2145,4 @@ TenantSettings = (function() {
 
 angular.module('imago').service('tenantSettings', ['$http', '$rootScope', 'imagoSettings', TenantSettings]);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/not-supported.html","<div ng-show=\"supported.invalid\" class=\"imago-not-supported\"><div class=\"inner\"><h1>Time for change!</h1><p>Please download a new version of your favorite browser.</p><ul><li><a href=\"http://support.apple.com/downloads/#safari\" target=\"_blank\"><div class=\"icon icon-safari\"></div><h2>Safari</h2><span>Download</span></a></li><li><a href=\"http://www.google.com/chrome\" target=\"_blank\"><div class=\"icon icon-chrome\"></div><h2>Chrome</h2><span>Download</span></a></li><li><a href=\"http://www.opera.com/download\" target=\"_blank\"><div class=\"icon icon-opera\"></div><h2>Opera</h2><span>Download</span></a></li><li><a href=\"http://www.mozilla.org/firefox\" target=\"_blank\"><div class=\"icon icon-firefox\"></div><h2>Firefox</h2><span>Download</span></a></li><li><a href=\"http://windows.microsoft.com/en-us/internet-explorer/download-ie\" target=\"_blank\"><div class=\"icon icon-ie\"></div><h2>IE</h2><span>Download</span></a></li></ul></div></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/not-supported.html","<div ng-if=\"supported.invalid\" ng-class=\"::{\'mobile\': mobile}\" class=\"imago-not-supported\"><div ng-if=\"mobile\" class=\"inner\"><h1>Browser not supported!</h1></div><div ng-if=\"!mobile\" class=\"inner\"><h1>Time for change!</h1><p>Please download a new version of your favorite browser.</p><ul><li><a href=\"http://support.apple.com/downloads/#safari\" target=\"_blank\"><div class=\"icon icon-safari\"></div><h2>Safari</h2><span>Download</span></a></li><li><a href=\"http://www.google.com/chrome\" target=\"_blank\"><div class=\"icon icon-chrome\"></div><h2>Chrome</h2><span>Download</span></a></li><li><a href=\"http://www.opera.com/download\" target=\"_blank\"><div class=\"icon icon-opera\"></div><h2>Opera</h2><span>Download</span></a></li><li><a href=\"http://www.mozilla.org/firefox\" target=\"_blank\"><div class=\"icon icon-firefox\"></div><h2>Firefox</h2><span>Download</span></a></li><li><a href=\"http://windows.microsoft.com/en-us/internet-explorer/download-ie\" target=\"_blank\"><div class=\"icon icon-ie\"></div><h2>IE</h2><span>Download</span></a></li></ul></div></div>");}]);

@@ -1,6 +1,9 @@
-.imago-not-supported(ng-show="supported.invalid")
+.imago-not-supported(ng-if="supported.invalid" ng-class="::{'mobile': mobile}")
 
-  .inner
+  .inner(ng-if="mobile")
+    h1 Browser not supported!
+
+  .inner(ng-if="!mobile")
     h1 Time for change!
     p Please download a new version of your favorite browser.
 
@@ -10,28 +13,22 @@
           .icon.icon-safari
           h2 Safari
           span Download
-
       li
         a(href="http://www.google.com/chrome" target="_blank")
           .icon.icon-chrome
           h2 Chrome
           span Download
-
-
       li
         a(href="http://www.opera.com/download" target="_blank")
           .icon.icon-opera
           h2 Opera
           span Download
 
-
       li
         a(href="http://www.mozilla.org/firefox" target="_blank")
           .icon.icon-firefox
           h2 Firefox
           span Download
-
-
       li
         a(href="http://windows.microsoft.com/en-us/internet-explorer/download-ie" target="_blank")
           .icon.icon-ie
