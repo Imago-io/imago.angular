@@ -7,6 +7,6 @@ class imagoDownload extends Directive
         asset: "="
         fieldname: "="
       templateUrl: (element, attrs) ->
-        return attrs.templateurl or '/imago/imago-download.html'
+        return attrs.templateUrl or '/imago/imago-download.html'
 
       }

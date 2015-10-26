@@ -8,7 +8,7 @@ ImagoSubscribe = (function() {
       transclude: true,
       controller: 'imagoSubscribeController as imagosubscribe',
       templateUrl: function(element, attrs) {
-        return attrs.templateurl || '/imago/imago-subscribe.html';
+        return attrs.templateUrl || '/imago/imago-subscribe.html';
       }
     };
   }

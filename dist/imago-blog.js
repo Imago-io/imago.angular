@@ -17,7 +17,7 @@ imagoPager = (function() {
       controller: 'imagoPagerController as imagopager',
       bindToController: true,
       templateUrl: function(element, attrs) {
-        return attrs.templateurl || '/imago/imago-pager.html';
+        return attrs.templateUrl || '/imago/imago-pager.html';
       }
     };
   }

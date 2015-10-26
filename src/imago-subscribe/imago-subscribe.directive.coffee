@@ -9,7 +9,7 @@ class ImagoSubscribe extends Directive
       transclude: true
       controller: 'imagoSubscribeController as imagosubscribe'
       templateUrl: (element, attrs) ->
-        return attrs.templateurl or '/imago/imago-subscribe.html'
+        return attrs.templateUrl or '/imago/imago-subscribe.html'
 
     }
 

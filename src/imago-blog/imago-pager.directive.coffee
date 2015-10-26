@@ -17,7 +17,7 @@ class imagoPager extends Directive
       controller: 'imagoPagerController as imagopager'
       bindToController: true
       templateUrl: (element, attrs) ->
-        return attrs.templateurl or '/imago/imago-pager.html'
+        return attrs.templateUrl or '/imago/imago-pager.html'
 
     }
 
