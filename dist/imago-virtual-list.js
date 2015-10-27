@@ -45,6 +45,8 @@ ImagoVirtualList = (function() {
               self.numberOfCells = 3 * self.cellsPerPage;
               if (self.itemsPerRow > 1) {
                 self.canvasWidth = self.itemsPerRow * masterDiv.clientWidth;
+              } else {
+                self.canvasWidth = null;
               }
               self.updateData();
               return _this.initRunning = false;
