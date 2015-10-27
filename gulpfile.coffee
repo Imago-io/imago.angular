@@ -37,12 +37,12 @@ compileFolder = (folder) ->
     .pipe plugins.order([
         "index.coffee"
       ])
-    .pipe plugins.gulpif /[.]jade$/, plugins.jade({locals: {}}).on('error', reportError)
-    .pipe plugins.gulpif /[.]html$/, plugins.templateCache(
+    .pipe plugins.if /[.]jade$/, plugins.jade({locals: {}}).on('error', reportError)
+    .pipe plugins.if /[.]html$/, plugins.angularTemplatecache(
       module: moduleName
       root: '/imago/'
     )
-    .pipe plugins.gulpif /[.]coffee$/, plugins.ngClassify(
+    .pipe plugins.if /[.]coffee$/, plugins.ngClassify(
       appName: moduleName
       animation:
         format: 'camelCase'
@@ -66,10 +66,10 @@ compileFolder = (folder) ->
       value:
         format: 'camelCase'
       )
-    .pipe plugins.gulpif /[.]coffee$/, plugins.coffee(
+    .pipe plugins.if /[.]coffee$/, plugins.coffee(
         bare: true
       ).on('error', reportError)
-    .pipe plugins.gulpif /[.]coffee$/, plugins.coffeelint()
+    .pipe plugins.if /[.]coffee$/, plugins.coffeelint()
     .pipe(plugins.concat(folder + ".js"))
     .pipe(gulp.dest(dest))
     .pipe(plugins.uglify())
@@ -129,7 +129,7 @@ gulp.task "karma", ->
       errorHandler: reportError
     )
     .pipe plugins.jade({locals: {}}).on('error', reportError)
-    .pipe plugins.templateCache(
+    .pipe plugins.angularTemplatecache(
       standalone: true
       root: "/imagoWidgets/"
       module: "ImagoWidgetsTemplates"
