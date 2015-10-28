@@ -23,6 +23,7 @@ imagoShare = (function() {
         asset: "="
       },
       controller: 'imagoShareController as imagoshare',
+      bindToController: true,
       templateUrl: function(element, attrs) {
         return attrs.templateUrl || '/imago/imago-share.html';
       }
@@ -36,7 +37,11 @@ imagoShare = (function() {
 imagoShareController = (function() {
   function imagoShareController($scope, $attrs, $location) {
     var i, item, len, options;
-    this.location = $location.absUrl();
+    if (this.asset.path) {
+      this.location = ($location.protocol()) + "://" + ($location.host()) + this.asset.path;
+    } else {
+      this.location = $location.absUrl();
+    }
     if (!$attrs.imagoShare) {
       return console.log('You need to specify one service at least.');
     }

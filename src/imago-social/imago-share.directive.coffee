@@ -7,6 +7,7 @@ class imagoShare extends Directive
       scope:
         asset: "="
       controller: 'imagoShareController as imagoshare'
+      bindToController: true
       templateUrl: (element, attrs) ->
         return attrs.templateUrl or '/imago/imago-share.html'
 
@@ -15,7 +16,10 @@ class imagoShare extends Directive
 class imagoShareController extends Controller
 
   constructor: ($scope, $attrs, $location) ->
-    @location = $location.absUrl()
+    if @asset.path
+      @location = "#{$location.protocol()}://#{$location.host()}#{@asset.path}"
+    else
+      @location = $location.absUrl()
 
     return console.log 'You need to specify one service at least.' unless $attrs.imagoShare
 
