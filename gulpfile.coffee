@@ -4,7 +4,7 @@ gulp            = require 'gulp'
 
 ngClassify      = require 'gulp-ng-classify'
 
-karma           = require('karma').server
+# karma           = require('karma').server
 
 fs              = require 'fs'
 merge           = require 'merge-stream'
