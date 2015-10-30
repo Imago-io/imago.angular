@@ -2,8 +2,6 @@ plugins         = require('gulp-load-plugins')()
 
 gulp            = require 'gulp'
 
-ngClassify      = require 'gulp-ng-classify'
-
 # karma           = require('karma').server
 
 fs              = require 'fs'
@@ -13,8 +11,6 @@ vinylPaths      = require 'vinyl-paths'
 path            = require 'path'
 notification    = require 'node-notifier'
 exec            = require('child_process').exec
-
-sketch          = require 'gulp-sketch'
 
 # Defaults
 
@@ -78,7 +74,7 @@ compileFolder = (folder) ->
 
 gulp.task 'sketch', ->
   gulp.src paths.sketch
-    .pipe sketch(
+    .pipe plugins.sketch(
       export: 'artboards'
       saveForWeb: true
       trimmed: false)
