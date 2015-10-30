@@ -376,7 +376,7 @@ imagoVideo = (function() {
         watchers.resizestop = $rootScope.$on('resizestop', function() {
           return preload(scope.source);
         });
-        watchers.action = $rootScope.$on('video:action', function(evt, params) {
+        watchers.action = $rootScope.$on('imagovideo:action', function(evt, params) {
           var ref;
           if (!params.id === scope.source._id || !params.action) {
             return;

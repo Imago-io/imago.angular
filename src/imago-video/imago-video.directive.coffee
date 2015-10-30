@@ -251,7 +251,7 @@ class imagoVideo extends Directive
         watchers.resizestop = $rootScope.$on 'resizestop', ->
           preload(scope.source)
 
-        watchers.action = $rootScope.$on 'video:action', (evt, params) ->
+        watchers.action = $rootScope.$on 'imagovideo:action', (evt, params) ->
           return if not params.id is scope.source._id or not params.action
           return unless _.isFunction scope.imagovideo.player?[params.action]
           scope.imagovideo.player[params.action]()
