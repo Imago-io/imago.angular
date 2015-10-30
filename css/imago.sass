@@ -394,7 +394,7 @@
 .inline-block
   display: inline-block
 // pixel values
-@for $i from 1 to 200
+@for $i from 0 to 200
   .w#{$i}0px
     width: #{$i}0px
     @extend .inline-block
@@ -403,7 +403,7 @@
     @extend .inline-block
 
 // percentage
-@for $i from 1 to 101
+@for $i from 0 to 101
   .w#{$i}
     width: $i * 1%
 
