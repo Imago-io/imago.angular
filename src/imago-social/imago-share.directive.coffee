@@ -2,37 +2,24 @@ class imagoShare extends Directive
 
   constructor: ($compile, $templateCache, $http) ->
 
-    defaultTemplate = '/imago/imago-share.html'
-
-    getTemplate = (url) ->
-
-      templateLoader = $http.get(url,
-        cache: $templateCache
-      )
-      templateLoader
-
     return {
 
       scope:
         asset: "="
       controller: 'imagoShareController as imagoshare'
-      link: (scope, element, attrs) ->
-        template = if attrs.templateurl then attrs.templateurl else defaultTemplate
-
-        syntax = undefined
-
-        getTemplate(template).success((html) ->
-          # element.html html
-          syntax = html
-        ).then ->
-          element.append $compile(syntax)(scope)
+      bindToController: true
+      templateUrl: (element, attrs) ->
+        return attrs.templateUrl or '/imago/imago-share.html'
 
     }
 
 class imagoShareController extends Controller
 
   constructor: ($scope, $attrs, $location) ->
-    @location = $location.absUrl()
+    if @asset.path
+      @location = "#{$location.protocol()}://#{$location.host()}#{@asset.path}"
+    else
+      @location = $location.absUrl()
 
     return console.log 'You need to specify one service at least.' unless $attrs.imagoShare
 

@@ -8,7 +8,7 @@ imagoDownload = (function() {
         fieldname: "="
       },
       templateUrl: function(element, attrs) {
-        return attrs.templateurl || '/imago/imago-download.html';
+        return attrs.templateUrl || '/imago/imago-download.html';
       }
     };
   }

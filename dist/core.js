@@ -1298,7 +1298,8 @@ imagoUtils = (function() {
         "Romania": "EUR",
         "Slovakia": "EUR",
         "Slovenia": "EUR",
-        "Spain": "EUR"
+        "Spain": "EUR",
+        "United Kingdom": "EUR"
       },
       CODES: {
         'Andorra': 'AD',

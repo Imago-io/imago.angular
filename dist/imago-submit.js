@@ -10,18 +10,18 @@ imagoSubmit = (function() {
         return $http.get(url);
       },
       formToJson: function(form) {
-        var defaultFields, key, message, obj, value;
+        var _message, defaultFields, key, obj, value;
         defaultFields = ['message', 'subscribe'];
         obj = {};
-        message = '';
+        _message = '';
         for (key in form) {
           value = form[key];
           if (indexOf.call(defaultFields, key) < 0) {
-            message += (imagoUtils.titleCase(key)) + ": " + value + "<br><br>";
+            _message += (imagoUtils.titleCase(key)) + ": " + value + "<br><br>";
           }
           obj[key] = value || '';
         }
-        obj.message = message + imagoUtils.replaceNewLines(obj.message || '');
+        obj.message = _message + imagoUtils.replaceNewLines(obj.message || '');
         return angular.toJson(obj);
       },
       send: function(data) {

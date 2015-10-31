@@ -189,6 +189,7 @@ class imagoUtils extends Factory
         "South Africa"             : "ZAR"
         "Zambia"                   : "ZMW"
         "Zimbabwe"                 : "ZWD"
+        # euro countries
         "Austria"                  : "EUR"
         "Belgium"                  : "EUR"
         "Bulgaria"                 : "EUR"
@@ -215,6 +216,7 @@ class imagoUtils extends Factory
         "Slovakia"                 : "EUR"
         "Slovenia"                 : "EUR"
         "Spain"                    : "EUR"
+        "United Kingdom"           : "EUR"
 
       CODES:
         'Andorra' : 'AD'

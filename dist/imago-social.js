@@ -18,29 +18,14 @@ var imagoShare, imagoShareController;
 
 imagoShare = (function() {
   function imagoShare($compile, $templateCache, $http) {
-    var defaultTemplate, getTemplate;
-    defaultTemplate = '/imago/imago-share.html';
-    getTemplate = function(url) {
-      var templateLoader;
-      templateLoader = $http.get(url, {
-        cache: $templateCache
-      });
-      return templateLoader;
-    };
     return {
       scope: {
         asset: "="
       },
       controller: 'imagoShareController as imagoshare',
-      link: function(scope, element, attrs) {
-        var syntax, template;
-        template = attrs.templateurl ? attrs.templateurl : defaultTemplate;
-        syntax = void 0;
-        return getTemplate(template).success(function(html) {
-          return syntax = html;
-        }).then(function() {
-          return element.append($compile(syntax)(scope));
-        });
+      bindToController: true,
+      templateUrl: function(element, attrs) {
+        return attrs.templateUrl || '/imago/imago-share.html';
       }
     };
   }
@@ -52,7 +37,11 @@ imagoShare = (function() {
 imagoShareController = (function() {
   function imagoShareController($scope, $attrs, $location) {
     var i, item, len, options;
-    this.location = $location.absUrl();
+    if (this.asset.path) {
+      this.location = ($location.protocol()) + "://" + ($location.host()) + this.asset.path;
+    } else {
+      this.location = $location.absUrl();
+    }
     if (!$attrs.imagoShare) {
       return console.log('You need to specify one service at least.');
     }

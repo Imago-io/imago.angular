@@ -376,6 +376,16 @@ imagoVideo = (function() {
         watchers.resizestop = $rootScope.$on('resizestop', function() {
           return preload(scope.source);
         });
+        watchers.action = $rootScope.$on('imagovideo:action', function(evt, params) {
+          var ref;
+          if (!params.id === scope.source._id || !params.action) {
+            return;
+          }
+          if (!_.isFunction((ref = scope.imagovideo.player) != null ? ref[params.action] : void 0)) {
+            return;
+          }
+          return scope.imagovideo.player[params.action]();
+        });
         scope.$on('$destroy', function() {
           var results;
           results = [];

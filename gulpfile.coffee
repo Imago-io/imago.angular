@@ -1,34 +1,16 @@
-coffee          = require 'gulp-coffee'
-coffeelint      = require 'gulp-coffeelint'
-
-concat          = require 'gulp-concat'
+plugins         = require('gulp-load-plugins')()
 
 gulp            = require 'gulp'
 
-jade            = require 'gulp-jade'
+# karma           = require('karma').server
 
-ngClassify      = require 'gulp-ng-classify'
-
-karma           = require('karma').server
-
-plumber         = require 'gulp-plumber'
-templateCache   = require 'gulp-angular-templatecache'
-uglify          = require 'gulp-uglify'
-watch           = require 'gulp-watch'
-gutil           = require 'gulp-util'
 fs              = require 'fs'
 merge           = require 'merge-stream'
-rename          = require 'gulp-rename'
 del             = require 'del'
 vinylPaths      = require 'vinyl-paths'
-order           = require 'gulp-order'
-gulpif          = require 'gulp-if'
 path            = require 'path'
-tap             = require 'gulp-tap'
 notification    = require 'node-notifier'
 exec            = require('child_process').exec
-
-sketch          = require 'gulp-sketch'
 
 # Defaults
 
@@ -45,18 +27,18 @@ getFolders = (dir) ->
 
 compileFolder = (folder) ->
   gulp.src(path.join(src, folder, "/*"))
-    .pipe plumber(
+    .pipe plugins.plumber(
       errorHandler: reportError
     )
-    .pipe order([
+    .pipe plugins.order([
         "index.coffee"
       ])
-    .pipe gulpif /[.]jade$/, jade({locals: {}}).on('error', reportError)
-    .pipe gulpif /[.]html$/, templateCache(
+    .pipe plugins.if /[.]jade$/, plugins.jade({locals: {}}).on('error', reportError)
+    .pipe plugins.if /[.]html$/, plugins.angularTemplatecache(
       module: moduleName
       root: '/imago/'
     )
-    .pipe gulpif /[.]coffee$/, ngClassify(
+    .pipe plugins.if /[.]coffee$/, plugins.ngClassify(
       appName: moduleName
       animation:
         format: 'camelCase'
@@ -80,19 +62,19 @@ compileFolder = (folder) ->
       value:
         format: 'camelCase'
       )
-    .pipe gulpif /[.]coffee$/, coffee(
+    .pipe plugins.if /[.]coffee$/, plugins.coffee(
         bare: true
       ).on('error', reportError)
-    .pipe gulpif /[.]coffee$/, coffeelint()
-    .pipe(concat(folder + ".js"))
+    .pipe plugins.if /[.]coffee$/, plugins.coffeelint()
+    .pipe(plugins.concat(folder + ".js"))
     .pipe(gulp.dest(dest))
-    .pipe(uglify())
-    .pipe(rename(folder + ".min.js"))
+    .pipe(plugins.uglify())
+    .pipe(plugins.rename(folder + ".min.js"))
     .pipe gulp.dest(dest)
 
 gulp.task 'sketch', ->
   gulp.src paths.sketch
-    .pipe sketch(
+    .pipe plugins.sketch(
       export: 'artboards'
       saveForWeb: true
       trimmed: false)
@@ -107,10 +89,10 @@ gulp.task "join", ->
 
 gulp.task "karma", ->
   gulp.src paths.coffee
-    .pipe plumber(
+    .pipe plugins.plumber(
       errorHandler: reportError
     )
-    .pipe ngClassify(
+    .pipe plugins.ngClassify(
       appName: moduleName
       animation:
         format: 'camelCase'
@@ -134,21 +116,21 @@ gulp.task "karma", ->
       value:
         format: 'camelCase'
       )
-    .pipe coffee(
+    .pipe plugins.coffee(
       bare: true
     ).on('error', reportError)
     .pipe gulp.dest test
   gulp.src paths.jade
-    .pipe plumber(
+    .pipe plugins.plumber(
       errorHandler: reportError
     )
-    .pipe jade({locals: {}}).on('error', reportError)
-    .pipe templateCache(
+    .pipe plugins.jade({locals: {}}).on('error', reportError)
+    .pipe plugins.angularTemplatecache(
       standalone: true
       root: "/imagoWidgets/"
       module: "ImagoWidgetsTemplates"
     )
-    .pipe concat targets.jade
+    .pipe plugins.concat targets.jade
     .pipe gulp.dest test
   karma.start(
     configFile: 'tests/karma.conf.coffee'
@@ -166,16 +148,16 @@ gulp.task "build", ["clean"], ->
 ## Essentials Task
 
 gulp.task "watch", ->
-  watch({glob: "#{src}/**/*.*", emitOnGlob: false})
-    .pipe tap (file, t) ->
+  plugins.watch({glob: "#{src}/**/*.*", emitOnGlob: false})
+    .pipe plugins.tap (file, t) ->
       compileFolder(path.dirname(file.relative))
 
 reportError = (err) ->
-  gutil.beep()
+  plugins.gutil.beep()
   notification.notify
     title: "Error running Gulp"
     message: err.message
-  gutil.log err.message
+  plugins.gutil.log err.message
   @emit 'end'
 
 

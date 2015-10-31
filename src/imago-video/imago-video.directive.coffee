@@ -251,6 +251,11 @@ class imagoVideo extends Directive
         watchers.resizestop = $rootScope.$on 'resizestop', ->
           preload(scope.source)
 
+        watchers.action = $rootScope.$on 'imagovideo:action', (evt, params) ->
+          return if not params.id is scope.source._id or not params.action
+          return unless _.isFunction scope.imagovideo.player?[params.action]
+          scope.imagovideo.player[params.action]()
+
         scope.$on '$destroy', ->
           for key of watchers
             watchers[key]()
@@ -272,7 +277,7 @@ class imagoVideo extends Directive
 class imagoVideoController extends Controller
 
   constructor: ($scope, $element, $attrs) ->
-    @player  = $element.find('video')[0]
+    @player = $element.find('video')[0]
     $scope.loading = true
 
     angular.element(@player).bind 'ended', (e) =>
