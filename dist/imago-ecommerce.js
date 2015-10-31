@@ -306,6 +306,7 @@ imagoCart = (function() {
     } else {
       console.log('you need to enable at least one currency in the settings');
     }
+    this.$rootScope.$emit('imagocart:currencyloaded');
     if (!this.cart) {
       return;
     }

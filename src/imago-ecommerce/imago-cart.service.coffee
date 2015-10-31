@@ -41,6 +41,8 @@ class imagoCart extends Service
     else
       console.log 'you need to enable at least one currency in the settings'
 
+    @$rootScope.$emit 'imagocart:currencyloaded'
+
     return unless @cart
     if @cart.currency isnt @currency
       @cart.currency = angular.copy @currency
