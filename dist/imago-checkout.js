@@ -582,43 +582,41 @@ Calculation = (function() {
     })(this));
   };
 
-  Calculation.prototype.submit = function() {
+  Calculation.prototype.formatForm = function(form) {
     var ref, ref1;
-    this.process.form.items = angular.copy(this.cart.items);
-    this.process.form.costs = angular.copy(this.costs);
-    this.process.form.currency = angular.copy(this.currency);
-    this.process.form.billing_address.name = angular.copy(this.process.form.card.name);
-    this.process.form.costs.shipping_options = angular.copy(this.shipping_options);
-    this.process.form.costs.coupon = angular.copy(this.coupon);
-    this.process.form.cartId = angular.copy(this.cart._id);
-    if (!this.differentshipping) {
-      this.process.form['shipping_address'] = angular.copy(this.process.form['billing_address']);
-    }
-    this.process.form.billing_address['phone'] = angular.copy(this.process.form.phone);
-    this.process.form.shipping_address['phone'] = angular.copy(this.process.form.phone);
-    this.process.form.fulfillmentcenter = angular.copy((ref = this.fcenter) != null ? ref._id : void 0);
-    this.process.form.userData = {
+    form.costs = angular.copy(this.costs);
+    form.costs.shipping_options = angular.copy(this.shipping_options);
+    form.costs.coupon = (this.coupon ? angular.copy(this.coupon) : null);
+    form.shipping_address || (form.shipping_address = {});
+    form.billing_address['phone'] = angular.copy(this.process.form.phone);
+    form.shipping_address['phone'] = angular.copy(this.process.form.phone);
+    form.fulfillmentcenter = angular.copy((ref = this.fcenter) != null ? ref._id : void 0);
+    form.userData = {
       'browser': (ref1 = window.navigator) != null ? ref1.userAgent : void 0
     };
+    if (!this.differentshipping) {
+      form.shipping_address = angular.copy(this.process.form['billing_address']);
+    }
+    return form;
+  };
+
+  Calculation.prototype.submit = function() {
+    this.process.form.items = angular.copy(this.cart.items);
+    this.process.form.currency = angular.copy(this.currency);
+    this.process.form.cartId = angular.copy(this.cart._id);
+    this.process.form.billing_address.name = angular.copy(this.process.form.card.name);
+    this.process.form = this.formatForm(this.process.form);
     return this.$http.post(this.imagoSettings.host + '/api/checkout', this.process.form);
   };
 
   Calculation.prototype.saveCart = function() {
-    var base, form, ref;
+    var form;
     form = angular.copy(this.cart);
     form.currency = this.currency;
     form.data = angular.copy(this.process.form);
-    form.data.costs = angular.copy(this.costs);
     form.data.paymentType = angular.copy(this.paymentType);
     form.data.differentshipping = this.differentshipping;
-    form.data.costs.coupon = (this.coupon ? angular.copy(this.coupon) : null);
-    (base = form.data).shipping_address || (base.shipping_address = {});
-    form.data.billing_address['phone'] = angular.copy(form.data.phone);
-    form.data.shipping_address['phone'] = angular.copy(form.data.phone);
-    form.data.fulfillmentcenter = angular.copy((ref = this.fcenter) != null ? ref._id : void 0);
-    if (!this.differentshipping) {
-      form.data['shipping_address'] = angular.copy(this.process.form['billing_address']);
-    }
+    form.data = this.formatForm(form.data);
     return this.$http.put(this.imagoSettings.host + '/api/carts/' + this.cart._id, form);
   };
 

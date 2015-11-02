@@ -339,23 +339,27 @@ class Calculation extends Service
         @applyCoupon(@coupon, @costs) if @coupon
         @calculateTotal()
 
-  submit: =>
-    @process.form.items    = angular.copy @cart.items
-    @process.form.costs    = angular.copy @costs
-    @process.form.currency = angular.copy @currency
-    @process.form.billing_address.name = angular.copy @process.form.card.name
-    @process.form.costs.shipping_options = angular.copy(@shipping_options)
-    @process.form.costs.coupon = angular.copy(@coupon)
-    @process.form.cartId = angular.copy @cart._id
+  formatForm: (form) ->
+    form.costs = angular.copy @costs
+    form.costs.shipping_options = angular.copy @shipping_options
+    form.costs.coupon = (if @coupon then angular.copy(@coupon) else null)
+    form.shipping_address or= {}
+    form.billing_address['phone']  = angular.copy @process.form.phone
+    form.shipping_address['phone'] = angular.copy @process.form.phone
+    form.fulfillmentcenter = angular.copy @fcenter?._id
+    form.userData = {'browser': window.navigator?.userAgent}
 
     if not @differentshipping
-      @process.form['shipping_address'] = angular.copy @process.form['billing_address']
+      form.shipping_address = angular.copy @process.form['billing_address']
 
-    @process.form.billing_address['phone']  = angular.copy @process.form.phone
-    @process.form.shipping_address['phone'] = angular.copy @process.form.phone
+    return form
 
-    @process.form.fulfillmentcenter = angular.copy @fcenter?._id
-    @process.form.userData = {'browser': window.navigator?.userAgent}
+  submit: =>
+    @process.form.items    = angular.copy @cart.items
+    @process.form.currency = angular.copy @currency
+    @process.form.cartId = angular.copy @cart._id
+    @process.form.billing_address.name = angular.copy @process.form.card.name
+    @process.form = @formatForm(@process.form)
 
     return @$http.post(@imagoSettings.host + '/api/checkout', @process.form)
 
@@ -363,16 +367,8 @@ class Calculation extends Service
     form = angular.copy @cart
     form.currency = @currency
     form.data = angular.copy @process.form
-    form.data.costs = angular.copy @costs
     form.data.paymentType = angular.copy @paymentType
     form.data.differentshipping = @differentshipping
-    form.data.costs.coupon = (if @coupon then angular.copy(@coupon) else null)
-    form.data.shipping_address or= {}
-    form.data.billing_address['phone']  = angular.copy form.data.phone
-    form.data.shipping_address['phone'] = angular.copy form.data.phone
-    form.data.fulfillmentcenter = angular.copy @fcenter?._id
-
-    if not @differentshipping
-      form.data['shipping_address'] = angular.copy @process.form['billing_address']
+    form.data = @formatForm(form.data)
 
     return @$http.put(@imagoSettings.host + '/api/carts/' + @cart._id, form)
