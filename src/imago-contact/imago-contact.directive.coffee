@@ -7,7 +7,7 @@ class imagoContact extends Directive
       scope: {}
       controller: 'imagoContactController as contact'
       templateUrl: (element, attrs) ->
-        return attrs.templateUrl or '/imago/imago-contact.html'
+        return attrs.templateurl or '/imago/imago-contact.html'
 
     }
 
