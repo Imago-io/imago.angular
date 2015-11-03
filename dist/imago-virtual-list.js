@@ -52,7 +52,7 @@ ImagoVirtualList = (function() {
               self.updateData();
               return _this.initRunning = false;
             };
-          })(this), 100);
+          })(this), 200);
         };
         self.updateData = function() {
           if (!scope.imagovirtuallist.data) {

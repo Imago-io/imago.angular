@@ -48,7 +48,7 @@ class ImagoVirtualList extends Directive
               self.canvasWidth = null
             self.updateData()
             @initRunning = false
-          , 100
+          , 200
 
         self.updateData = ->
           return unless scope.imagovirtuallist.data
