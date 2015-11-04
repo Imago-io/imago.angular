@@ -82,7 +82,6 @@ class imagoCart extends Service
       @create(@cart).then (response) =>
         _.assign @cart, response.data
         @imagoUtils.cookie('imagoCart', response.data._id)
-        # localStorage.setItem('imagoCart', response.data._id)
         defer.resolve('created')
     defer.promise
 

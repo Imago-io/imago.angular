@@ -14,7 +14,7 @@ class WebStorage extends Service
 
   get: (key) ->
     if @valid
-      value = @$window.localStorage.getItem('size')
+      value = @$window.localStorage.getItem(key)
       try
         angular.fromJson(value)
       catch e

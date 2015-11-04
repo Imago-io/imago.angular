@@ -2168,7 +2168,7 @@ WebStorage = (function() {
   WebStorage.prototype.get = function(key) {
     var e, error, value;
     if (this.valid) {
-      value = this.$window.localStorage.getItem('size');
+      value = this.$window.localStorage.getItem(key);
       try {
         angular.fromJson(value);
       } catch (error) {
