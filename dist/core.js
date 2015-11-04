@@ -2146,4 +2146,58 @@ TenantSettings = (function() {
 
 angular.module('imago').service('tenantSettings', ['$http', '$rootScope', 'imagoSettings', TenantSettings]);
 
+var WebStorage;
+
+WebStorage = (function() {
+  WebStorage.prototype.store = {};
+
+  function WebStorage($window) {
+    var e, error, test;
+    this.$window = $window;
+    this.valid = true;
+    test = 'imagoTestLocal';
+    try {
+      this.$window.localStorage.setItem(test, test);
+      this.$window.localStorage.removeItem(test);
+    } catch (error) {
+      e = error;
+      this.valid = false;
+    }
+  }
+
+  WebStorage.prototype.get = function(key) {
+    var e, error, value;
+    if (this.valid) {
+      value = this.$window.localStorage.getItem('size');
+      try {
+        angular.fromJson(value);
+      } catch (error) {
+        e = error;
+        return value;
+      }
+      return angular.fromJson(value);
+    }
+    return this.store[key];
+  };
+
+  WebStorage.prototype.set = function(key, value) {
+    if (this.valid) {
+      return this.$window.localStorage.setItem(key, angular.toJson(value));
+    }
+    return this.store[key] = value;
+  };
+
+  WebStorage.prototype.remove = function(key) {
+    if (this.valid) {
+      return this.$window.localStorage.removeItem(key);
+    }
+    return delete this.store[key];
+  };
+
+  return WebStorage;
+
+})();
+
+angular.module('imago').service('webStorage', ['$window', WebStorage]);
+
 angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/not-supported.html","<div ng-if=\"supported.invalid\" ng-class=\"::{\'mobile\': mobile}\" class=\"imago-not-supported\"><div ng-if=\"mobile\" class=\"inner\"><h1>Browser not supported!</h1></div><div ng-if=\"!mobile\" class=\"inner\"><h1>Time for change!</h1><p>Please download a new version of your favorite browser.</p><ul><li><a href=\"http://support.apple.com/downloads/#safari\" target=\"_blank\"><div class=\"icon icon-safari\"></div><h2>Safari</h2><span>Download</span></a></li><li><a href=\"http://www.google.com/chrome\" target=\"_blank\"><div class=\"icon icon-chrome\"></div><h2>Chrome</h2><span>Download</span></a></li><li><a href=\"http://www.opera.com/download\" target=\"_blank\"><div class=\"icon icon-opera\"></div><h2>Opera</h2><span>Download</span></a></li><li><a href=\"http://www.mozilla.org/firefox\" target=\"_blank\"><div class=\"icon icon-firefox\"></div><h2>Firefox</h2><span>Download</span></a></li><li><a href=\"http://windows.microsoft.com/en-us/internet-explorer/download-ie\" target=\"_blank\"><div class=\"icon icon-ie\"></div><h2>IE</h2><span>Download</span></a></li></ul></div></div>");}]);
