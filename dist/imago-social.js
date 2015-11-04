@@ -36,25 +36,46 @@ imagoShare = (function() {
 
 imagoShareController = (function() {
   function imagoShareController($scope, $attrs, $location) {
-    var i, item, len, options;
-    if (this.asset.path) {
-      this.location = ($location.protocol()) + "://" + ($location.host()) + this.asset.path;
-    } else {
-      this.location = $location.absUrl();
+    var watcher;
+    this.$scope = $scope;
+    this.$attrs = $attrs;
+    this.$location = $location;
+    if (this.asset) {
+      return this.init();
     }
-    if (!$attrs.imagoShare) {
+    watcher = this.$scope.$watch('imagoshare.asset', (function(_this) {
+      return function(value) {
+        if (!value) {
+          return;
+        }
+        watcher();
+        return _this.init();
+      };
+    })(this));
+  }
+
+  imagoShareController.prototype.init = function() {
+    var i, item, len, options, results;
+    if (this.asset.path) {
+      this.location = (this.$location.protocol()) + "://" + (this.$location.host()) + this.asset.path;
+    } else {
+      this.location = this.$location.absUrl();
+    }
+    if (!this.$attrs.imagoShare) {
       return console.log('You need to specify one service at least.');
     }
-    options = $scope.$eval($attrs.imagoShare);
+    options = this.$scope.$eval(this.$attrs.imagoShare);
     if (_.isArray(options)) {
+      results = [];
       for (i = 0, len = options.length; i < len; i++) {
         item = options[i];
-        this[item] = true;
+        results.push(this[item] = true);
       }
-    } else if ($attrs.imagoShare === 'all') {
-      this.all = true;
+      return results;
+    } else if (this.$attrs.imagoShare === 'all') {
+      return this.all = true;
     }
-  }
+  };
 
   return imagoShareController;
 

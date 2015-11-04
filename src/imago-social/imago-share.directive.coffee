@@ -15,19 +15,28 @@ class imagoShare extends Directive
 
 class imagoShareController extends Controller
 
-  constructor: ($scope, $attrs, $location) ->
+  constructor: (@$scope, @$attrs, @$location) ->
+
+    return @init() if @asset
+
+    watcher = @$scope.$watch 'imagoshare.asset', (value) =>
+      return unless value
+      watcher()
+      @init()
+
+  init: ->
     if @asset.path
-      @location = "#{$location.protocol()}://#{$location.host()}#{@asset.path}"
+      @location = "#{@$location.protocol()}://#{@$location.host()}#{@asset.path}"
     else
-      @location = $location.absUrl()
+      @location = @$location.absUrl()
 
-    return console.log 'You need to specify one service at least.' unless $attrs.imagoShare
+    return console.log 'You need to specify one service at least.' unless @$attrs.imagoShare
 
-    options = $scope.$eval $attrs.imagoShare
+    options = @$scope.$eval @$attrs.imagoShare
 
     if _.isArray options
       for item in options
         @[item] = true
-    else if $attrs.imagoShare is 'all'
+    else if @$attrs.imagoShare is 'all'
       @all = true
 
