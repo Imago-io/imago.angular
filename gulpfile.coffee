@@ -153,11 +153,11 @@ gulp.task "watch", ->
       compileFolder(path.dirname(file.relative))
 
 reportError = (err) ->
-  plugins.gutil.beep()
+  plugins.util.beep()
   notification.notify
     title: "Error running Gulp"
     message: err.message
-  plugins.gutil.log err.message
+  plugins.util.log err.message
   @emit 'end'
 
 
