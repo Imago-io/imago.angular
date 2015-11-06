@@ -96,15 +96,12 @@ GeoIp = (function() {
   }
 
   GeoIp.prototype.get = function() {
-    if (this.imagoUtils.cookie('countryGeo')) {
-      this.data.country = this.imagoUtils.getCountryByCode(this.imagoUtils.cookie('countryGeo'));
-      this.$rootScope.$emit('geoip:loaded', this.data);
-      this.loaded = true;
-      return;
-    }
     return this.$http.get('//api.imago.io/geoip').then((function(_this) {
       return function(response) {
         var code;
+        if (_.isEmpty(response.data)) {
+          return _this.getCookie();
+        }
         code = _this.imagoUtils.getCountryByCode(response.data.country_code);
         _this.imagoUtils.cookie('countryGeo', response.data.country_code);
         _this.data.country = code;
@@ -113,11 +110,21 @@ GeoIp = (function() {
       };
     })(this), (function(_this) {
       return function(err) {
-        _this.data = null;
-        _this.$rootScope.$emit('geoip:loaded', _this.data);
-        return _this.loaded = true;
+        return _this.getCookie();
       };
     })(this));
+  };
+
+  GeoIp.prototype.getCookie = function() {
+    if (this.imagoUtils.cookie('countryGeo')) {
+      this.data.country = this.imagoUtils.getCountryByCode(this.imagoUtils.cookie('countryGeo'));
+      this.$rootScope.$emit('geoip:loaded', this.data);
+      return this.loaded = true;
+    } else {
+      this.data = null;
+      this.$rootScope.$emit('geoip:loaded', this.data);
+      return this.loaded = true;
+    }
   };
 
   return GeoIp;
