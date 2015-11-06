@@ -8,23 +8,24 @@ class imagoSubmit extends Service
         url = imagoSettings.host + "/getxsrf"
         $http.get(url)
 
-      formToJson: (form) ->
+      formatForm: (form) ->
         defaultFields = ['message', 'subscribe']
         obj = {}
         _message = ''
         for key, value of form
+          console.log 'key', key, value
           unless key in defaultFields
-            _message+= "#{imagoUtils.titleCase(key)}: #{value}<br><br>"
+            _message+= "<b>#{_.startCase(key)}</b>:: #{value}<br><br>"
           obj[key] = value or ''
+        originalMsg =  imagoUtils.replaceNewLines(obj.message or '')
+        obj.message = _message + "<b>Message</b>:<br><br> #{originalMsg}<br><br>"
 
-        obj.message = _message + imagoUtils.replaceNewLines(obj.message or '')
-
-        return angular.toJson(obj)
+        return obj
 
       send: (data) ->
-        postUrl =  imagoSettings.host + "/api/contact"
+        postUrl =  imagoSettings.host + '/api/contact'
 
-        $http.post(postUrl, @formToJson(data)).then (response) =>
+        $http.post(postUrl, @formatForm(data)).then (response) =>
           console.log 'success: ', response
           return {status: true, message: ""}
         , (error) ->

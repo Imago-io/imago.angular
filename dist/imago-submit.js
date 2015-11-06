@@ -9,25 +9,27 @@ imagoSubmit = (function() {
         url = imagoSettings.host + "/getxsrf";
         return $http.get(url);
       },
-      formToJson: function(form) {
-        var _message, defaultFields, key, obj, value;
+      formatForm: function(form) {
+        var _message, defaultFields, key, obj, originalMsg, value;
         defaultFields = ['message', 'subscribe'];
         obj = {};
         _message = '';
         for (key in form) {
           value = form[key];
+          console.log('key', key, value);
           if (indexOf.call(defaultFields, key) < 0) {
-            _message += (imagoUtils.titleCase(key)) + ": " + value + "<br><br>";
+            _message += "<b>" + (_.startCase(key)) + "</b>:: " + value + "<br><br>";
           }
           obj[key] = value || '';
         }
-        obj.message = _message + imagoUtils.replaceNewLines(obj.message || '');
-        return angular.toJson(obj);
+        originalMsg = imagoUtils.replaceNewLines(obj.message || '');
+        obj.message = _message + ("<b>Message</b>:<br><br> " + originalMsg + "<br><br>");
+        return obj;
       },
       send: function(data) {
         var postUrl;
-        postUrl = imagoSettings.host + "/api/contact";
-        return $http.post(postUrl, this.formToJson(data)).then((function(_this) {
+        postUrl = imagoSettings.host + '/api/contact';
+        return $http.post(postUrl, this.formatForm(data)).then((function(_this) {
           return function(response) {
             console.log('success: ', response);
             return {
