@@ -16,7 +16,6 @@ imagoSubmit = (function() {
         _message = '';
         for (key in form) {
           value = form[key];
-          console.log('key', key, value);
           if (indexOf.call(defaultFields, key) < 0) {
             _message += "<b>" + (_.startCase(key)) + "</b>:: " + value + "<br><br>";
           }

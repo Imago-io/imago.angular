@@ -13,7 +13,6 @@ class imagoSubmit extends Service
         obj = {}
         _message = ''
         for key, value of form
-          console.log 'key', key, value
           unless key in defaultFields
             _message+= "<b>#{_.startCase(key)}</b>:: #{value}<br><br>"
           obj[key] = value or ''
