@@ -112,7 +112,7 @@ ImagoVirtualList = (function() {
           });
         };
         scope.onScroll = function() {
-          self.scrollTop = $window.scrollY;
+          self.scrollTop = $window.scrollY || $window.pageYOffset;
           if ((self.canvasHeight - self.scrollTop) <= Number(scope.imagovirtuallist.offsetBottom)) {
             scope.imagovirtuallist.onBottom();
           }

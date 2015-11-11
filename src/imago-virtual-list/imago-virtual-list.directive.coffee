@@ -91,7 +91,7 @@ class ImagoVirtualList extends Directive
             $document.scrollTop(self.scrollTop, 0)
 
         scope.onScroll = ->
-          self.scrollTop = $window.scrollY
+          self.scrollTop = $window.scrollY or $window.pageYOffset
           if (self.canvasHeight - self.scrollTop) <= Number(scope.imagovirtuallist.offsetBottom)
             scope.imagovirtuallist.onBottom()
           self.updateDisplayList()
