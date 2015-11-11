@@ -26,9 +26,9 @@ class imagoShareController extends Controller
 
   init: ->
     if @asset.path
-      @location = "#{@$location.protocol()}://#{@$location.host()}#{@asset.path}"
+      @$scope.location = "#{@$location.protocol()}://#{@$location.host()}#{@asset.path}"
     else
-      @location = @$location.absUrl()
+      @$scope.location = @$location.absUrl()
 
     return console.log 'You need to specify one service at least.' unless @$attrs.imagoShare
 
@@ -36,7 +36,6 @@ class imagoShareController extends Controller
 
     if _.isArray options
       for item in options
-        @[item] = true
+        @$scope[item] = true
     else if @$attrs.imagoShare is 'all'
-      @all = true
-
+      @$scope.all = true
