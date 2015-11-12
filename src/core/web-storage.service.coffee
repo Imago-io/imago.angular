@@ -37,3 +37,10 @@ class WebStorage extends Service
 
     # Fallback
     delete @store[key]
+
+  clear: ->
+    if @valid
+      return @$window.localStorage.clear()
+
+    # Fallback
+    @store = {}

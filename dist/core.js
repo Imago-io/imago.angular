@@ -2194,6 +2194,13 @@ WebStorage = (function() {
     return delete this.store[key];
   };
 
+  WebStorage.prototype.clear = function() {
+    if (this.valid) {
+      return this.$window.localStorage.clear();
+    }
+    return this.store = {};
+  };
+
   return WebStorage;
 
 })();
