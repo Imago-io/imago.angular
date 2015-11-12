@@ -26,7 +26,10 @@ class WebStorage extends Service
 
   set: (key, value) ->
     if @valid
-      return @$window.localStorage.setItem(key, angular.toJson(value))
+      try
+        return @$window.localStorage.setItem(key, angular.toJson(value))
+      catch err
+        console.log 'error on set LocalStorage:', key, angular.toJson value
 
     # Fallback
     @store[key] = value
