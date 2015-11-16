@@ -147,13 +147,9 @@ imagoVideo = (function() {
           })(this));
         }
         compile = function() {
-          var ref, ref1, ref2;
+          var ref, ref1;
           if (!((ref = scope.source.fields) != null ? (ref1 = ref.formats) != null ? ref1.length : void 0 : void 0)) {
             return console.log('no formats found');
-          }
-          if (!((ref2 = scope.source) != null ? ref2.serving_url : void 0)) {
-            element.remove();
-            return;
           }
           if (scope.source.fields.hasOwnProperty('crop') && !attrs['align']) {
             opts.align = scope.source.fields.crop.value;

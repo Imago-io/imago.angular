@@ -24,9 +24,9 @@ class ImagoVirtualList extends Directive
         self = {}
         self.scrollTop = 0
         self.browserKey = if bowser?.safari <= 8 then '-webkit-transform' else 'transform'
+        self.uuid = scope.imagovirtuallist.uuid or 'id'
 
         scope.imagovirtuallist.offsetBottom = $window.innerHeight unless scope.imagovirtuallist.offsetBottom
-        self.uuid = scope.imagovirtuallist.uuid or 'id'
 
         masterDiv = document.createElement 'div'
         masterDiv.id = 'master-item'

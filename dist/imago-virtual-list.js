@@ -23,10 +23,10 @@ ImagoVirtualList = (function() {
         self = {};
         self.scrollTop = 0;
         self.browserKey = (typeof bowser !== "undefined" && bowser !== null ? bowser.safari : void 0) <= 8 ? '-webkit-transform' : 'transform';
+        self.uuid = scope.imagovirtuallist.uuid || 'id';
         if (!scope.imagovirtuallist.offsetBottom) {
           scope.imagovirtuallist.offsetBottom = $window.innerHeight;
         }
-        self.uuid = scope.imagovirtuallist.uuid || 'id';
         masterDiv = document.createElement('div');
         masterDiv.id = 'master-item';
         masterDiv.className = attrs.classItem;

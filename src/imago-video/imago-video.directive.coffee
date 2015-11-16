@@ -1,7 +1,9 @@
 class imagoVideo extends Directive
 
   constructor: ($timeout, $rootScope, imagoUtils, imagoModel) ->
+
     return {
+
       replace: true
       scope: true
       templateUrl: '/imago/imago-video.html'
@@ -52,10 +54,6 @@ class imagoVideo extends Directive
 
         compile = ->
           return console.log 'no formats found' unless scope.source.fields?.formats?.length
-
-          unless scope.source?.serving_url
-            element.remove()
-            return
 
           if scope.source.fields.hasOwnProperty('crop') and not attrs['align']
             opts.align = scope.source.fields.crop.value
