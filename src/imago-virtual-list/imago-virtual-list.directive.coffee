@@ -14,6 +14,7 @@ class ImagoVirtualList extends Directive
         onBottom: '&'
         scroll: '='
         offsetBottom: '@'
+        uuid: '@'
 
       link: (scope, element, attrs, ctrl, transclude) ->
 
@@ -25,6 +26,7 @@ class ImagoVirtualList extends Directive
         self.browserKey = if bowser?.safari <= 8 then '-webkit-transform' else 'transform'
 
         scope.imagovirtuallist.offsetBottom = $window.innerHeight unless scope.imagovirtuallist.offsetBottom
+        self.uuid = scope.imagovirtuallist.uuid or 'id'
 
         masterDiv = document.createElement 'div'
         masterDiv.id = 'master-item'
@@ -70,7 +72,7 @@ class ImagoVirtualList extends Directive
             findIndex = ->
               for chunk, indexChunk in chunks
                 for item, indexItem in chunk
-                  continue unless item.id is scope.visibleProvider[i].id
+                  continue unless item[self.uuid] is scope.visibleProvider[i][self.uuid]
                   idx =
                     chunk  : indexChunk
                     inside : indexItem

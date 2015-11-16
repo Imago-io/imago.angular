@@ -12,7 +12,8 @@ ImagoVirtualList = (function() {
         data: '=',
         onBottom: '&',
         scroll: '=',
-        offsetBottom: '@'
+        offsetBottom: '@',
+        uuid: '@'
       },
       link: function(scope, element, attrs, ctrl, transclude) {
         var masterDiv, self, watchers;
@@ -25,6 +26,7 @@ ImagoVirtualList = (function() {
         if (!scope.imagovirtuallist.offsetBottom) {
           scope.imagovirtuallist.offsetBottom = $window.innerHeight;
         }
+        self.uuid = scope.imagovirtuallist.uuid || 'id';
         masterDiv = document.createElement('div');
         masterDiv.id = 'master-item';
         masterDiv.className = attrs.classItem;
@@ -81,7 +83,7 @@ ImagoVirtualList = (function() {
                 chunk = chunks[indexChunk];
                 for (indexItem = k = 0, len1 = chunk.length; k < len1; indexItem = ++k) {
                   item = chunk[indexItem];
-                  if (item.id !== scope.visibleProvider[i].id) {
+                  if (item[self.uuid] !== scope.visibleProvider[i][self.uuid]) {
                     continue;
                   }
                   idx = {

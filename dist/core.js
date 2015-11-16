@@ -2181,8 +2181,14 @@ WebStorage = (function() {
   };
 
   WebStorage.prototype.set = function(key, value) {
+    var err, error;
     if (this.valid) {
-      return this.$window.localStorage.setItem(key, angular.toJson(value));
+      try {
+        return this.$window.localStorage.setItem(key, angular.toJson(value));
+      } catch (error) {
+        err = error;
+        console.log('error on set LocalStorage:', key, angular.toJson(value));
+      }
     }
     return this.store[key] = value;
   };
