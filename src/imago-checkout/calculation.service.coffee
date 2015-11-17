@@ -358,7 +358,7 @@ class Calculation extends Service
     @process.form.items    = angular.copy @cart.items
     @process.form.currency = angular.copy @currency
     @process.form.cartId = angular.copy @cart._id
-    @process.form.billing_address.name = angular.copy @process.form.card.name
+    @process.form.billing_address.name = angular.copy @process.form.user?.name
     @process.form = @formatForm(@process.form)
 
     return @$http.post(@imagoSettings.host + '/api/checkout', @process.form)

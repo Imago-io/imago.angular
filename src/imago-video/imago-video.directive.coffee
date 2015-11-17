@@ -84,14 +84,16 @@ class imagoVideo extends Directive
 
           dpr = if opts.hires then Math.ceil(window.devicePixelRatio) or 1 else 1
 
-          serving_url = "#{scope.source.serving_url}=s#{ Math.ceil(Math.min(Math.max(width, height) * dpr)) or 1600 }"
+          if scope.source.serving_url
+            serving_url = "#{scope.source.serving_url}=s#{ Math.ceil(Math.min(Math.max(width, height) * dpr)) or 1600 }"
 
           style =
             size:                 opts.size
             sizemode:             opts.sizemode
             backgroundPosition:   opts.align
-            backgroundImage:      "url(#{serving_url})"
             backgroundRepeat:     "no-repeat"
+
+          style.backgroundImage = "url(#{serving_url})" if serving_url
 
           scope.wrapperStyle = style
 
@@ -107,21 +109,25 @@ class imagoVideo extends Directive
           scope.imagovideo.player.setAttribute("loop", opts.loop) if opts.loop is true
 
         render = (width, height, servingUrl) =>
-          if  opts.lazy and not scope.visible
+          if opts.lazy and not scope.visible
             self.visibleFunc = scope.$watch attrs.visible, (value) =>
               scope.visible = value
               return unless value
               self.visibleFunc()
               render(width, height, servingUrl)
           else
-            img = angular.element('<img>')
-            img.on 'load', (e) =>
-              _.assign(scope.wrapperStyle, styleWrapper(width, height))
-              scope.videoStyle   = styleVideo(width, height)
-              scope.loading = false
-              scope.$apply()
+            imgLoaded = ->
+              $timeout ->
+                _.assign(scope.wrapperStyle, styleWrapper(width, height))
+                scope.videoStyle = styleVideo(width, height)
+                scope.loading = false
 
-            img[0].src = servingUrl
+            img = angular.element('<img>')
+            img.on 'load', imgLoaded
+
+            if servingUrl
+              return img[0].src = servingUrl
+            return imgLoaded()
 
         styleWrapper = (width, height) ->
           return unless width and height

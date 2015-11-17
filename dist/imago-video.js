@@ -180,14 +180,18 @@ imagoVideo = (function() {
             height = element[0].clientHeight;
           }
           dpr = opts.hires ? Math.ceil(window.devicePixelRatio) || 1 : 1;
-          serving_url = scope.source.serving_url + "=s" + (Math.ceil(Math.min(Math.max(width, height) * dpr)) || 1600);
+          if (scope.source.serving_url) {
+            serving_url = scope.source.serving_url + "=s" + (Math.ceil(Math.min(Math.max(width, height) * dpr)) || 1600);
+          }
           style = {
             size: opts.size,
             sizemode: opts.sizemode,
             backgroundPosition: opts.align,
-            backgroundImage: "url(" + serving_url + ")",
             backgroundRepeat: "no-repeat"
           };
+          if (serving_url) {
+            style.backgroundImage = "url(" + serving_url + ")";
+          }
           scope.wrapperStyle = style;
           setPlayerAttrs();
           scope.videoFormats = loadFormats();
@@ -206,7 +210,7 @@ imagoVideo = (function() {
         };
         render = (function(_this) {
           return function(width, height, servingUrl) {
-            var img;
+            var img, imgLoaded;
             if (opts.lazy && !scope.visible) {
               return self.visibleFunc = scope.$watch(attrs.visible, function(value) {
                 scope.visible = value;
@@ -217,14 +221,19 @@ imagoVideo = (function() {
                 return render(width, height, servingUrl);
               });
             } else {
+              imgLoaded = function() {
+                return $timeout(function() {
+                  _.assign(scope.wrapperStyle, styleWrapper(width, height));
+                  scope.videoStyle = styleVideo(width, height);
+                  return scope.loading = false;
+                });
+              };
               img = angular.element('<img>');
-              img.on('load', function(e) {
-                _.assign(scope.wrapperStyle, styleWrapper(width, height));
-                scope.videoStyle = styleVideo(width, height);
-                scope.loading = false;
-                return scope.$apply();
-              });
-              return img[0].src = servingUrl;
+              img.on('load', imgLoaded);
+              if (servingUrl) {
+                return img[0].src = servingUrl;
+              }
+              return imgLoaded();
             }
           };
         })(this);

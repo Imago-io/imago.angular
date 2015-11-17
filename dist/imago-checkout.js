@@ -601,10 +601,11 @@ Calculation = (function() {
   };
 
   Calculation.prototype.submit = function() {
+    var ref;
     this.process.form.items = angular.copy(this.cart.items);
     this.process.form.currency = angular.copy(this.currency);
     this.process.form.cartId = angular.copy(this.cart._id);
-    this.process.form.billing_address.name = angular.copy(this.process.form.card.name);
+    this.process.form.billing_address.name = angular.copy((ref = this.process.form.user) != null ? ref.name : void 0);
     this.process.form = this.formatForm(this.process.form);
     return this.$http.post(this.imagoSettings.host + '/api/checkout', this.process.form);
   };
