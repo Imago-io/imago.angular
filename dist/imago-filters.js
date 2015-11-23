@@ -44,17 +44,16 @@ Price = (function() {
         decimal = 2;
       }
       if (_.isUndefined(price)) {
-        return '';
-      } else {
-        format = 1000.5.toLocaleString();
-        price = Number(price) / 100;
-        dec = format.charAt(5);
-        thousand = format.charAt(1);
-        if (dec !== '.' && dec !== ',') {
-          return price;
-        }
-        return imagoUtils.formatCurrency(price, decimal, dec, thousand);
+        return;
       }
+      format = 1000.5.toLocaleString();
+      price = Number(price) / 100;
+      dec = format.charAt(5);
+      thousand = format.charAt(1);
+      if (dec !== '.' && dec !== ',') {
+        return price;
+      }
+      return imagoUtils.formatCurrency(price, decimal, dec, thousand);
     };
   }
 
