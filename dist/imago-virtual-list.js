@@ -42,12 +42,14 @@ ImagoVirtualList = (function() {
           return $timeout((function(_this) {
             return function() {
               var cellsPerHeight;
-              self.itemsPerRow = Math.floor(element[0].clientWidth / masterDiv.clientWidth);
-              cellsPerHeight = Math.round($window.innerHeight / masterDiv.clientHeight);
+              self.divWidth = masterDiv.clientWidth;
+              self.divHeight = masterDiv.clientHeight;
+              self.itemsPerRow = Math.floor(element[0].clientWidth / self.divWidth);
+              cellsPerHeight = Math.round($window.innerHeight / self.divHeight);
               self.cellsPerPage = cellsPerHeight * self.itemsPerRow;
               self.numberOfCells = 3 * self.cellsPerPage;
               if (self.itemsPerRow > 1) {
-                self.canvasWidth = self.itemsPerRow * masterDiv.clientWidth;
+                self.canvasWidth = self.itemsPerRow * self.divWidth;
               } else {
                 self.canvasWidth = null;
               }
@@ -69,7 +71,7 @@ ImagoVirtualList = (function() {
         };
         self.updateDisplayList = function() {
           var cellsToCreate, chunks, data, findIndex, firstCell, i, idx, l;
-          firstCell = Math.max(Math.round(self.scrollTop / masterDiv.clientHeight) - (Math.round($window.innerHeight / masterDiv.clientHeight)), 0);
+          firstCell = Math.max(Math.round(self.scrollTop / self.divHeight) - (Math.round($window.innerHeight / masterDiv.clientHeight)), 0);
           cellsToCreate = Math.min(firstCell + self.numberOfCells, self.numberOfCells);
           data = firstCell * self.itemsPerRow;
           scope.visibleProvider = scope.imagovirtuallist.data.slice(data, data + cellsToCreate);
@@ -96,7 +98,7 @@ ImagoVirtualList = (function() {
             };
             idx = findIndex();
             scope.visibleProvider[i].styles = {};
-            scope.visibleProvider[i].styles[self.browserKey] = "translate(" + ((masterDiv.clientWidth * idx.inside) + 'px') + ", " + ((firstCell + idx.chunk) * masterDiv.clientHeight + 'px') + ")";
+            scope.visibleProvider[i].styles[self.browserKey] = "translate(" + ((self.divWidth * idx.inside) + 'px') + ", " + ((firstCell + idx.chunk) * self.divHeight + 'px') + ")";
             i++;
           }
           if (scope.imagovirtuallist.scroll) {
