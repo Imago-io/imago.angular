@@ -349,7 +349,8 @@ class imagoModel extends Service
         @data.push copy
 
       if options.save
-        delete copy.serving_url if copy.status is 'processing'
+        if @imagoUtils.isBaseString(copy.serving_url)
+          delete copy.serving_url
         @assets.update(copy).then ->
           defer.resolve()
 
@@ -364,7 +365,8 @@ class imagoModel extends Service
         else
           @data.push asset
 
-        delete asset.serving_url if asset.status is 'processing'
+        if @imagoUtils.isBaseString(asset.serving_url)
+          delete asset.serving_url
 
       if options.save
         @assets.batch(copy).then ->

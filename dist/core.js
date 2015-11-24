@@ -586,7 +586,7 @@ imagoModel = (function() {
         this.data.push(copy);
       }
       if (options.save) {
-        if (copy.status === 'processing') {
+        if (this.imagoUtils.isBaseString(copy.serving_url)) {
           delete copy.serving_url;
         }
         this.assets.update(copy).then(function() {
@@ -607,7 +607,7 @@ imagoModel = (function() {
         } else {
           this.data.push(asset);
         }
-        if (asset.status === 'processing') {
+        if (this.imagoUtils.isBaseString(asset.serving_url)) {
           delete asset.serving_url;
         }
       }
