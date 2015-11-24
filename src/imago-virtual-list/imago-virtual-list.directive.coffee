@@ -40,12 +40,14 @@ class ImagoVirtualList extends Directive
           @initRunning = true
           scope.visibleProvider = []
           $timeout =>
-            self.itemsPerRow = Math.floor(element[0].clientWidth / masterDiv.clientWidth)
-            cellsPerHeight = Math.round($window.innerHeight / masterDiv.clientHeight)
+            self.divWidth  = masterDiv.clientWidth
+            self.divHeight = masterDiv.clientHeight
+            self.itemsPerRow = Math.floor(element[0].clientWidth / self.divWidth)
+            cellsPerHeight = Math.round($window.innerHeight / self.divHeight)
             self.cellsPerPage = cellsPerHeight * self.itemsPerRow
             self.numberOfCells = 3 * self.cellsPerPage
             if self.itemsPerRow > 1
-              self.canvasWidth = self.itemsPerRow * masterDiv.clientWidth
+              self.canvasWidth = self.itemsPerRow * self.divWidth
             else
               self.canvasWidth = null
             self.updateData()
@@ -61,7 +63,7 @@ class ImagoVirtualList extends Directive
           self.updateDisplayList()
 
         self.updateDisplayList = ->
-          firstCell = Math.max(Math.round(self.scrollTop / masterDiv.clientHeight) - (Math.round($window.innerHeight / masterDiv.clientHeight)), 0)
+          firstCell = Math.max(Math.round(self.scrollTop / self.divHeight) - (Math.round($window.innerHeight / masterDiv.clientHeight)), 0)
           cellsToCreate = Math.min(firstCell + self.numberOfCells, self.numberOfCells)
           data = firstCell * self.itemsPerRow
           scope.visibleProvider = scope.imagovirtuallist.data.slice(data, data + cellsToCreate)
@@ -80,8 +82,8 @@ class ImagoVirtualList extends Directive
 
             idx = findIndex()
             scope.visibleProvider[i].styles = {}
-            # scope.visibleProvider[i].styles[self.browserKey] = "translate3d(#{(masterDiv.clientWidth * idx.inside) + 'px'}, #{(firstCell + idx.chunk) * masterDiv.clientHeight + 'px'}, 0)"
-            scope.visibleProvider[i].styles[self.browserKey] = "translate(#{(masterDiv.clientWidth * idx.inside) + 'px'}, #{(firstCell + idx.chunk) * masterDiv.clientHeight + 'px'})"
+            # scope.visibleProvider[i].styles[self.browserKey] = "translate3d(#{(self.divWidth * idx.inside) + 'px'}, #{(firstCell + idx.chunk) * self.divHeight + 'px'}, 0)"
+            scope.visibleProvider[i].styles[self.browserKey] = "translate(#{(self.divWidth * idx.inside) + 'px'}, #{(firstCell + idx.chunk) * self.divHeight + 'px'})"
             i++
           scope.scroll() if scope.imagovirtuallist.scroll
 
