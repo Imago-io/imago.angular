@@ -389,7 +389,6 @@ imagoModel = (function() {
       defer.resolve(asset);
     } else {
       this.assets.get(id).then(function(response) {
-        console.log('getById:', response.data);
         return defer.resolve(response.data);
       });
     }

@@ -233,7 +233,6 @@ class imagoModel extends Service
       defer.resolve(asset)
     else
       @assets.get(id).then (response) ->
-        console.log 'getById:', response.data
         defer.resolve(response.data)
 
     defer.promise
