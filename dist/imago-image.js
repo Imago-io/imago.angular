@@ -27,6 +27,8 @@ imagoImage = (function() {
           value = attrs[key];
           if (value === 'true' || value === 'false') {
             opts[key] = JSON.parse(value);
+          } else if (key === 'maxsize') {
+            opts[key] = parseInt(value);
           } else {
             opts[key] = value;
           }

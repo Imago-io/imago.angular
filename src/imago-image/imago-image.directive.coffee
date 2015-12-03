@@ -31,6 +31,8 @@ class imagoImage extends Directive
         for key, value of attrs
           if value is 'true' or value is 'false'
             opts[key] = JSON.parse value
+          else if key is 'maxsize'
+            opts[key] = parseInt value
           # else if key is 'width' or key is 'height'
           #   opts[key] = if value is 'auto' then value else parseInt value
           else
