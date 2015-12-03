@@ -40,9 +40,7 @@ imagoShareController = (function() {
     this.$scope = $scope;
     this.$attrs = $attrs;
     this.$location = $location;
-    if (this.asset) {
-      return this.init();
-    }
+    this.init();
     watcher = this.$scope.$watch('imagoshare.asset', (function(_this) {
       return function(value) {
         if (!value) {
@@ -55,8 +53,8 @@ imagoShareController = (function() {
   }
 
   imagoShareController.prototype.init = function() {
-    var i, item, len, options, results;
-    if (this.asset.path) {
+    var i, item, len, options, ref, results;
+    if ((ref = this.asset) != null ? ref.path : void 0) {
       this.$scope.location = (this.$location.protocol()) + "://" + (this.$location.host()) + this.asset.path;
     } else {
       this.$scope.location = this.$location.absUrl();

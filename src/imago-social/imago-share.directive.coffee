@@ -17,7 +17,7 @@ class imagoShareController extends Controller
 
   constructor: (@$scope, @$attrs, @$location) ->
 
-    return @init() if @asset
+    @init()
 
     watcher = @$scope.$watch 'imagoshare.asset', (value) =>
       return unless value
@@ -25,7 +25,7 @@ class imagoShareController extends Controller
       @init()
 
   init: ->
-    if @asset.path
+    if @asset?.path
       @$scope.location = "#{@$location.protocol()}://#{@$location.host()}#{@asset.path}"
     else
       @$scope.location = @$location.absUrl()
