@@ -85,7 +85,7 @@ imagoImage = (function() {
               });
             }
           }
-          return initialize();
+          return $timeout(initialize, 50);
         };
         initialize = function() {
           var dpr, height, r, servingSize, width, wrapperRatio;

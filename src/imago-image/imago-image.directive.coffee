@@ -75,7 +75,9 @@ class imagoImage extends Directive
                 calcMediaSize()
                 scope.$evalAsync()
 
-          initialize()
+          # initialize()
+          # wait for tom to get proper container dimentions
+          $timeout initialize, 50
 
         initialize = ->
           if angular.isString(scope.source.resolution)
