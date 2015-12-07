@@ -265,24 +265,22 @@ imagoCart = (function() {
       items: []
     };
     if (tenantSettings.loaded) {
-      this.onSettings();
-    } else {
-      this.$rootScope.$on('settings:loaded', (function(_this) {
-        return function(evt, message) {
-          return _this.onSettings();
-        };
-      })(this));
+      return this.onSettings();
     }
+    this.$rootScope.$on('settings:loaded', (function(_this) {
+      return function(evt, message) {
+        return _this.onSettings();
+      };
+    })(this));
   }
 
   imagoCart.prototype.onSettings = function() {
     var local;
     this.currencies = this.$rootScope.tenantSettings.currencies;
+    this.checkGeoIp();
     local = this.imagoUtils.cookie('imagoCart');
     if (local) {
       return this.checkStatus(local);
-    } else {
-      return this.checkGeoIp();
     }
   };
 

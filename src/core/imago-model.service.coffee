@@ -219,7 +219,6 @@ class imagoModel extends Service
     @data.push(asset) unless @find('_id': asset._id)
     @populateData asset.assets
 
-
   populateData: (assets) =>
     return if !_.isArray(assets)
     @addAsset asset for asset in assets

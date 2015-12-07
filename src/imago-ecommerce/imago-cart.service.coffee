@@ -9,19 +9,16 @@ class imagoCart extends Service
     @cart =
       items: []
 
-    if tenantSettings.loaded
+    return @onSettings() if tenantSettings.loaded
+
+    @$rootScope.$on 'settings:loaded', (evt, message) =>
       @onSettings()
-    else
-      @$rootScope.$on 'settings:loaded', (evt, message) =>
-        @onSettings()
 
   onSettings: ->
     @currencies = @$rootScope.tenantSettings.currencies
+    @checkGeoIp()
     local = @imagoUtils.cookie('imagoCart')
-    if local
-      @checkStatus(local)
-    else
-      @checkGeoIp()
+    @checkStatus(local) if local
 
   checkGeoIp: ->
     unless @geoIp.loaded
