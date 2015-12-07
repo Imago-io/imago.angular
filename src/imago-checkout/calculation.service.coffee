@@ -269,8 +269,10 @@ class Calculation extends Service
       # if we didnt find any rates yet check if there is a less specific rate.
       rates = _.filter rates_by_country, (item) -> item.states.length is 0
       return rates?[0] or {'rate': 0}
+    else if rates_by_country?[0] and not rates_by_country[0].states?.length
+      return rates_by_country?[0]
     else
-      return rates_by_country?[0] or {'rate': 0}
+      return {'rate': 0}
 
   getZipTax: =>
     deferred = @$q.defer()

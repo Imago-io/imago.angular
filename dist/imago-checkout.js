@@ -414,7 +414,7 @@ Calculation = (function() {
   };
 
   Calculation.prototype.findTaxRate = function() {
-    var rate, rates, rates_by_country, ref;
+    var rate, rates, rates_by_country, ref, ref1;
     if (!this.country) {
       return {
         'rate': 0
@@ -470,8 +470,10 @@ Calculation = (function() {
       return (rates != null ? rates[0] : void 0) || {
         'rate': 0
       };
+    } else if ((rates_by_country != null ? rates_by_country[0] : void 0) && !((ref1 = rates_by_country[0].states) != null ? ref1.length : void 0)) {
+      return rates_by_country != null ? rates_by_country[0] : void 0;
     } else {
-      return (rates_by_country != null ? rates_by_country[0] : void 0) || {
+      return {
         'rate': 0
       };
     }
