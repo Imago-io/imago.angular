@@ -45,8 +45,8 @@
 .ii-tag:before { content: "\F702" }
 .ii-edit:before { content: "\F703" }
 .ii-cart:before { content: "\F704" }
-.ii-loupe:before { content: "\F706" }
 .ii-home:before { content: "\F705" }
+.ii-loupe:before { content: "\F706" }
 .ii-trash:before { content: "\F707" }
 .ii-upsize:before { content: "\F708" }
 .ii-gear:before { content: "\F709" }
@@ -73,3 +73,7 @@
 .ii-downsize:before { content: "\F731" }
 .ii-help:before { content: "\F732" }
 .ii-dashboard-white:before { content: "\F733" }
+.ii-caret-down-line:before { content: "\F734" }
+.ii-caret-right-line:before { content: "\F735" }
+.ii-caret-left-line:before { content: "\F736" }
+.ii-caret-up-line:before { content: "\F737" }
