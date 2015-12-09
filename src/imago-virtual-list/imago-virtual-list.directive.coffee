@@ -56,14 +56,14 @@ class ImagoVirtualList extends Directive
 
         self.updateData = ->
           return unless scope.imagovirtuallist.data
-          self.canvasHeight = Math.ceil(scope.imagovirtuallist.data.length / self.itemsPerRow) * masterDiv.clientHeight
+          self.canvasHeight = Math.ceil(scope.imagovirtuallist.data.length / self.itemsPerRow) * self.divHeight
           scope.canvasStyle =
             height : "#{self.canvasHeight}px"
             width  : "#{self.canvasWidth}px"
           self.updateDisplayList()
 
         self.updateDisplayList = ->
-          firstCell = Math.max(Math.round(self.scrollTop / self.divHeight) - (Math.round($window.innerHeight / masterDiv.clientHeight)), 0)
+          firstCell = Math.max(Math.round(self.scrollTop / self.divHeight) - (Math.round($window.innerHeight / self.divHeight)), 0)
           cellsToCreate = Math.min(firstCell + self.numberOfCells, self.numberOfCells)
           data = firstCell * self.itemsPerRow
           scope.visibleProvider = scope.imagovirtuallist.data.slice(data, data + cellsToCreate)

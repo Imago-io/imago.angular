@@ -1,4 +1,4 @@
-class tagFilter extends Filter
+class TagFilter extends Filter
   constructor: (imagoUtils) ->
     return (input, tag) ->
       return unless input
@@ -7,9 +7,9 @@ class tagFilter extends Filter
         for asset in input
           tags = imagoUtils.getMeta(asset, 'tags')
           normtags = []
-          normtags.push imagoUtils.normalize(t) for t in tags
+          normtags.push _.kebabCase(t) for t in tags
 
-          filtered.push asset if normtags and imagoUtils.normalize(tag) in normtags
+          filtered.push asset if normtags and _.kebabCase(tag) in normtags
         return filtered
       else
         return input

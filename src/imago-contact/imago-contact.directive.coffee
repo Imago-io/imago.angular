@@ -22,4 +22,4 @@ class imagoContactController extends Controller
       return unless isValid
       imagoSubmit.send(@data).then (result) =>
         @status = result.status
-        @error = result.message or ''
+        @error  = result.message or ''

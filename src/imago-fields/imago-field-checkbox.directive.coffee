@@ -18,8 +18,8 @@ class ImagoFieldCheckbox extends Directive
         attrs.$observe 'disabled', (value) ->
           scope.disabled = value
 
-        scope.update = (value, disabled) ->
-          return if disabled
+        scope.update = (value) ->
+          return if scope.disabled
           value = !value
           ngModelController.$setViewValue(value)
           ngModelController.$render()

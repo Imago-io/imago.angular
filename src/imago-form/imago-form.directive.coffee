@@ -14,11 +14,11 @@ class imagoForm extends Directive
           element.append(clone)
 
         scope.submitForm = (isValid) =>
-          if isValid
-            imagoSubmit.send(scope.data).then (result) =>
-              scope.status = result.status
-              scope.error = result.message or ''
-              if scope.status
-                scope.data = {}
+          return unless isValid
+          imagoSubmit.send(scope.data).then (result) =>
+            scope.status = result.status
+            scope.error = result.message or ''
+            if scope.status
+              scope.data = {}
 
     }

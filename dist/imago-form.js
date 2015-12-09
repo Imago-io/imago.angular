@@ -14,15 +14,16 @@ imagoForm = (function() {
         });
         return scope.submitForm = (function(_this) {
           return function(isValid) {
-            if (isValid) {
-              return imagoSubmit.send(scope.data).then(function(result) {
-                scope.status = result.status;
-                scope.error = result.message || '';
-                if (scope.status) {
-                  return scope.data = {};
-                }
-              });
+            if (!isValid) {
+              return;
             }
+            return imagoSubmit.send(scope.data).then(function(result) {
+              scope.status = result.status;
+              scope.error = result.message || '';
+              if (scope.status) {
+                return scope.data = {};
+              }
+            });
           };
         })(this);
       }
@@ -35,4 +36,4 @@ imagoForm = (function() {
 
 angular.module('imago').directive('imagoForm', ['imagoSubmit', imagoForm]);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-form.html","<div class=\"imagoForm\"></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-form.html","<div class=\"imago-form\"></div>");}]);

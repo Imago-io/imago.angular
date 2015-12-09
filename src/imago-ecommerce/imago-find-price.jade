@@ -1,0 +1,12 @@
+.imago-find-price
+  .one-price(ng-show="findprice.highest === findprice.lowest")
+    span.currency(ng-bind-html="findprice.imagoCart.currency | currencySymbol")
+    span.amount(ng-bind="findprice.highest | price: 0")
+
+  div(ng-show="findprice.highest !== findprice.lowest"
+    ng-class="{'discount': findprice.discounts.length, 'range': !findprice.discounts.length}")
+    span.currency.low(ng-bind-html="findprice.imagoCart.currency")
+    span.amount.low(ng-bind="findprice.lowest | price: 0")
+    span.dash -
+    span.currency.high(ng-bind-html="findprice.imagoCart.currency")
+    span.amount.high(ng-bind="findprice.highest | price: 0")

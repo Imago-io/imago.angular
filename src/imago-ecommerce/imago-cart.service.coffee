@@ -165,8 +165,6 @@ class imagoCart extends Service
       continue unless item.qty and item.price?[@currency]
       @subtotal += item.qty * item.price[@currency]
 
-
-
   checkout: ->
     return unless tenant
 

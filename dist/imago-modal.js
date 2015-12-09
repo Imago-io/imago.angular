@@ -1,7 +1,7 @@
-var Modal, ModalController;
+var ImagoModal, imagoModalController;
 
-Modal = (function() {
-  function Modal() {
+ImagoModal = (function() {
+  function ImagoModal() {
     return {
       scope: {
         item: '=',
@@ -9,7 +9,7 @@ Modal = (function() {
       },
       transclude: true,
       templateUrl: '/imago/imago-modal.html',
-      controller: 'modalController as modal',
+      controller: 'imagoModalController as modal',
       bindToController: true,
       link: function(scope, element, attrs, ctrl, transclude) {
         return transclude(scope, function(clone) {
@@ -21,12 +21,12 @@ Modal = (function() {
     };
   }
 
-  return Modal;
+  return ImagoModal;
 
 })();
 
-ModalController = (function() {
-  function ModalController($rootScope, $scope) {
+imagoModalController = (function() {
+  function imagoModalController($rootScope, $scope) {
     this.$rootScope = $rootScope;
     this.$scope = $scope;
     this.active = false;
@@ -44,19 +44,19 @@ ModalController = (function() {
     })(this));
   }
 
-  ModalController.prototype.activate = function(item) {
+  imagoModalController.prototype.activate = function(item) {
     return this.active = true;
   };
 
-  ModalController.prototype.disable = function() {
+  imagoModalController.prototype.disable = function() {
     this.item = null;
     return this.active = false;
   };
 
-  return ModalController;
+  return imagoModalController;
 
 })();
 
-angular.module('imago').directive('modal', [Modal]).controller('modalController', ['$rootScope', '$scope', ModalController]);
+angular.module('imago').directive('imagoModal', [ImagoModal]).controller('imagoModalController', ['$rootScope', '$scope', imagoModalController]);
 
 angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-modal.html","<div ng-show=\"modal.active\" ng-click=\"modal.disable()\" class=\"imago-modal\"><div class=\"wrapper\"><div class=\"close icon-thin-close icon\"></div><div class=\"transclude\"></div></div></div>");}]);

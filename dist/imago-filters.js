@@ -19,12 +19,12 @@ angular.module('imago').filter('currencySymbol', ['imagoUtils', CurrencySymbol])
 var Normalize;
 
 Normalize = (function() {
-  function Normalize(imagoUtils) {
+  function Normalize() {
     return function(string) {
       if (!string) {
         return false;
       }
-      return imagoUtils.normalize(string);
+      return _.kebabCase(string);
     };
   }
 
@@ -32,7 +32,7 @@ Normalize = (function() {
 
 })();
 
-angular.module('imago').filter('normalize', ['imagoUtils', Normalize]);
+angular.module('imago').filter('normalize', [Normalize]);
 
 var Price;
 
@@ -63,11 +63,11 @@ Price = (function() {
 
 angular.module('imago').filter('price', ['imagoUtils', Price]);
 
-var tagFilter,
+var TagFilter,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-tagFilter = (function() {
-  function tagFilter(imagoUtils) {
+TagFilter = (function() {
+  function TagFilter(imagoUtils) {
     return function(input, tag) {
       var asset, filtered, i, j, len, len1, normtags, ref, t, tags;
       if (!input) {
@@ -81,9 +81,9 @@ tagFilter = (function() {
           normtags = [];
           for (j = 0, len1 = tags.length; j < len1; j++) {
             t = tags[j];
-            normtags.push(imagoUtils.normalize(t));
+            normtags.push(_.kebabCase(t));
           }
-          if (normtags && (ref = imagoUtils.normalize(tag), indexOf.call(normtags, ref) >= 0)) {
+          if (normtags && (ref = _.kebabCase(tag), indexOf.call(normtags, ref) >= 0)) {
             filtered.push(asset);
           }
         }
@@ -94,8 +94,8 @@ tagFilter = (function() {
     };
   }
 
-  return tagFilter;
+  return TagFilter;
 
 })();
 
-angular.module('imago').filter('tagFilter', ['imagoUtils', tagFilter]);
+angular.module('imago').filter('tagFilter', ['imagoUtils', TagFilter]);

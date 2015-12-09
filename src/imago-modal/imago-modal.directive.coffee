@@ -1,4 +1,4 @@
-class Modal extends Directive
+class ImagoModal extends Directive
 
   constructor: ->
 
@@ -9,7 +9,7 @@ class Modal extends Directive
         active: '='
       transclude: true
       templateUrl: '/imago/imago-modal.html'
-      controller: 'modalController as modal'
+      controller: 'imagoModalController as modal'
       bindToController: true
       link: (scope, element, attrs, ctrl, transclude) ->
 
@@ -19,7 +19,7 @@ class Modal extends Directive
 
     }
 
-class ModalController extends Controller
+class imagoModalController extends Controller
 
   constructor: (@$rootScope, @$scope) ->
     @active = false

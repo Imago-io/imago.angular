@@ -531,6 +531,283 @@ imagoCart = (function() {
 
 angular.module('imago').service('imagoCart', ['$q', '$rootScope', '$location', '$window', '$http', 'imagoUtils', 'imagoModel', 'fulfillmentsCenter', 'geoIp', 'imagoSettings', 'tenantSettings', 'imagoCartUtils', imagoCart]);
 
+var imagoFindPrice, imagoFindPriceController;
+
+imagoFindPrice = (function() {
+  function imagoFindPrice() {
+    return {
+      scope: true,
+      controller: 'imagoFindPriceController as findprice',
+      bindToController: {
+        options: '=variants',
+        product: '=',
+        attributes: '@'
+      },
+      templateUrl: '/imago/imago-find-price.jade'
+    };
+  }
+
+  return imagoFindPrice;
+
+})();
+
+imagoFindPriceController = (function() {
+  function imagoFindPriceController($scope, $parse, imagoCart) {
+    var initWatcher, watch;
+    this.imagoCart = imagoCart;
+    if (!this.attributes) {
+      return;
+    }
+    this.attrs = $parse(this.attributes)();
+    initWatcher = (function(_this) {
+      return function() {
+        var createWatchFunc, i, len, name, ref, toWatchProperties;
+        toWatchProperties = ['findprice.imagoCart.currency', 'findprice.options'];
+        createWatchFunc = function(name) {
+          return toWatchProperties.push(function() {
+            return _this.product[name];
+          });
+        };
+        ref = _this.attrs;
+        for (i = 0, len = ref.length; i < len; i++) {
+          name = ref[i];
+          createWatchFunc(name);
+        }
+        return $scope.$watchGroup(toWatchProperties, function() {
+          return _this.findOpts();
+        });
+      };
+    })(this);
+    watch = $scope.$watch('findprice.product', function(value) {
+      if (!value) {
+        return;
+      }
+      watch();
+      return initWatcher();
+    });
+  }
+
+  imagoFindPriceController.prototype.findOpts = function() {
+    var i, len, name, ref, ref1;
+    if (!(this.imagoCart.currency && ((ref = this.options) != null ? ref.length : void 0) && this.product)) {
+      return;
+    }
+    this.variants = _.clone(this.options);
+    ref1 = this.attrs;
+    for (i = 0, len = ref1.length; i < len; i++) {
+      name = ref1[i];
+      if (!this.product[name]) {
+        continue;
+      }
+      this.variants = _.filter(this.variants, (function(_this) {
+        return function(item) {
+          var ref2, ref3;
+          return _this.product[name] === ((ref2 = item.fields) != null ? (ref3 = ref2[name]) != null ? ref3.value : void 0 : void 0);
+        };
+      })(this));
+    }
+    return this.findPrice();
+  };
+
+  imagoFindPriceController.prototype.findPrice = function() {
+    var i, len, option, ref, ref1, ref2, ref3, ref4, ref5, ref6;
+    this.prices = [];
+    this.discounts = [];
+    ref = this.variants;
+    for (i = 0, len = ref.length; i < len; i++) {
+      option = ref[i];
+      if ((ref1 = option.fields) != null ? (ref2 = ref1.price) != null ? (ref3 = ref2.value) != null ? ref3[this.imagoCart.currency] : void 0 : void 0 : void 0) {
+        this.prices.push(option.fields.price.value[this.imagoCart.currency]);
+      }
+      if ((ref4 = option.fields) != null ? (ref5 = ref4.discountedPrice) != null ? (ref6 = ref5.value) != null ? ref6[this.imagoCart.currency] : void 0 : void 0 : void 0) {
+        this.discounts.push(option.fields.discountedPrice.value[this.imagoCart.currency]);
+      }
+    }
+    if (!this.prices.length) {
+      return;
+    }
+    this.highest = Math.max.apply(Math, this.prices);
+    if (this.discounts.length) {
+      return this.lowest = Math.max.apply(Math, this.discounts);
+    } else {
+      return this.lowest = Math.min.apply(Math, this.prices);
+    }
+  };
+
+  return imagoFindPriceController;
+
+})();
+
+angular.module('imago').directive('imagoFindPrice', [imagoFindPrice]).controller('imagoFindPriceController', ['$scope', '$parse', 'imagoCart', imagoFindPriceController]);
+
+var imagoProduct;
+
+imagoProduct = (function() {
+  function imagoProduct(imagoCart, fulfillmentsCenter) {
+    var ProductInstance;
+    return ProductInstance = (function() {
+      function ProductInstance(variants, options) {
+        var key;
+        this.variants = variants;
+        for (key in options) {
+          this[key] = options[key];
+        }
+        if (!this.optionsWhitelist) {
+          return console.log('no optionsWhitelist set.');
+        }
+        this.lowStock || (this.lowStock = 3);
+        this.getOptions();
+      }
+
+      ProductInstance.prototype.getOptions = function() {
+        var base, capKey, i, item, j, k, key, len, len1, len2, name, obj, order, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, variant;
+        this.options = {};
+        if (this.variants.length === 1) {
+          ref = this.variants;
+          for (i = 0, len = ref.length; i < len; i++) {
+            variant = ref[i];
+            variant.stock = Number((ref1 = variant.fields) != null ? (ref2 = ref1.stock) != null ? (ref3 = ref2.value) != null ? ref3[fulfillmentsCenter.selected._id] : void 0 : void 0 : void 0);
+            variant.presale = (ref4 = variant.fields) != null ? (ref5 = ref4.presale) != null ? ref5.value : void 0 : void 0;
+            variant.lowstock = variant.stock <= this.lowStock && variant.stock ? true : false;
+          }
+          return this.selected = this.variants[0];
+        } else {
+          ref6 = this.variants;
+          for (j = 0, len1 = ref6.length; j < len1; j++) {
+            variant = ref6[j];
+            if (!angular.isDefined((ref7 = variant.fields.price) != null ? (ref8 = ref7.value) != null ? ref8[imagoCart.currency] : void 0 : void 0)) {
+              continue;
+            }
+            ref9 = this.optionsWhitelist;
+            for (k = 0, len2 = ref9.length; k < len2; k++) {
+              item = ref9[k];
+              if (!variant.fields[item.name].value) {
+                continue;
+              }
+              obj = {};
+              for (key in item) {
+                obj[key] = (ref10 = variant.fields) != null ? (ref11 = ref10[item[key]]) != null ? ref11.value : void 0 : void 0;
+              }
+              obj.normname = _.kebabCase(obj.name);
+              (base = this.options)[name = item.name] || (base[name] = []);
+              this.options[item.name].push(obj);
+            }
+            variant.stock = Number((ref12 = variant.fields) != null ? (ref13 = ref12.stock) != null ? (ref14 = ref13.value) != null ? ref14[fulfillmentsCenter.selected._id] : void 0 : void 0 : void 0);
+            variant.presale = (ref15 = variant.fields) != null ? (ref16 = ref15.presale) != null ? ref16.value : void 0 : void 0;
+            variant.lowstock = variant.stock <= this.lowStock && variant.stock ? true : false;
+          }
+          if (((ref17 = this.options.size) != null ? ref17.length : void 0) > 1) {
+            order = ['xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl'];
+            this.options.size.sort(function(a, b) {
+              return order.indexOf(a.normname) - order.indexOf(b.normname);
+            });
+          }
+          for (key in this.options) {
+            this.options[key] = _.uniq(this.options[key], 'name');
+            capKey = _.capitalize(key);
+            if (((ref18 = this.options[key]) != null ? ref18.length : void 0) === 1) {
+              this[key] = this.options[key][0].normname;
+            }
+          }
+          return this.selectVariant();
+        }
+      };
+
+      ProductInstance.prototype.setOption = function(attr, value) {
+        this[attr] = value;
+        return this.selectVariant();
+      };
+
+      ProductInstance.prototype.findVariant = function(field, value) {
+        var i, item, len, obj, opt, opts, ref;
+        opts = [];
+        ref = this.optionsWhitelist;
+        for (i = 0, len = ref.length; i < len; i++) {
+          opt = ref[i];
+          obj = {
+            name: opt.name
+          };
+          obj.value = obj.name === field ? value : this[opt.name];
+          if (!obj.value) {
+            return true;
+          }
+          opts.push(obj);
+        }
+        item = _.find(this.variants, function(variant) {
+          var j, len1, ref1, ref2, valid;
+          valid = true;
+          for (j = 0, len1 = opts.length; j < len1; j++) {
+            opt = opts[j];
+            if (_.kebabCase((ref1 = variant.fields) != null ? (ref2 = ref1[opt.name]) != null ? ref2.value : void 0 : void 0) !== _.kebabCase(opt.value)) {
+              valid = false;
+            }
+          }
+          if (valid) {
+            return true;
+          }
+        });
+        if ((item != null ? item.stock : void 0) || (item != null ? item.presale : void 0)) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      ProductInstance.prototype.selectVariant = function() {
+        var key, keys, ref, ref1, ref2, ref3, valid, variant;
+        keys = {};
+        valid = true;
+        for (key in this.options) {
+          if (!this[key]) {
+            valid = false;
+          }
+          keys[key] = this[key];
+        }
+        if (!valid) {
+          return;
+        }
+        variant = _.find(this.variants, (function(_this) {
+          return function(item) {
+            var norm, ref, ref1;
+            valid = true;
+            for (key in keys) {
+              norm = _.kebabCase((ref = item.fields) != null ? (ref1 = ref[key]) != null ? ref1.value : void 0 : void 0);
+              if (norm !== _.kebabCase(_this[key])) {
+                return false;
+              }
+            }
+            return valid;
+          };
+        })(this));
+        if (!variant) {
+          return this.selected = 0;
+        }
+        variant.price = (ref = variant.fields) != null ? (ref1 = ref.price) != null ? ref1.value : void 0 : void 0;
+        variant.discountedPrice = (ref2 = variant.fields) != null ? (ref3 = ref2.discountedPrice) != null ? ref3.value : void 0 : void 0;
+        return this.selected = variant;
+      };
+
+      ProductInstance.prototype.addToCart = function(product, options, fields) {
+        if (!product) {
+          return this.error = true;
+        } else {
+          this.error = false;
+          product.qty = 1;
+          return imagoCart.add(product, options, fields);
+        }
+      };
+
+      return ProductInstance;
+
+    })();
+  }
+
+  return imagoProduct;
+
+})();
+
+angular.module('imago').factory('imagoProduct', ['imagoCart', 'fulfillmentsCenter', imagoProduct]);
+
 var ShippingCountries;
 
 ShippingCountries = (function() {
@@ -610,5 +887,6 @@ VariantsStorage = (function() {
 
 angular.module('imago').service('variantsStorage', ['$http', '$q', 'imagoModel', 'imagoSettings', VariantsStorage]);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-cart-messages.html","<div class=\"messages\"><div ng-repeat=\"key in item.updates\" ng-swich=\"key\" class=\"message\"><p ng-swich-wen=\"price\">price has changed.</p><p ng-swich-wen=\"quantity\">quantity has been updated.</p></div></div>");
-$templateCache.put("/imago/imago-cart.html","<div class=\"cart\"><div ng-class=\"{\'message\': cart.imagoCart.newmessages}\" ng-mouseenter=\"cart.imagoCart.show = true\" ng-click=\"cart.imagoCart.show = !cart.imagoCart.show\" analytics-on=\"click\" analytics-event=\"Show Cart {{cart.imagoCart.show}}\" class=\"icon\"><div ng-bind=\"cart.imagoCart.itemsLength\" class=\"counter\"></div></div><div ng-show=\"cart.imagoCart.show\" stop-scroll=\"stop-scroll\" class=\"box\"><div ng-transclude=\"ng-transclude\"></div><div ng-show=\"cart.imagoCart.itemsLength\" class=\"itemnumber\">{{cart.imagoCart.itemsLength}}<span ng-show=\"cart.imagoCart.itemsLength === 1\"> item</span><span ng-show=\"cart.imagoCart.itemsLength &gt; 1\"> items</span></div><div ng-show=\"cart.imagoCart.itemsLength === 0\" class=\"noitems\">cart empty</div><div ng-show=\"cart.imagoCart.itemsLength\" class=\"subtotal\">subtotal:<span ng-bind-html=\"cart.imagoCart.currency | currencySymbol\" class=\"currency\"></span><span class=\"amount\">{{cart.imagoCart.subtotal | price:0}}</span></div><button ng-show=\"cart.imagoCart.cart.items.length\" type=\"submit\" ng-click=\"cart.imagoCart.checkout()\" analytics-on=\"click\" analytics-event=\"Go to Checkout\" class=\"checkout\">checkout</button></div></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-cart-messages.html","<div class=\"imago-cart-messages\"><div ng-repeat=\"key in item.updates\" ng-swich=\"key\" class=\"message\"><p ng-swich-wen=\"price\">price has changed.</p><p ng-swich-wen=\"quantity\">quantity has been updated.</p></div></div>");
+$templateCache.put("/imago/imago-cart.html","<div class=\"imago-cart\"><div ng-class=\"{\'message\': cart.imagoCart.newmessages}\" ng-mouseenter=\"cart.imagoCart.show = true\" ng-click=\"cart.imagoCart.show = !cart.imagoCart.show\" analytics-on=\"click\" analytics-event=\"Show Cart {{cart.imagoCart.show}}\" class=\"icon\"><div ng-bind=\"cart.imagoCart.itemsLength\" class=\"counter\"></div></div><div ng-show=\"cart.imagoCart.show\" stop-scroll=\"stop-scroll\" class=\"box\"><div ng-transclude=\"ng-transclude\"></div><div ng-show=\"cart.imagoCart.itemsLength\" class=\"itemnumber\">{{cart.imagoCart.itemsLength}}<span ng-show=\"cart.imagoCart.itemsLength === 1\"> item</span><span ng-show=\"cart.imagoCart.itemsLength &gt; 1\"> items</span></div><div ng-show=\"cart.imagoCart.itemsLength === 0\" class=\"noitems\">cart empty</div><div ng-show=\"cart.imagoCart.itemsLength\" class=\"subtotal\">subtotal:<span ng-bind-html=\"cart.imagoCart.currency | currencySymbol\" class=\"currency\"></span><span class=\"amount\">{{cart.imagoCart.subtotal | price:0}}</span></div><button ng-show=\"cart.imagoCart.cart.items.length\" type=\"submit\" ng-click=\"cart.imagoCart.checkout()\" analytics-on=\"click\" analytics-event=\"Go to Checkout\" class=\"checkout\">checkout</button></div></div>");
+$templateCache.put("/imago/imago-find-price.html","<div class=\"imago-find-price\"><div ng-show=\"findprice.highest === findprice.lowest\" class=\"one-price\"><span ng-bind-html=\"findprice.imagoCart.currency | currencySymbol\" class=\"currency\"></span><span ng-bind=\"findprice.highest | price: 0\" class=\"amount\"></span></div><div ng-show=\"findprice.highest !== findprice.lowest\" ng-class=\"{\'discount\': findprice.discounts.length, \'range\': !findprice.discounts.length}\"><span ng-bind-html=\"findprice.imagoCart.currency\" class=\"currency low\"></span><span ng-bind=\"findprice.lowest | price: 0\" class=\"amount low\"></span><span class=\"dash\">-</span><span ng-bind-html=\"findprice.imagoCart.currency\" class=\"currency high\"></span><span ng-bind=\"findprice.highest | price: 0\" class=\"amount high\"></span></div></div>");}]);
