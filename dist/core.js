@@ -352,11 +352,6 @@ imagoModel = (function() {
   };
 
   imagoModel.prototype.addAsset = function(asset) {
-    if (this.imagoUtils.isBaseString(asset.serving_url)) {
-      asset.base64 = true;
-    } else {
-      asset.base64 = false;
-    }
     if (!this.find({
       '_id': asset._id
     })) {
@@ -524,11 +519,6 @@ imagoModel = (function() {
             ref = result.data.data;
             for (j = 0, len = ref.length; j < len; j++) {
               asset = ref[j];
-              if (_this.imagoUtils.isBaseString(asset.serving_url)) {
-                asset.base64 = true;
-              } else {
-                asset.base64 = false;
-              }
               _this.data.push(asset);
             }
           }
@@ -542,11 +532,6 @@ imagoModel = (function() {
       if (options.push) {
         for (j = 0, len = assets.length; j < len; j++) {
           asset = assets[j];
-          if (this.imagoUtils.isBaseString(asset.serving_url)) {
-            asset.base64 = true;
-          } else {
-            asset.base64 = false;
-          }
           this.data.push(asset);
         }
         defer.resolve();
@@ -585,8 +570,8 @@ imagoModel = (function() {
         this.data.push(copy);
       }
       if (options.save) {
-        if (this.imagoUtils.isBaseString(copy.serving_url)) {
-          delete copy.serving_url;
+        if (copy.base64_url) {
+          delete copy.base64_url;
         }
         this.assets.update(copy).then(function() {
           return defer.resolve();
@@ -606,8 +591,8 @@ imagoModel = (function() {
         } else {
           this.data.push(asset);
         }
-        if (this.imagoUtils.isBaseString(asset.serving_url)) {
-          delete asset.serving_url;
+        if (asset.base64_url) {
+          delete asset.base64_url;
         }
       }
       if (options.save) {
@@ -1779,10 +1764,13 @@ imagoUtils = (function() {
       },
       fireEvent: function(name) {
         var evt;
-        if (document.createEvent && !(typeof bowser !== "undefined" && bowser !== null ? bowser.msie : void 0)) {
-          evt = new Event(name);
-          return window.dispatchEvent(evt);
+        if (window.CustomEvent) {
+          evt = new CustomEvent(name);
+        } else {
+          evt = document.createEvent(name);
+          evt.initCustomEvent(name, true, true);
         }
+        return window.dispatchEvent(evt);
       },
       getKeyName: function(e) {
         return KEYS[e.which];
