@@ -940,9 +940,12 @@ class imagoUtils extends Factory
         return !!value.match(pattern)
 
       fireEvent: (name) ->
-        if document.createEvent and not bowser?.msie
-          evt = new Event(name)
-          window.dispatchEvent(evt)
+        if window.CustomEvent
+          evt = new CustomEvent(name)
+        else
+          evt = document.createEvent(name)
+          evt.initCustomEvent(name, true, true)
+        window.dispatchEvent(evt)
 
       getKeyName: (e) ->
         KEYS[e.which]

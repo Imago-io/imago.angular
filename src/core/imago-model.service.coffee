@@ -212,10 +212,6 @@ class imagoModel extends Service
     querydict
 
   addAsset: (asset) =>
-    if @imagoUtils.isBaseString(asset.serving_url)
-      asset.base64 = true
-    else
-      asset.base64 = false
     @data.push(asset) unless @find('_id': asset._id)
     @populateData asset.assets
 
@@ -302,11 +298,6 @@ class imagoModel extends Service
 
         if options.push
           for asset in result.data.data
-            if @imagoUtils.isBaseString(asset.serving_url)
-              asset.base64 = true
-            else
-              asset.base64 = false
-
             @data.push(asset)
 
         defer.resolve result.data.data
@@ -315,10 +306,6 @@ class imagoModel extends Service
     else
       if options.push
         for asset in assets
-          if @imagoUtils.isBaseString(asset.serving_url)
-            asset.base64 = true
-          else
-            asset.base64 = false
           @data.push(asset)
 
         defer.resolve()
@@ -347,8 +334,7 @@ class imagoModel extends Service
         @data.push copy
 
       if options.save
-        if @imagoUtils.isBaseString(copy.serving_url)
-          delete copy.serving_url
+        delete copy.base64_url if copy.base64_url
         @assets.update(copy).then ->
           defer.resolve()
 
@@ -363,8 +349,7 @@ class imagoModel extends Service
         else
           @data.push asset
 
-        if @imagoUtils.isBaseString(asset.serving_url)
-          delete asset.serving_url
+        delete asset.base64_url if asset.base64_url
 
       if options.save
         @assets.batch(copy).then ->
