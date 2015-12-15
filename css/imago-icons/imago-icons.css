@@ -1,23 +1,23 @@
 @font-face {
   font-family: "imago-icons";
-  src: url('i/fonts/imago-icons.eot');
+  src: url('i/fonts/imago-icons.eot?670485729352');
   src: url('i/fonts/imago-icons.eot?#iefix') format('eot'),
-    url('i/fonts/imago-icons.woff2') format('woff2'),
-    url('i/fonts/imago-icons.woff') format('woff'),
-    url('i/fonts/imago-icons.ttf') format('truetype'),
+    url('i/fonts/imago-icons.woff2?670485729352') format('woff2'),
+    url('i/fonts/imago-icons.woff?670485729352') format('woff'),
+    url('i/fonts/imago-icons.ttf?670485729352') format('truetype'),
     url('i/fonts/imago-icons.svg#imago-icons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 
-.ii:before {
+.ii {
   display: inline-block;
-  font-family: "imago-icons";
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
+  font: normal normal normal 14px/1 "imago-icons";;
+  font-size: inherit;
+  text-rendering: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  vertical-align: -15%;
 }
 
 .ii-lg {
@@ -39,6 +39,46 @@
 .ii-fw {
   width: 1.2857142857142858em;
   text-align: center;
+}
+
+.ii--fw {
+  width: 1.28571429em;
+  text-align: center;
+}
+.ii--ul {
+  padding-left: 0;
+  margin-left: 2.14285714em;
+  list-style-type: none;
+}
+.ii--ul > li {
+  position: relative;
+}
+.ii--li {
+  position: absolute;
+  left: -2.14285714em;
+  width: 2.14285714em;
+  top: 0.14285714em;
+  text-align: center;
+}
+.ii--li.ii--lg {
+  left: -1.85714286em;
+}
+.ii--border {
+  padding: .2em .25em .15em;
+  border: solid 0.08em #eeeeee;
+  border-radius: .1em;
+}
+/*.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}*/
+.ii-.pull-left {
+  margin-right: .3em;
+}
+.ii-.pull-right {
+  margin-left: .3em;
 }
 
 .ii-eye:before { content: "\F701" }
@@ -77,3 +117,5 @@
 .ii-caret-right-line:before { content: "\F735" }
 .ii-caret-left-line:before { content: "\F736" }
 .ii-caret-up-line:before { content: "\F737" }
+.ii-bars:before { content: "\F738" }
+.ii-menu:before { content: "\F739" }
