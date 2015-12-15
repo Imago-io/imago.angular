@@ -1,10 +1,10 @@
 @font-face {
   font-family: "imago-icons";
-  src: url('i/fonts/imago-icons.eot?670485729352');
+  src: url('i/fonts/imago-icons.eot?923657236854');
   src: url('i/fonts/imago-icons.eot?#iefix') format('eot'),
-    url('i/fonts/imago-icons.woff2?670485729352') format('woff2'),
-    url('i/fonts/imago-icons.woff?670485729352') format('woff'),
-    url('i/fonts/imago-icons.ttf?670485729352') format('truetype'),
+    url('i/fonts/imago-icons.woff2?923657236854') format('woff2'),
+    url('i/fonts/imago-icons.woff?923657236854') format('woff'),
+    url('i/fonts/imago-icons.ttf?923657236854') format('truetype'),
     url('i/fonts/imago-icons.svg#imago-icons') format('svg');
   font-weight: normal;
   font-style: normal;
@@ -12,7 +12,8 @@
 
 .ii {
   display: inline-block;
-  font: normal normal normal 14px/1 "imago-icons";;
+  font: normal normal normal 14px/1 "imago-icons";
+  font-family: "imago-icons" !important;
   font-size: inherit;
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
