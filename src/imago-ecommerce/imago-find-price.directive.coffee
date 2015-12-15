@@ -10,14 +10,13 @@ class imagoFindPrice extends Directive
         options: '=variants'
         product: '='
         attributes: '@'
-      templateUrl: '/imago/imago-find-price.jade'
+      templateUrl: '/imago/imago-find-price.html'
 
     }
 
 class imagoFindPriceController extends Controller
 
   constructor: ($scope, $parse, @imagoCart) ->
-    return unless @attributes
     @attrs = $parse(@attributes)()
 
     initWatcher = =>
@@ -25,8 +24,9 @@ class imagoFindPriceController extends Controller
       createWatchFunc = (name) =>
         toWatchProperties.push(=> @product[name])
 
-      for name in @attrs
-        createWatchFunc(name)
+      if @attrs
+        for name in @attrs
+          createWatchFunc(name)
 
       $scope.$watchGroup toWatchProperties, =>
         @findOpts()
@@ -40,10 +40,11 @@ class imagoFindPriceController extends Controller
     return unless @imagoCart.currency and @options?.length and @product
     @variants = _.clone @options
 
-    for name in @attrs
-      continue unless @product[name]
-      @variants = _.filter @variants, (item) =>
-        return @product[name] is item.fields?[name]?.value
+    if @attrs
+      for name in @attrs
+        continue unless @product[name]
+        @variants = _.filter @variants, (item) =>
+          return @product[name] is item.fields?[name]?.value
 
     @findPrice()
 

@@ -55,10 +55,10 @@ class imagoVideo extends Directive
         compile = ->
           return console.log 'no formats found' unless scope.source.fields?.formats?.length
 
-          if scope.source.fields.hasOwnProperty('crop') and not attrs['align']
+          if scope.source.fields?.hasOwnProperty('crop') and not attrs['align']
             opts.align = scope.source.fields.crop.value
 
-          if scope.source.fields.hasOwnProperty('sizemode')
+          if scope.source.fields?.hasOwnProperty('sizemode')
             if scope.source.fields.sizemode.value isnt 'default' and not attrs['sizemode']
               opts.sizemode = scope.source.fields.sizemode.value
 

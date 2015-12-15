@@ -147,14 +147,14 @@ imagoVideo = (function() {
           })(this));
         }
         compile = function() {
-          var ref, ref1;
+          var ref, ref1, ref2, ref3;
           if (!((ref = scope.source.fields) != null ? (ref1 = ref.formats) != null ? ref1.length : void 0 : void 0)) {
             return console.log('no formats found');
           }
-          if (scope.source.fields.hasOwnProperty('crop') && !attrs['align']) {
+          if (((ref2 = scope.source.fields) != null ? ref2.hasOwnProperty('crop') : void 0) && !attrs['align']) {
             opts.align = scope.source.fields.crop.value;
           }
-          if (scope.source.fields.hasOwnProperty('sizemode')) {
+          if ((ref3 = scope.source.fields) != null ? ref3.hasOwnProperty('sizemode') : void 0) {
             if (scope.source.fields.sizemode.value !== 'default' && !attrs['sizemode']) {
               opts.sizemode = scope.source.fields.sizemode.value;
             }

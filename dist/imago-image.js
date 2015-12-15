@@ -63,16 +63,16 @@ imagoImage = (function() {
           })(this));
         }
         compile = function() {
-          var ref;
+          var ref, ref1, ref2;
           opts.servingSize = null;
           if (!((ref = scope.source) != null ? ref.serving_url : void 0)) {
             element.remove();
             return;
           }
-          if (scope.source.fields.hasOwnProperty('crop') && !attrs['align']) {
+          if (((ref1 = scope.source.fields) != null ? ref1.hasOwnProperty('crop') : void 0) && !attrs['align']) {
             opts.align = scope.source.fields.crop.value;
           }
-          if (scope.source.fields.hasOwnProperty('sizemode')) {
+          if ((ref2 = scope.source.fields) != null ? ref2.hasOwnProperty('sizemode') : void 0) {
             if (scope.source.fields.sizemode.value !== 'default' && !attrs['sizemode']) {
               opts.sizemode = scope.source.fields.sizemode.value;
             }

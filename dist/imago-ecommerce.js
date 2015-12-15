@@ -543,7 +543,7 @@ imagoFindPrice = (function() {
         product: '=',
         attributes: '@'
       },
-      templateUrl: '/imago/imago-find-price.jade'
+      templateUrl: '/imago/imago-find-price.html'
     };
   }
 
@@ -555,9 +555,6 @@ imagoFindPriceController = (function() {
   function imagoFindPriceController($scope, $parse, imagoCart) {
     var initWatcher, watch;
     this.imagoCart = imagoCart;
-    if (!this.attributes) {
-      return;
-    }
     this.attrs = $parse(this.attributes)();
     initWatcher = (function(_this) {
       return function() {
@@ -568,10 +565,12 @@ imagoFindPriceController = (function() {
             return _this.product[name];
           });
         };
-        ref = _this.attrs;
-        for (i = 0, len = ref.length; i < len; i++) {
-          name = ref[i];
-          createWatchFunc(name);
+        if (_this.attrs) {
+          ref = _this.attrs;
+          for (i = 0, len = ref.length; i < len; i++) {
+            name = ref[i];
+            createWatchFunc(name);
+          }
         }
         return $scope.$watchGroup(toWatchProperties, function() {
           return _this.findOpts();
@@ -593,18 +592,20 @@ imagoFindPriceController = (function() {
       return;
     }
     this.variants = _.clone(this.options);
-    ref1 = this.attrs;
-    for (i = 0, len = ref1.length; i < len; i++) {
-      name = ref1[i];
-      if (!this.product[name]) {
-        continue;
+    if (this.attrs) {
+      ref1 = this.attrs;
+      for (i = 0, len = ref1.length; i < len; i++) {
+        name = ref1[i];
+        if (!this.product[name]) {
+          continue;
+        }
+        this.variants = _.filter(this.variants, (function(_this) {
+          return function(item) {
+            var ref2, ref3;
+            return _this.product[name] === ((ref2 = item.fields) != null ? (ref3 = ref2[name]) != null ? ref3.value : void 0 : void 0);
+          };
+        })(this));
       }
-      this.variants = _.filter(this.variants, (function(_this) {
-        return function(item) {
-          var ref2, ref3;
-          return _this.product[name] === ((ref2 = item.fields) != null ? (ref3 = ref2[name]) != null ? ref3.value : void 0 : void 0);
-        };
-      })(this));
     }
     return this.findPrice();
   };
