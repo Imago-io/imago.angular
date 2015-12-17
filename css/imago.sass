@@ -1,49 +1,73 @@
+// V2 !!!
 .imagoimage
   position: relative
-  width: 100%
-  overflow: hidden
-  flex-direction: row
-  display: inline-flex
+  display: inline-block
   vertical-align: top
   line-height: 0
-  &.center
-    justify-content: center
-    align-items: center
-  &.top
-    align-items: flex-start
-  &.bottom
-    align-items: flex-end
-  &.left
-    justify-content: flex-start
-  &.right
-    justify-content: flex-end
-  // box-sizing: content-box
-
   .imagox23
-    opacity: 0.5
-    transition: opacity 0.1s ease-in-out
+    max-height: 100%
+    max-width: 100%
     background-repeat: no-repeat
-
-  img.imagox23
+  img,
+  .placeholder
+    display: inline-block
     max-width: 100%
     max-height: 100%
+    width: auto
+    height: auto
+    padding: 0
+    margin: 0
+    line-height: 0
+  .placeholder
+    visibility: hidden
 
-  div.imagox23
-    width:  100%
-    height: 100%
 
-  // &.resizing
-  //   img.imagox23
-  //     max-width: initial
-  //     max-height: initial
-  //     border: 5px solid red
+// .imagoimage
+//   position: relative
+//   width: 100%
+//   overflow: hidden
+//   flex-direction: row
+//   display: inline-flex
+//   vertical-align: top
+//   line-height: 0
+//   &.center
+//     justify-content: center
+//     align-items: center
+//   &.top
+//     align-items: flex-start
+//   &.bottom
+//     align-items: flex-end
+//   &.left
+//     justify-content: flex-start
+//   &.right
+//     justify-content: flex-end
+//   // box-sizing: content-box
 
-  &.loaded
-    .imagox23
-      opacity: 1
-    .spin,
-    .spin2
-      opacity: 0
+//   .imagox23
+//     opacity: 0.5
+//     transition: opacity 0.1s ease-in-out
+//     background-repeat: no-repeat
+
+//   img.imagox23
+//     max-width: 100%
+//     max-height: 100%
+
+//   div.imagox23
+//     width:  100%
+//     height: 100%
+
+//   // &.resizing
+//   //   img.imagox23
+//   //     max-width: initial
+//   //     max-height: initial
+//   //     border: 5px solid red
+
+//   &.loaded
+//     .imagox23
+//       opacity: 1
+//     .spin,
+//     .spin2
+//       opacity: 0
 
 .imagovideo
   position: relative

@@ -1,14 +1,9 @@
 .imagoimage(
-  visible="visible"
-  in-view="visible = $inview"
-  in-view-options="{debounce: 100}"
+  visible="imagoimage.visible"
+  in-view="imagoimage.visible = $inview"
   in-view-remove="imagoimage.removeInView"
-  ng-style="elementStyle"
-  ng-class="[imagoimage.status, align]"
-  ng-switch="sizemode"
+  ng-class="[{'loaded': imagoimage.loaded}, imagoimage.opts.align]"
   )
-  img.imagox23(ng-src="{{servingUrl}}" ng-style="imagoimage.imageStyle" ng-switch-when="fit")
-  .imagox23(ng-style="imagoimage.imageStyle" ng-switch-when="crop")
-  .loading(ng-hide="imagoimage.status === 'loaded'")
-    .spin
-    .spin2
+
+  .imagox23(ng-style="imagoimage.imageStyle")
+    img.placeholder(ng-if="imagoimage.placeholder" ng-src="{{::imagoimage.placeholder.src}}" width="{{::imagoimage.placeholder.width}}" height="{{::imagoimage.placeholder.height}}")
