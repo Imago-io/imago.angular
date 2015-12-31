@@ -1,26 +1,67 @@
 // V2 !!!
+
 .imagoimage
   position: relative
-  display: inline-block
-  vertical-align: top
-  line-height: 0
-  .imagox23
-    max-height: 100%
-    max-width: 100%
-    background-repeat: no-repeat
-  img,
-  .placeholder
-    display: inline-block
-    max-width: 100%
-    max-height: 100%
-    width: auto
-    height: auto
+  background: rgba(red, 0.3)
+  // overflow: hidden
+  box-sizing: border-box
+  // display: inline-block
+  border: 1px dotted red
+  pre
+    position: absolute
+    top:  50%
+    left: 50%
+    transform: translateX(-50%) translateY(-50%)
+    background: white
+    padding: 1em
+  .spacer
+    // border: 1px dashed red
+  img
+    position: absolute
     padding: 0
     margin: 0
     line-height: 0
-  .placeholder
-    visibility: hidden
+    &.small
+      // filter: blur(50px)
+      // width: 100%
+      // height: 100%
+      opacity: 1
+    &.large
+      opacity: 0
+      transition: opacity 2s
 
+  &.loaded
+    img
+      border: 0
+    img.large
+      opacity: 1
+      // opacity: 0.1
+    img.small
+      // display: none
+      opacity: 0
+
+  &.center img
+    left: 50%
+    top:  50%
+    transform: translateX(-50%) translateY(-50%)
+  &.left img
+    left: 0
+  &.top img
+    top: 0
+  &.right img
+    right: 0
+  &.bottom img
+    bottom: 0
+
+
+  &.crop.width img
+    height: 100%
+  &.crop.height img
+    width: 100%
+  &.fit.width img
+    width: 100%
+  &.fit.height img
+    height: 100%
 
 // .imagoimage
 //   position: relative
@@ -375,44 +416,6 @@
       color: darken(white,40%)
 
 
-// spinner
-
-.imagoimage
-  .spin,
-  .spin2
-    position: absolute
-    left: 50%
-    top:  50%
-    z-index: 1
-    margin: -20px 0 0 -20px
-
-    width:  30px
-    height: 30px
-
-    border:     6px solid transparent
-    border-top: 6px solid rgba(255,255,255,0.2)
-
-    border-radius: 50%
-    animation: rotate 1.5s infinite linear
-
-    transition: opacity 1s ease
-
-    box-sizing: content-box
-
-  .spin2
-    margin: -17px 0 0 -17px
-    width:  30px
-    height: 30px
-    border-width: 2px
-    border:     3px solid transparent
-    border-top: 3px solid rgba(255,255,255,0.8)
-    animation: rotate 1.5s infinite ease
-
-@keyframes rotate
-  0%
-    transform: rotate(0deg)
-  100%
-    transform: rotate(360deg)
 
 
 .inline-block

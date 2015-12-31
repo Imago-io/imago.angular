@@ -46,7 +46,6 @@ class imagoImageController extends Controller
       align      : 'center center'
       sizemode   : 'fit'
       autosize   : 'none'
-      # hires      : true
       responsive : true
       scale      : 1
       lazy       : true
@@ -61,13 +60,19 @@ class imagoImageController extends Controller
       else
         @opts[key] = @$attrs[key]
 
-    @$rootScope.$on 'resizestop', =>
-      @compile()
+    # @$rootScope.$on 'resizestop', =>
+    #   @compile()
+
+    @$rootScope.$on 'resize', =>
+      @resize()
+
 
   init: (data) ->
     @data = data
     @resolution =  @data.resolution.split('x')
     @assetRatio = _.first(@resolution) / _.last(@resolution)
+    @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
+
 
     # @width  = @$element[0].clientWidth
 
@@ -76,35 +81,32 @@ class imagoImageController extends Controller
 
     # @resolution = [minWidthResolution, minWidthResolution/@assetRatio]
 
-    @createPlaceHolder() if @opts.sizemode is 'fit'
-
     if @data.fields?.crop?.value and not @$attrs.align
       @opts.align = @data.fields.crop.value
-    if @data.fields?.sizemode?.value and\
+    if @data.fields?.sizemode?.value and \
       @data.fields.sizemode.value isnt 'default' and not @$attrs.sizemode
         @opts.sizemode = @data.fields.sizemode.value
 
     if @opts.lazy is false
       @removeInView = true
 
-    @$timeout =>
-      @$scope.$applyAsync =>
-        @compile()
-    , 0, false
+    # @$scope.$applyAsync =>
+    #   @compile()
 
-  createPlaceHolder: ->
-    canvas = document.createElement 'canvas'
-    canvas.width  = _.first @resolution
-    canvas.height = _.last @resolution
-    @placeholder =
-      src    : canvas.toDataURL()
 
-  compile: ->
+
+  resize: ->
     @width  = @$element[0].clientWidth
     @height = @$element[0].clientHeight
 
     @wrapperRatio = @width / @height if @height
-    # console.log '@wrapperRatio', @wrapperRatio, @width, @height, opts.resolution
+    # debugger if not @height
+    console.log 'resize', @wrapperRatio, @width, @height, @resolution
+    # console.log 'fit', @fit = if @opts.assetRatio < @wrapperRatio then 'width' else 'height'
+
+  compile: ->
+
+    @resize()
 
     if @opts.sizemode is 'crop' and @height
       if @assetRatio <= @wrapperRatio
@@ -164,11 +166,11 @@ class imagoImageController extends Controller
       img = angular.element('<img>')
       img.on 'load', =>
         @$scope.$applyAsync =>
-          @imageStyle =
-            backgroundImage: "url(#{@opts.servingUrl})"
-            backgroundSize: if @opts.assetRatio < @wrapperRatio then '100% auto' else 'auto 100%'
-            backgroundPosition: @opts.align
+          # @imageStyle =
+          #   backgroundImage: "url(#{@opts.servingUrl})"
+          #   backgroundSize: if @opts.assetRatio < @wrapperRatio then '100% auto' else 'auto 100%'
+          #   backgroundPosition: @opts.align
+          @imgUrl = @opts.servingUrl
 
-          console.log '@imageStyle', @imageStyle
           @loaded = true
       img[0].src = @opts.servingUrl
