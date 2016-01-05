@@ -11,25 +11,24 @@ class imagoImage extends Directive
       bindToController: true
       link: (scope, element, attrs, imagoSlider) ->
 
-        self =
-          destroy: ->
-            scope.$destroy()
-            element.remove()
+        destroy = ->
+          scope.$destroy()
+          element.remove()
 
         if attrs.imagoImage.match(/[0-9a-fA-F]{24}/)
-          self.watch = attrs.$observe 'imagoImage', (data) ->
+          watcher = attrs.$observe 'imagoImage', (data) ->
             return unless data
-            self.watch()
+            watcher()
             data = imagoModel.find('_id': data)
             unless data.serving_url
-              return self.destroy()
+              return destroy()
             scope.imagoimage.init(data)
         else
-          self.watch = scope.$watch attrs.imagoImage, (data) =>
+          watcher = scope.$watch attrs.imagoImage, (data) =>
             return unless data
-            self.watch()
+            watcher()
             unless data.serving_url
-              return self.destroy()
+              return destroy()
             scope.imagoimage.init(data)
 
     }
@@ -43,13 +42,15 @@ class imagoImageController extends Controller
     @dpr = Math.ceil(window.devicePixelRatio, 1) or 1
 
     @opts =
-      align      : 'center center'
-      sizemode   : 'fit'
-      autosize   : 'none'
-      responsive : true
-      scale      : 1
-      lazy       : true
-      maxsize    : 4000
+      align       : 'center center'
+      sizemode    : 'fit'
+      autosize    : 'none'
+      responsive  : true
+      scale       : 1
+      lazy        : true
+      maxsize     : 4000
+      placeholder : true
+      preventDrag : true
 
     for key of @$attrs
       continue unless @opts[key]
@@ -60,12 +61,11 @@ class imagoImageController extends Controller
       else
         @opts[key] = @$attrs[key]
 
-    # @$rootScope.$on 'resizestop', =>
-    #   @compile()
+    console.log '@opts', @opts
 
-    @$rootScope.$on 'resize', =>
-      @resize()
-
+    if @opts.responsive
+      @$rootScope.$on 'resize', =>
+        @resize()
 
   init: (data) ->
     @data = data
@@ -90,10 +90,14 @@ class imagoImageController extends Controller
     if @opts.lazy is false
       @removeInView = true
 
-    # @$scope.$applyAsync =>
-    #   @compile()
-
-
+    if @opts.lazy and not @visible
+      watcher = @$scope.$watch 'imagoimage.visible', (value) =>
+        return unless value
+        watcher()
+        @visible = true
+        @getServingUrl()
+    else
+      @getServingUrl()
 
   resize: ->
     @width  = @$element[0].clientWidth
@@ -101,11 +105,10 @@ class imagoImageController extends Controller
 
     @wrapperRatio = @width / @height if @height
     # debugger if not @height
-    console.log 'resize', @wrapperRatio, @width, @height, @resolution
+    console.log 'resize', @wrapperRatio, @width, @height, @$element[0].clientHeight, @resolution
     # console.log 'fit', @fit = if @opts.assetRatio < @wrapperRatio then 'width' else 'height'
 
-  compile: ->
-
+  getServingUrl: ->
     @resize()
 
     if @opts.sizemode is 'crop' and @height
@@ -155,22 +158,15 @@ class imagoImageController extends Controller
 
     @render()
 
-  render: ->
-    if @opts.lazy and not @visible
-      self.visibleFunc = @$scope.$watch 'imagoimage.visible', (value) =>
-        return unless value
-        self.visibleFunc()
-        @visible = true
-        @render()
-    else
-      img = angular.element('<img>')
-      img.on 'load', =>
-        @$scope.$applyAsync =>
-          # @imageStyle =
-          #   backgroundImage: "url(#{@opts.servingUrl})"
-          #   backgroundSize: if @opts.assetRatio < @wrapperRatio then '100% auto' else 'auto 100%'
-          #   backgroundPosition: @opts.align
-          @imgUrl = @opts.servingUrl
+  render: =>
+    img = angular.element('<img>')
+    img.on 'load', =>
+      @$scope.$applyAsync =>
+        # @imageStyle =
+        #   backgroundImage: "url(#{@opts.servingUrl})"
+        #   backgroundSize: if @opts.assetRatio < @wrapperRatio then '100% auto' else 'auto 100%'
+        #   backgroundPosition: @opts.align
+        @imgUrl = @opts.servingUrl
+        @loaded = true
 
-          @loaded = true
-      img[0].src = @opts.servingUrl
+    img[0].src = @opts.servingUrl

@@ -1,15 +1,21 @@
-.imagoimage(
-  ng-class="[{'loaded': imagoimage.loaded}, imagoimage.opts.align, imagoimage.fit, imagoimage.opts.sizemode]"
+.imago-image(
+  ng-class="[{'loaded': imagoimage.loaded}, {'prevent-drag': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode]"
   )
 
   .spacer(ng-style="::imagoimage.spacerStyle")
 
-  img(class="small" ng-src="{{::imagoimage.data.serving_url}}=s3" ng-style="::imagoimage.imgSmallStyle")
-  img(class="large"
+  img(
+    class="small"
+    ng-if="::imagoimage.opts.placeholder"
+    ng-src="{{::imagoimage.data.serving_url}}=s3"
+    ng-style="::imagoimage.imgSmallStyle")
+
+  img(
+    class="large"
     ng-src="{{imagoimage.imgUrl}}"
     ng-show="imagoimage.imgUrl"
     visible="imagoimage.visible"
-    in-view="imagoimage.visible = $inview && imagoimage.compile()"
+    in-view="imagoimage.visible = $inview"
     in-view-remove="imagoimage.removeInView")
 
 
