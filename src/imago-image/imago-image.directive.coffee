@@ -65,10 +65,12 @@ class imagoImageController extends Controller
 
     if @opts.responsive
       @watchers.push @$rootScope.$on 'resize', =>
-        @resize()
+        @$scope.$applyAsync =>
+          @resize()
 
       @watchers.push @$rootScope.$on 'resizestop', =>
-        @resize()
+        @$scope.$applyAsync =>
+          @resize()
 
     @$scope.$on '$destroy', =>
       watcher() for watcher in @watchers
