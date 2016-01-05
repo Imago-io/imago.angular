@@ -106,7 +106,7 @@ class imagoImageController extends Controller
 
     @wrapperRatio = @width / @height if @height
     # debugger if not @height
-    console.log 'resize', @wrapperRatio, @width, @height, @$element[0].clientHeight, @resolution
+    console.log 'resize', @wrapperRatio, @width, @height, @resolution
     # console.log 'fit', @fit = if @opts.assetRatio < @wrapperRatio then 'width' else 'height'
 
   getServingUrl: ->
