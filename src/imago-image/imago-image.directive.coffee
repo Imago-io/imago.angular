@@ -97,7 +97,8 @@ class imagoImageController extends Controller
         @visible = true
         @getServingUrl()
     else
-      @getServingUrl()
+      @$scope.$applyAsync =>
+        @getServingUrl()
 
   resize: ->
     @width  = @$element[0].clientWidth
