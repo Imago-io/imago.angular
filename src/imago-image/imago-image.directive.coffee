@@ -60,10 +60,12 @@ class imagoImageController extends Controller
       else
         @opts[key] = @$attrs[key]
 
-    console.log '@opts', @opts
+    # console.log '@opts', @opts
 
     if @opts.responsive
       @$rootScope.$on 'resize', =>
+        @resize()
+      @$rootScope.$on 'resizestop', =>
         @resize()
 
   init: (data) ->
@@ -71,14 +73,6 @@ class imagoImageController extends Controller
     @resolution =  @data.resolution.split('x')
     @assetRatio = _.first(@resolution) / _.last(@resolution)
     @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
-
-
-    # @width  = @$element[0].clientWidth
-
-    # if @width
-    #   minWidthResolution = Math.min @resolution[0], 100
-
-    # @resolution = [minWidthResolution, minWidthResolution/@assetRatio]
 
     if @data.fields?.crop?.value and not @$attrs.align
       @opts.align = @data.fields.crop.value
@@ -100,8 +94,8 @@ class imagoImageController extends Controller
         @getServingUrl()
 
   resize: ->
-    @width  = @$element[0].clientWidth
-    @height = @$element[0].clientHeight
+    @width  = @$element.children()[0].clientWidth
+    @height = @$element.children()[0].clientHeight
 
     @wrapperRatio = @width / @height
     return unless @height

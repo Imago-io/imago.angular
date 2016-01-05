@@ -61,7 +61,6 @@ imagoImageController = (function() {
     this.$timeout = $timeout1;
     this.render = bind(this.render, this);
     this.imageStyle = {};
-    this.loaded = false;
     this.dpr = Math.ceil(window.devicePixelRatio, 1) || 1;
     this.opts = {
       align: 'center center',
@@ -86,9 +85,13 @@ imagoImageController = (function() {
         this.opts[key] = this.$attrs[key];
       }
     }
-    console.log('@opts', this.opts);
     if (this.opts.responsive) {
       this.$rootScope.$on('resize', (function(_this) {
+        return function() {
+          return _this.resize();
+        };
+      })(this));
+      this.$rootScope.$on('resizestop', (function(_this) {
         return function() {
           return _this.resize();
         };
@@ -134,10 +137,13 @@ imagoImageController = (function() {
   };
 
   imagoImageController.prototype.resize = function() {
-    this.width = this.$element[0].clientWidth;
-    this.height = this.$element[0].clientHeight;
+    this.width = this.$element.children()[0].clientWidth;
+    this.height = this.$element.children()[0].clientHeight;
     this.wrapperRatio = this.width / this.height;
-    console.log('@wrapperRatio, @assetRatio', this.wrapperRatio, this.assetRatio, this.height);
+    if (!this.height) {
+      return;
+    }
+    console.log('@wrapperRatio, @assetRatio', this.wrapperRatio, this.assetRatio, this.height, this.data._id, this.visible);
     if (this.opts.sizemode === 'crop') {
       return this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
     } else {
@@ -193,4 +199,4 @@ imagoImageController = (function() {
 
 angular.module('imago').directive('imagoImage', ['$timeout', 'imagoModel', imagoImage]).controller('imagoImageController', ['$rootScope', '$attrs', '$scope', '$element', '$timeout', imagoImageController]);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-image.html","<div ng-class=\"[{\'loaded\': imagoimage.loaded}, {\'prevent-drag\': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode]\" class=\"imago-image\"><div ng-style=\"::imagoimage.spacerStyle\" ng-show=\"imagoimage.height === 0\" class=\"spacer\"></div><img ng-if=\"imagoimage.opts.placeholder &amp;&amp; !imagoimage.loaded\" ng-src=\"{{::imagoimage.data.serving_url}}=s3\" ng-style=\"::imagoimage.imgSmallStyle\" class=\"small\"/><img ng-class=\"imagoimage.mainSide\" ng-src=\"{{imagoimage.imgUrl}}\" ng-show=\"imagoimage.imgUrl\" visible=\"imagoimage.visible\" in-view=\"imagoimage.visible = $inview\" in-view-remove=\"imagoimage.removeInView\" class=\"large\"/><pre>sizemode: {{imagoimage.opts.sizemode}}  align: {{imagoimage.opts.align}}<br/>class {{imagoimage.loaded}}<br/>mainSide {{imagoimage.mainSide}}</pre></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-image.html","<div ng-class=\"[{\'loaded\': imagoimage.loaded}, {\'prevent-drag\': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode]\" id=\"{{imagoimage.data._id}}\" class=\"imago-image\"><div ng-style=\"::imagoimage.spacerStyle\" class=\"spacer\"></div><img ng-if=\"imagoimage.opts.placeholder &amp;&amp; !imagoimage.loaded\" ng-src=\"{{::imagoimage.data.serving_url}}=s3\" ng-style=\"::imagoimage.imgSmallStyle\" class=\"small\"/><img ng-class=\"imagoimage.mainSide\" ng-src=\"{{imagoimage.imgUrl}}\" ng-show=\"imagoimage.imgUrl\" visible=\"imagoimage.visible\" in-view=\"imagoimage.visible = $inview\" in-view-remove=\"imagoimage.removeInView\" class=\"large\"/><pre>sizemode: {{imagoimage.opts.sizemode}}  align: {{imagoimage.opts.align}}<br/>class {{imagoimage.loaded}}<br/>mainSide {{imagoimage.mainSide}} height {{imagoimage.height}}</pre></div>");}]);
