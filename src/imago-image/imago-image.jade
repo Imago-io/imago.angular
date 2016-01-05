@@ -2,7 +2,7 @@
   ng-class="[{'loaded': imagoimage.loaded}, {'prevent-drag': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode]"
   )
 
-  .spacer(ng-style="::imagoimage.spacerStyle" ng-show="imagoimage.height === 0")
+  .spacer(ng-style="::imagoimage.spacerStyle")
 
   img(
     class="small"
@@ -24,4 +24,4 @@
     br
     | class {{imagoimage.loaded}}
     br
-    | mainSide {{imagoimage.mainSide}}
+    | mainSide {{imagoimage.mainSide}} height {{imagoimage.height}}

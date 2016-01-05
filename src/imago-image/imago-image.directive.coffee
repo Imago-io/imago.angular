@@ -38,7 +38,6 @@ class imagoImageController extends Controller
   constructor: (@$rootScope, @$attrs, @$scope, @$element, @$timeout) ->
 
     @imageStyle = {}
-    @loaded = false
     @dpr = Math.ceil(window.devicePixelRatio, 1) or 1
 
     @opts =
