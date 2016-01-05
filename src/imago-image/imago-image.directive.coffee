@@ -38,6 +38,7 @@ class imagoImageController extends Controller
   constructor: (@$rootScope, @$attrs, @$scope, @$element, @$timeout) ->
 
     @imageStyle = {}
+    @watchers   = []
     @dpr = Math.ceil(window.devicePixelRatio, 1) or 1
 
     @opts =
@@ -63,10 +64,14 @@ class imagoImageController extends Controller
     # console.log '@opts', @opts
 
     if @opts.responsive
-      @$rootScope.$on 'resize', =>
+      @watchers.push @$rootScope.$on 'resize', =>
         @resize()
-      @$rootScope.$on 'resizestop', =>
+
+      @watchers.push @$rootScope.$on 'resizestop', =>
         @resize()
+
+    @$scope.$on '$destroy', =>
+      watcher() for watcher in @watchers
 
   init: (data) ->
     @data = data
@@ -87,13 +92,13 @@ class imagoImageController extends Controller
       watcher = @$scope.$watch 'imagoimage.visible', (value) =>
         return unless value
         watcher()
-        @visible = true
         @getServingUrl()
     else
       @$scope.$applyAsync =>
         @getServingUrl()
 
   resize: ->
+    return unless @visible
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
 
@@ -107,6 +112,7 @@ class imagoImageController extends Controller
       @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
 
   getServingUrl: ->
+    @visible = true
     @resize()
 
     if @opts.sizemode is 'crop' and @height
