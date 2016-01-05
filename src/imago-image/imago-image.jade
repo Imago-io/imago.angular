@@ -2,11 +2,11 @@
   ng-class="[{'loaded': imagoimage.loaded}, {'prevent-drag': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode]"
   )
 
-  .spacer(ng-style="::imagoimage.spacerStyle")
+  .spacer(ng-style="::imagoimage.spacerStyle" ng-hide="imagoimage.loaded && imagoimage.opts.preventDrag")
 
   img(
     class="small"
-    ng-if="::imagoimage.opts.placeholder"
+    ng-if="::imagoimage.opts.placeholder && !imagoimage.loaded"
     ng-src="{{::imagoimage.data.serving_url}}=s3"
     ng-style="::imagoimage.imgSmallStyle")
 
