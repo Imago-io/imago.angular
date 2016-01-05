@@ -112,7 +112,7 @@ class imagoImageController extends Controller
     else
       @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
 
-    console.log '@wrapperRatio, @assetRatio', @wrapperRatio, @assetRatio, @height, @mainSide
+    # console.log '@wrapperRatio, @assetRatio', @wrapperRatio, @assetRatio, @height, @mainSide
 
   getServingUrl: ->
     @visible = true

@@ -162,11 +162,10 @@ imagoImageController = (function() {
       return;
     }
     if (this.opts.sizemode === 'crop') {
-      this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
+      return this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
     } else {
-      this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
+      return this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
     }
-    return console.log('@wrapperRatio, @assetRatio', this.wrapperRatio, this.assetRatio, this.height, this.mainSide);
   };
 
   imagoImageController.prototype.getServingUrl = function() {
