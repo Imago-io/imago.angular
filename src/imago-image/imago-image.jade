@@ -1,5 +1,5 @@
 .imago-image(
-  ng-class="[{'loaded': imagoimage.loaded}, {'prevent-drag': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode]"
+  ng-class="[{'loaded': imagoimage.loaded}, {'prevent-drag': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode, imagoimage.mainSide]"
   id="{{imagoimage.data._id}}"
   )
 
@@ -13,7 +13,6 @@
 
   img(
     class="large"
-    ng-class="imagoimage.mainSide"
     ng-src="{{imagoimage.imgUrl}}"
     ng-show="imagoimage.imgUrl"
     visible="imagoimage.visible"

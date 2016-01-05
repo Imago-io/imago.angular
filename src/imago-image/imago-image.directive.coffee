@@ -100,11 +100,12 @@ class imagoImageController extends Controller
     @wrapperRatio = @width / @height
     return unless @height
 
-    console.log '@wrapperRatio, @assetRatio', @wrapperRatio, @assetRatio, @height, @data._id, @visible
     if @opts.sizemode is 'crop'
       @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
     else
       @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
+
+    console.log '@wrapperRatio, @assetRatio', @wrapperRatio, @assetRatio, @height, @mainSide
 
   getServingUrl: ->
     @resize()

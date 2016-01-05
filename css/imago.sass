@@ -29,14 +29,16 @@
       opacity: 0
       transition: opacity 2s
 
-
+  &.fit.height img
+    height: 100%
+  &.fit.width img
+    width: 100%
 
   &.loaded
     img
       border: 0
     img.large
       opacity: 1
-      opacity: 0.4
     img.small
       // display: none
       opacity: 0
@@ -100,15 +102,12 @@
       transform: translateX(0%) translateY(0%)
 
   &.crop
+    &.center img
+      left: 50%
+      top:  50%
+      transform: translateX(-50%) translateY(-50%)
 
 
-
-
-  &.crop
-    background: yellow
-
-  &.fit
-    background: blue
 
 // .imago-image
 //   position: relative
