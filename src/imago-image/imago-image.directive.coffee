@@ -68,6 +68,9 @@ class imagoImageController extends Controller
         @$scope.$applyAsync =>
           @resize()
 
+      @watchers.push @$rootScope.$on 'resizestop', =>
+        @getServingUrl()
+
     @$scope.$on '$destroy', =>
       watcher() for watcher in @watchers
 
