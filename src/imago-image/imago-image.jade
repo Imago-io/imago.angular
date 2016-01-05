@@ -7,7 +7,7 @@
   img(
     class="small"
     ng-if="::imagoimage.opts.placeholder && !imagoimage.loaded"
-    ng-src="{{::imagoimage.data.serving_url}}=s3")
+    ng-src="{{::imagoimage.placeholderUrl}}")
 
   img(
     class="large"

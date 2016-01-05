@@ -76,6 +76,7 @@ class imagoImageController extends Controller
 
   init: (data) ->
     @data = data
+    @placeholderUrl = @data.b64 or "#{@data.serving_url}=s3"
     @resolution =  @data.resolution.split('x')
     @assetRatio = _.first(@resolution) / _.last(@resolution)
     @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
