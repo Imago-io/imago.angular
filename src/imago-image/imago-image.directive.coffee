@@ -104,7 +104,8 @@ class imagoImageController extends Controller
     @height = @$element[0].clientHeight
 
     @wrapperRatio = @width / @height
-    # return unless @height
+    return unless @height
+
     console.log '@wrapperRatio, @assetRatio', @wrapperRatio, @assetRatio, @height, @data._id, @visible
     if @opts.sizemode is 'crop'
       @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
