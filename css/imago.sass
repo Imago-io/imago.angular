@@ -34,6 +34,11 @@
   &.fit.width img
     width: 100%
 
+  &.crop.height img
+    height: 100%
+  &.crop.width img
+    width: 100%
+
   &.loaded
     img
       border: 0
@@ -43,71 +48,62 @@
       // display: none
       opacity: 0
 
-  &.fit
-    &.center img
-      left: 50%
-      top:  50%
-      transform: translateX(-50%) translateY(-50%)
+  &.center img
+    left: 50%
+    top:  50%
+    transform: translateX(-50%) translateY(-50%)
 
-    &.left.center img
-      top:  50%
-      right: initial
-      left: 0
-      bottom: initial
-      transform: translateX(0%) translateY(-50%)
-    &.right.center img
-      top:  50%
-      right: 0
-      left: initial
-      bottom: initial
-      transform: translateX(0%) translateY(-50%)
-
-
-    &.left.top img
-      top: 0
-      right: initial
-      bottom: initial
-      left: 0
-      transform: translateX(0%) translateY(0%)
-    &.center.top img
-      top: 0
-      right: initial
-      bottom: initial
-      left: 50%
-      transform: translateX(-50%) translateY(0%)
-    &.right.top img
-      top: 0
-      right: 0
-      bottom: initial
-      left: initial
-      transform: translateX(0%) translateY(0%)
-
-    &.left.bottom img
-      top: initial
-      right: initial
-      bottom: 0
-      left: 0
-      transform: translateX(0%) translateY(0%)
-    &.center.bottom img
-      top: initial
-      right: initial
-      bottom: 0
-      left: 50%
-      transform: translateX(-50%) translateY(0%)
-    &.right.bottom img
-      top: initial
-      right: 0
-      bottom: 0
-      left: initial
-      transform: translateX(0%) translateY(0%)
-
-  &.crop
-    &.center img
-      left: 50%
-      top:  50%
-      transform: translateX(-50%) translateY(-50%)
+  &.left.center img
+    top:  50%
+    right: initial
+    left: 0
+    bottom: initial
+    transform: translateX(0%) translateY(-50%)
+  &.right.center img
+    top:  50%
+    right: 0
+    left: initial
+    bottom: initial
+    transform: translateX(0%) translateY(-50%)
 
 
+  &.left.top img
+    top: 0
+    right: initial
+    bottom: initial
+    left: 0
+    transform: translateX(0%) translateY(0%)
+  &.center.top img
+    top: 0
+    right: initial
+    bottom: initial
+    left: 50%
+    transform: translateX(-50%) translateY(0%)
+  &.right.top img
+    top: 0
+    right: 0
+    bottom: initial
+    left: initial
+    transform: translateX(0%) translateY(0%)
+
+  &.left.bottom img
+    top: initial
+    right: initial
+    bottom: 0
+    left: 0
+    transform: translateX(0%) translateY(0%)
+  &.center.bottom img
+    top: initial
+    right: initial
+    bottom: 0
+    left: 50%
+    transform: translateX(-50%) translateY(0%)
+  &.right.bottom img
+    top: initial
+    right: 0
+    bottom: 0
+    left: initial
+    transform: translateX(0%) translateY(0%)
 
 // .imago-image
 //   position: relative

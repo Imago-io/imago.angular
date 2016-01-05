@@ -136,10 +136,10 @@ class imagoImageController extends Controller
       #   servingSize = Math.round(Math.max(@height, @height * @assetRatio))
 
       if @assetRatio <= @wrapperRatio
-        console.log 'fit full height', @width, @height, @assetRatio, @height * @assetRatio
+        # console.log 'fit full height', @width, @height, @assetRatio, @height * @assetRatio
         servingSize = Math.round(Math.max(@height, @height * @assetRatio))
       else
-        console.log 'fit full width', @width, @height, @assetRatio, @wrapperRatio
+        # console.log 'fit full width', @width, @height, @assetRatio, @wrapperRatio
         servingSize = Math.round(Math.max(@width, @width / @assetRatio))
 
     servingSize = parseInt Math.min(servingSize * @dpr, @opts.maxsize)
