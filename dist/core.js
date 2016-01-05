@@ -156,6 +156,13 @@ imagoModel = (function() {
           });
         };
       })(this),
+      pdfrequest: (function(_this) {
+        return function(ids) {
+          return _this.$http.post(_this.imagoSettings.host + "/api/assets/pdf", {
+            assets: ids
+          });
+        };
+      })(this),
       repair: (function(_this) {
         return function(id) {
           return _this.$http.put(_this.imagoSettings.host + "/api/assets/repairorder", {
