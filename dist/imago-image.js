@@ -1,4 +1,5 @@
-var imagoImage, imagoImageController;
+var imagoImage, imagoImageController,
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 imagoImage = (function() {
   function imagoImage($timeout, imagoModel) {
@@ -9,36 +10,34 @@ imagoImage = (function() {
       require: '?^imagoSlider',
       bindToController: true,
       link: function(scope, element, attrs, imagoSlider) {
-        var self;
-        self = {
-          destroy: function() {
-            scope.$destroy();
-            return element.remove();
-          }
+        var destroy, watcher;
+        destroy = function() {
+          scope.$destroy();
+          return element.remove();
         };
         if (attrs.imagoImage.match(/[0-9a-fA-F]{24}/)) {
-          return self.watch = attrs.$observe('imagoImage', function(data) {
+          return watcher = attrs.$observe('imagoImage', function(data) {
             if (!data) {
               return;
             }
-            self.watch();
+            watcher();
             data = imagoModel.find({
               '_id': data
             });
             if (!data.serving_url) {
-              return self.destroy();
+              return destroy();
             }
             return scope.imagoimage.init(data);
           });
         } else {
-          return self.watch = scope.$watch(attrs.imagoImage, (function(_this) {
+          return watcher = scope.$watch(attrs.imagoImage, (function(_this) {
             return function(data) {
               if (!data) {
                 return;
               }
-              self.watch();
+              watcher();
               if (!data.serving_url) {
-                return self.destroy();
+                return destroy();
               }
               return scope.imagoimage.init(data);
             };
@@ -60,6 +59,7 @@ imagoImageController = (function() {
     this.$scope = $scope;
     this.$element = $element;
     this.$timeout = $timeout1;
+    this.render = bind(this.render, this);
     this.imageStyle = {};
     this.loaded = false;
     this.dpr = Math.ceil(window.devicePixelRatio, 1) || 1;
@@ -70,7 +70,9 @@ imagoImageController = (function() {
       responsive: true,
       scale: 1,
       lazy: true,
-      maxsize: 4000
+      maxsize: 4000,
+      placeholder: true,
+      preventDrag: true
     };
     for (key in this.$attrs) {
       if (!this.opts[key]) {
@@ -84,15 +86,18 @@ imagoImageController = (function() {
         this.opts[key] = this.$attrs[key];
       }
     }
-    this.$rootScope.$on('resize', (function(_this) {
-      return function() {
-        return _this.resize();
-      };
-    })(this));
+    console.log('@opts', this.opts);
+    if (this.opts.responsive) {
+      this.$rootScope.$on('resize', (function(_this) {
+        return function() {
+          return _this.resize();
+        };
+      })(this));
+    }
   }
 
   imagoImageController.prototype.init = function(data) {
-    var ref, ref1, ref2, ref3;
+    var ref, ref1, ref2, ref3, watcher;
     this.data = data;
     this.resolution = this.data.resolution.split('x');
     this.assetRatio = _.first(this.resolution) / _.last(this.resolution);
@@ -106,20 +111,41 @@ imagoImageController = (function() {
       this.opts.sizemode = this.data.fields.sizemode.value;
     }
     if (this.opts.lazy === false) {
-      return this.removeInView = true;
+      this.removeInView = true;
+    }
+    if (this.opts.lazy && !this.visible) {
+      return watcher = this.$scope.$watch('imagoimage.visible', (function(_this) {
+        return function(value) {
+          if (!value) {
+            return;
+          }
+          watcher();
+          _this.visible = true;
+          return _this.getServingUrl();
+        };
+      })(this));
+    } else {
+      return this.$scope.$applyAsync((function(_this) {
+        return function() {
+          return _this.getServingUrl();
+        };
+      })(this));
     }
   };
 
   imagoImageController.prototype.resize = function() {
     this.width = this.$element[0].clientWidth;
     this.height = this.$element[0].clientHeight;
-    if (this.height) {
-      this.wrapperRatio = this.width / this.height;
+    this.wrapperRatio = this.width / this.height;
+    console.log('@wrapperRatio, @assetRatio', this.wrapperRatio, this.assetRatio, this.height);
+    if (this.opts.sizemode === 'crop') {
+      return this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
+    } else {
+      return this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
     }
-    return console.log('resize', this.wrapperRatio, this.width, this.height, this.resolution);
   };
 
-  imagoImageController.prototype.compile = function() {
+  imagoImageController.prototype.getServingUrl = function() {
     var servingSize;
     this.resize();
     if (this.opts.sizemode === 'crop' && this.height) {
@@ -129,15 +155,11 @@ imagoImageController = (function() {
         servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
       }
     } else {
-      if (!this.height || this.opts.autosize === 'height') {
-        this.opts.autosize = 'height';
-        servingSize = Math.round(Math.max(this.width, this.width / this.assetRatio));
-      } else if (!this.width || this.opts.autosize === 'width') {
-        this.opts.autosize = 'width';
-        servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
-      } else if (this.assetRatio <= this.wrapperRatio) {
+      if (this.assetRatio <= this.wrapperRatio) {
+        console.log('fit full height', this.width, this.height, this.assetRatio, this.height * this.assetRatio);
         servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
       } else {
+        console.log('fit full width', this.width, this.height, this.assetRatio, this.wrapperRatio);
         servingSize = Math.round(Math.max(this.width, this.width / this.assetRatio));
       }
     }
@@ -153,29 +175,16 @@ imagoImageController = (function() {
 
   imagoImageController.prototype.render = function() {
     var img;
-    if (this.opts.lazy && !this.visible) {
-      return self.visibleFunc = this.$scope.$watch('imagoimage.visible', (function(_this) {
-        return function(value) {
-          if (!value) {
-            return;
-          }
-          self.visibleFunc();
-          _this.visible = true;
-          return _this.render();
-        };
-      })(this));
-    } else {
-      img = angular.element('<img>');
-      img.on('load', (function(_this) {
-        return function() {
-          return _this.$scope.$applyAsync(function() {
-            _this.imgUrl = _this.opts.servingUrl;
-            return _this.loaded = true;
-          });
-        };
-      })(this));
-      return img[0].src = this.opts.servingUrl;
-    }
+    img = angular.element('<img>');
+    img.on('load', (function(_this) {
+      return function() {
+        return _this.$scope.$applyAsync(function() {
+          _this.imgUrl = _this.opts.servingUrl;
+          return _this.loaded = true;
+        });
+      };
+    })(this));
+    return img[0].src = this.opts.servingUrl;
   };
 
   return imagoImageController;
@@ -184,4 +193,4 @@ imagoImageController = (function() {
 
 angular.module('imago').directive('imagoImage', ['$timeout', 'imagoModel', imagoImage]).controller('imagoImageController', ['$rootScope', '$attrs', '$scope', '$element', '$timeout', imagoImageController]);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-image.html","<div ng-class=\"[{\'loaded\': imagoimage.loaded}, imagoimage.opts.align, imagoimage.fit, imagoimage.opts.sizemode]\" class=\"imagoimage\"><div ng-style=\"::imagoimage.spacerStyle\" class=\"spacer\"></div><img ng-src=\"{{::imagoimage.data.serving_url}}=s3\" ng-style=\"::imagoimage.imgSmallStyle\" class=\"small\"/><img ng-src=\"{{imagoimage.imgUrl}}\" ng-show=\"imagoimage.imgUrl\" visible=\"imagoimage.visible\" in-view=\"imagoimage.visible = $inview &amp;&amp; imagoimage.compile()\" in-view-remove=\"imagoimage.removeInView\" class=\"large\"/><pre>sizemode: {{imagoimage.opts.sizemode}}  align: {{imagoimage.opts.align}}<br/>class {{imagoimage.loaded}}</pre></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-image.html","<div ng-class=\"[{\'loaded\': imagoimage.loaded}, {\'prevent-drag\': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode]\" class=\"imago-image\"><div ng-style=\"::imagoimage.spacerStyle\" ng-show=\"imagoimage.height === 0\" class=\"spacer\"></div><img ng-if=\"imagoimage.opts.placeholder &amp;&amp; !imagoimage.loaded\" ng-src=\"{{::imagoimage.data.serving_url}}=s3\" ng-style=\"::imagoimage.imgSmallStyle\" class=\"small\"/><img ng-class=\"imagoimage.mainSide\" ng-src=\"{{imagoimage.imgUrl}}\" ng-show=\"imagoimage.imgUrl\" visible=\"imagoimage.visible\" in-view=\"imagoimage.visible = $inview\" in-view-remove=\"imagoimage.removeInView\" class=\"large\"/><pre>sizemode: {{imagoimage.opts.sizemode}}  align: {{imagoimage.opts.align}}<br/>class {{imagoimage.loaded}}<br/>mainSide {{imagoimage.mainSide}}</pre></div>");}]);

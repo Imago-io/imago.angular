@@ -12,6 +12,7 @@
 
   img(
     class="large"
+    ng-class="imagoimage.mainSide"
     ng-src="{{imagoimage.imgUrl}}"
     ng-show="imagoimage.imgUrl"
     visible="imagoimage.visible"
@@ -22,3 +23,5 @@
   pre sizemode: {{imagoimage.opts.sizemode}}  align: {{imagoimage.opts.align}}
     br
     | class {{imagoimage.loaded}}
+    br
+    | mainSide {{imagoimage.mainSide}}

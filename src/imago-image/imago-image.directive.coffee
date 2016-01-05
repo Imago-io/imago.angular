@@ -104,10 +104,13 @@ class imagoImageController extends Controller
     @width  = @$element[0].clientWidth
     @height = @$element[0].clientHeight
 
-    @wrapperRatio = @width / @height if @height
+    @wrapperRatio = @width / @height
     # debugger if not @height
-    console.log 'resize', @wrapperRatio, @width, @height, @resolution
-    # console.log 'fit', @fit = if @opts.assetRatio < @wrapperRatio then 'width' else 'height'
+    console.log '@wrapperRatio, @assetRatio', @wrapperRatio, @assetRatio, @height
+    if @opts.sizemode is 'crop'
+      @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
+    else
+      @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
 
   getServingUrl: ->
     @resize()
@@ -122,22 +125,22 @@ class imagoImageController extends Controller
 
     # sizemode fit
     else
-      # console.log 'assetratio: ', @assetRatio, 'wrapperraito: ' , @wrapperRatio
-      if not @height or @opts.autosize is 'height'
-        @opts.autosize = 'height'
-        # console.log '@opts.autosize inside', @opts.autosize, @width, height, @assetRatio, @opts.autosize
-        servingSize = Math.round(Math.max(@width, @width / @assetRatio))
+      # # console.log 'assetratio: ', @assetRatio, 'wrapperraito: ' , @wrapperRatio
+      # if not @height or @opts.autosize is 'height'
+      #   @opts.autosize = 'height'
+      #   # console.log '@opts.autosize inside', @opts.autosize, @width, height, @assetRatio, @opts.autosize
+      #   servingSize = Math.round(Math.max(@width, @width / @assetRatio))
 
-      else if not @width or @opts.autosize is 'width'
-        @opts.autosize = 'width'
-        # console.log '@opts.autosize inside', @opts.autosize
-        servingSize = Math.round(Math.max(@height, @height * @assetRatio))
+      # else if not @width or @opts.autosize is 'width'
+      #   @opts.autosize = 'width'
+      #   # console.log '@opts.autosize inside', @opts.autosize
+      #   servingSize = Math.round(Math.max(@height, @height * @assetRatio))
 
-      else if @assetRatio <= @wrapperRatio
-        # console.log 'fit full @height', width, @height, @assetRatio, @height * @assetRatio
+      if @assetRatio <= @wrapperRatio
+        console.log 'fit full height', @width, @height, @assetRatio, @height * @assetRatio
         servingSize = Math.round(Math.max(@height, @height * @assetRatio))
       else
-        # console.log 'fit full width', width, @height, @assetRatio, @wrapperRatio
+        console.log 'fit full width', @width, @height, @assetRatio, @wrapperRatio
         servingSize = Math.round(Math.max(@width, @width / @assetRatio))
 
     servingSize = parseInt Math.min(servingSize * @dpr, @opts.maxsize)
@@ -165,7 +168,7 @@ class imagoImageController extends Controller
       @$scope.$applyAsync =>
         # @imageStyle =
         #   backgroundImage: "url(#{@opts.servingUrl})"
-        #   backgroundSize: if @opts.assetRatio < @wrapperRatio then '100% auto' else 'auto 100%'
+        #   backgroundSize: if @assetRatio < @wrapperRatio then '100% auto' else 'auto 100%'
         #   backgroundPosition: @opts.align
         @imgUrl = @opts.servingUrl
         @loaded = true

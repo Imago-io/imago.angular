@@ -4,9 +4,7 @@
   position: relative
   background: rgba(red, 0.3)
   // overflow: hidden
-  box-sizing: content-box
-  // display: inline-block
-
+  box-sizing: border-box
   pre
     position: absolute
     top:  50%
@@ -30,38 +28,86 @@
       opacity: 0
       transition: opacity 2s
 
+
+
   &.loaded
     img
       border: 0
     img.large
       opacity: 1
-      // opacity: 0.1
+      opacity: 0.4
     img.small
       // display: none
       opacity: 0
 
-  &.center img
-    left: 50%
-    top:  50%
-    transform: translateX(-50%) translateY(-50%)
-  &.left img
-    left: 0
-  &.top img
-    top: 0
-  &.right img
-    right: 0
-  &.bottom img
-    bottom: 0
+  &.fit
+    &.center img
+      left: 50%
+      top:  50%
+      transform: translateX(-50%) translateY(-50%)
+
+    &.left.center img
+      top:  50%
+      right: initial
+      left: 0
+      bottom: initial
+      transform: translateX(0%) translateY(-50%)
+    &.right.center img
+      top:  50%
+      right: 0
+      left: initial
+      bottom: initial
+      transform: translateX(0%) translateY(-50%)
 
 
-  &.crop.width img
-    height: 100%
-  &.crop.height img
-    width: 100%
-  &.fit.width img
-    width: 100%
-  &.fit.height img
-    height: 100%
+    &.left.top img
+      top: 0
+      right: initial
+      bottom: initial
+      left: 0
+      transform: translateX(0%) translateY(0%)
+    &.center.top img
+      top: 0
+      right: initial
+      bottom: initial
+      left: 50%
+      transform: translateX(-50%) translateY(0%)
+    &.right.top img
+      top: 0
+      right: 0
+      bottom: initial
+      left: initial
+      transform: translateX(0%) translateY(0%)
+
+    &.left.bottom img
+      top: initial
+      right: initial
+      bottom: 0
+      left: 0
+      transform: translateX(0%) translateY(0%)
+    &.center.bottom img
+      top: initial
+      right: initial
+      bottom: 0
+      left: 50%
+      transform: translateX(-50%) translateY(0%)
+    &.right.bottom img
+      top: initial
+      right: 0
+      bottom: 0
+      left: initial
+      transform: translateX(0%) translateY(0%)
+
+  &.crop
+
+
+
+
+  &.crop
+    background: yellow
+
+  &.fit
+    background: blue
 
 // .imago-image
 //   position: relative
