@@ -1,9 +1,9 @@
-.imago-not-supported(ng-if="supported.invalid" ng-class="::{'mobile': mobile}")
+.imago-not-supported(ng-if="::supported.invalid" ng-class="::{'mobile': supported.mobile}")
 
-  .inner(ng-if="mobile")
+  .inner(ng-if="::supported.mobile")
     h1 Browser not supported!
 
-  .inner(ng-if="!mobile")
+  .inner(ng-if="::!supported.mobile")
     h1 Time for change!
     p Please download a new version of your favorite browser.
 

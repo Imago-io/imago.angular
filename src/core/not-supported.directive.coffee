@@ -14,7 +14,7 @@ class NotSupportedController extends Controller
 
   constructor: ($scope, $element, $attrs) ->
 
-    $scope.mobile = bowser.mobile
+    @mobile = bowser.mobile
 
     options =
       ie      : 9

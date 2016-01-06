@@ -4,13 +4,11 @@
 
   .spacer(ng-style="::imagoimage.spacerStyle")
 
-  img(
-    class="small"
-    ng-if="::imagoimage.opts.placeholder && !imagoimage.loaded"
+  img.small(
+    ng-if="::imagoimage.opts.placeholder"
     ng-src="{{::imagoimage.placeholderUrl}}")
 
-  img(
-    class="large"
+  img.large(
     ng-src="{{imagoimage.imgUrl}}"
     ng-show="::imagoimage.imgUrl"
     visible="imagoimage.visible"
@@ -20,6 +18,6 @@
 
   //- pre sizemode: {{imagoimage.opts.sizemode}}  align: {{imagoimage.opts.align}}
   //-   br
-  //-   | class {{imagoimage.loaded}}
+  //-   | class {{imagoimage.loaded}} placeholder {{imagoimage.removePlaceholder()}}
   //-   br
   //-   | mainSide {{imagoimage.mainSide}} height {{imagoimage.height}}

@@ -37,6 +37,7 @@ class imagoImageController extends Controller
 
   constructor: (@$rootScope, @$attrs, @$scope, @$element, @$timeout) ->
 
+    @loaded     = false
     @imageStyle = {}
     @watchers   = []
     @dpr = Math.ceil(window.devicePixelRatio, 1) or 1
@@ -158,7 +159,7 @@ class imagoImageController extends Controller
 
     @servingSize = Math.max servingSize, 60
 
-    console.log 'serving_url', @opts.servingUrl = "#{ @data.serving_url }=s#{ @servingSize * @opts.scale }"
+    @opts.servingUrl = "#{ @data.serving_url }=s#{ @servingSize * @opts.scale }"
 
     # if imagoSlider
     #   imagoSlider.setServingSize("=s#{ servingSize * @opts.scale }")
