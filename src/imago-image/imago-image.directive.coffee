@@ -101,6 +101,8 @@ class imagoImageController extends Controller
       @$scope.$applyAsync =>
         @getServingUrl()
 
+    @resize()
+
   resize: ->
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
@@ -113,7 +115,6 @@ class imagoImageController extends Controller
     else
       @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
 
-    # console.log '@wrapperRatio, @assetRatio', @wrapperRatio, @assetRatio, @height, @mainSide
 
   getServingUrl: ->
     @visible = true
@@ -155,9 +156,9 @@ class imagoImageController extends Controller
       @loaded = true
       return
 
-    @servingSize = Math.max servingSize, 320
+    @servingSize = Math.max servingSize, 60
 
-    @opts.servingUrl = "#{ @data.serving_url }=s#{ @servingSize * @opts.scale }"
+    console.log 'serving_url', @opts.servingUrl = "#{ @data.serving_url }=s#{ @servingSize * @opts.scale }"
 
     # if imagoSlider
     #   imagoSlider.setServingSize("=s#{ servingSize * @opts.scale }")
@@ -170,10 +171,6 @@ class imagoImageController extends Controller
     img = angular.element('<img>')
     img.on 'load', =>
       @$scope.$applyAsync =>
-        # @imageStyle =
-        #   backgroundImage: "url(#{@opts.servingUrl})"
-        #   backgroundSize: if @assetRatio < @wrapperRatio then '100% auto' else 'auto 100%'
-        #   backgroundPosition: @opts.align
         @imgUrl = @opts.servingUrl
         @loaded = true
 

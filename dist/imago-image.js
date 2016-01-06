@@ -139,7 +139,7 @@ imagoImageController = (function() {
       this.removeInView = true;
     }
     if (this.opts.lazy && !this.visible) {
-      return watcher = this.$scope.$watch('imagoimage.visible', (function(_this) {
+      watcher = this.$scope.$watch('imagoimage.visible', (function(_this) {
         return function(value) {
           if (!value) {
             return;
@@ -149,12 +149,13 @@ imagoImageController = (function() {
         };
       })(this));
     } else {
-      return this.$scope.$applyAsync((function(_this) {
+      this.$scope.$applyAsync((function(_this) {
         return function() {
           return _this.getServingUrl();
         };
       })(this));
     }
+    return this.resize();
   };
 
   imagoImageController.prototype.resize = function() {
@@ -193,8 +194,8 @@ imagoImageController = (function() {
       this.loaded = true;
       return;
     }
-    this.servingSize = Math.max(servingSize, 320);
-    this.opts.servingUrl = this.data.serving_url + "=s" + (this.servingSize * this.opts.scale);
+    this.servingSize = Math.max(servingSize, 60);
+    console.log('serving_url', this.opts.servingUrl = this.data.serving_url + "=s" + (this.servingSize * this.opts.scale));
     return this.render();
   };
 
@@ -218,4 +219,4 @@ imagoImageController = (function() {
 
 angular.module('imago').directive('imagoImage', ['$timeout', 'imagoModel', imagoImage]).controller('imagoImageController', ['$rootScope', '$attrs', '$scope', '$element', '$timeout', imagoImageController]);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-image.html","<div ng-class=\"[{\'loaded\': imagoimage.loaded}, {\'prevent-drag\': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode, imagoimage.mainSide]\" class=\"imago-image\"><div ng-style=\"::imagoimage.spacerStyle\" class=\"spacer\"></div><img ng-if=\"::imagoimage.opts.placeholder &amp;&amp; !imagoimage.loaded\" ng-src=\"{{::imagoimage.placeholderUrl}}\" class=\"small\"/><img ng-src=\"{{::imagoimage.imgUrl}}\" ng-show=\"::imagoimage.imgUrl\" visible=\"imagoimage.visible\" in-view=\"imagoimage.visible = $inview\" in-view-remove=\"imagoimage.removeInView\" class=\"large\"/></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-image.html","<div ng-class=\"[{\'loaded\': imagoimage.loaded}, {\'prevent-drag\': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode, imagoimage.mainSide]\" class=\"imago-image\"><div ng-style=\"::imagoimage.spacerStyle\" class=\"spacer\"></div><img ng-if=\"::imagoimage.opts.placeholder &amp;&amp; !imagoimage.loaded\" ng-src=\"{{::imagoimage.placeholderUrl}}\" class=\"small\"/><img ng-src=\"{{imagoimage.imgUrl}}\" ng-show=\"::imagoimage.imgUrl\" visible=\"imagoimage.visible\" in-view=\"imagoimage.visible = $inview\" in-view-remove=\"imagoimage.removeInView\" class=\"large\"/></div>");}]);
