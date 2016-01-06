@@ -94,15 +94,17 @@ class imagoImageController extends Controller
       @removeInView = true
 
     if @opts.lazy and not @visible
+      @$scope.$applyAsync =>
+        @resize()
       watcher = @$scope.$watch 'imagoimage.visible', (value) =>
         return unless value
         watcher()
         @getServingUrl()
     else
       @$scope.$applyAsync =>
+        @resize()
         @getServingUrl()
 
-    @resize()
 
   resize: ->
     @width  = @$element.children()[0].clientWidth
@@ -119,7 +121,6 @@ class imagoImageController extends Controller
 
   getServingUrl: ->
     @visible = true
-    @resize()
 
     if @opts.sizemode is 'crop' and @height
       if @assetRatio <= @wrapperRatio
