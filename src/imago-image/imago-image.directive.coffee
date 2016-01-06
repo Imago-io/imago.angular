@@ -65,10 +65,12 @@ class imagoImageController extends Controller
 
     if @opts.responsive
       @watchers.push @$rootScope.$on 'resize', =>
+        return unless @visible
         @$scope.$applyAsync =>
           @resize()
 
       @watchers.push @$rootScope.$on 'resizestop', =>
+        return unless @visible
         @getServingUrl()
 
     @$scope.$on '$destroy', =>
@@ -100,7 +102,6 @@ class imagoImageController extends Controller
         @getServingUrl()
 
   resize: ->
-    return unless @visible
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
 
