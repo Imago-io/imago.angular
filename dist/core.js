@@ -1629,31 +1629,24 @@ imagoUtils = (function() {
         return str.charAt(0).toUpperCase() + str.slice(1);
       },
       normalize: function(s) {
-        var mapping, r, str;
+        var key, specialCharMapping, value;
         if (typeof s !== 'string') {
           return;
         }
-        mapping = {
-          'ä': 'ae',
-          'ö': 'oe',
-          'ü': 'ue',
-          '&': 'and',
-          'é': 'e',
-          'ë': 'e',
-          'ê': 'e',
-          'ï': 'i',
-          'è': 'e',
-          'à': 'a',
-          'ù': 'u',
-          'ç': 'c',
-          'ø': 'o'
+        s = s.trim().toLowerCase();
+        specialCharMapping = {
+          "ä": "ae",
+          "ö": "oe",
+          "ü": "ue",
+          "&": "and",
+          "ß": "ss",
+          "@": "at"
         };
-        s = s.toLowerCase();
-        r = new RegExp(Object.keys(mapping).join('|'), 'g');
-        str = s.trim().replace(r, function(s) {
-          return mapping[s];
-        }).toLowerCase();
-        return str.replace(/[',:;#]/g, '').replace(/[^\/\w]+/g, '-').replace(/\W?\/\W?/g, '\/').replace(/^-|-$/g, '');
+        for (key in specialCharMapping) {
+          value = specialCharMapping[key];
+          s = s.replace(new RegExp(key, 'g'), value);
+        }
+        return _.deburr(s.replace(/[\.,#¡!?¿@$%\^&\*;:{}='`‘’“”„~()\?><\[\]†‡‹›•™¦©®ª«»¬°¹²³µ¶·º℅ⁿ§¨‣‼№♠♣♦♥←→↑↓♀♂♩♪♬♭]/g, '').replace(/\/|\_|\‾|\ |\\/g, '-').replace(/\-+/g, '-').replace(/^-|-$/g, ''));
       },
       alphaNumSort: alphanum = function(a, b) {
         var aa, bb, c, chunkify, d, x;

@@ -819,27 +819,30 @@ class imagoUtils extends Factory
         str.charAt(0).toUpperCase() + str.slice(1)
 
       normalize: (s) ->
-        return unless typeof s is 'string'
-        mapping =
-          'ä': 'ae'
-          'ö': 'oe'
-          'ü': 'ue'
-          '&': 'and'
-          'é': 'e'
-          'ë': 'e'
-          'ê': 'e'
-          'ï': 'i'
-          'è': 'e'
-          'à': 'a'
-          'ù': 'u'
-          'ç': 'c'
-          'ø': 'o'
+        return if typeof s isnt 'string'
 
-        s = s.toLowerCase()
-        r = new RegExp(Object.keys(mapping).join('|'), 'g')
-        str = s.trim().replace(r, (s) -> mapping[s]).toLowerCase()
+        s = s.trim().toLowerCase()
 
-        str.replace(/[',:;#]/g, '').replace(/[^\/\w]+/g, '-').replace(/\W?\/\W?/g, '\/').replace(/^-|-$/g, '')
+        specialCharMapping =
+          "ä": "ae"
+          "ö": "oe"
+          "ü": "ue"
+          "&": "and"
+          "ß": "ss"
+          "@": "at"
+
+        s = s.replace(new RegExp(key, 'g'), value) for key, value of specialCharMapping
+
+        _.deburr(s.
+          #remove all punctuation and special characters
+          replace(/[\.,#¡!?¿@$%\^&\*;:{}='`‘’“”„~()\?><\[\]†‡‹›•™¦©®ª«»¬°¹²³µ¶·º℅ⁿ§¨‣‼№♠♣♦♥←→↑↓♀♂♩♪♬♭]/g, '').
+          # replace every slash, underscore, overscore, space and backslash with '-'
+          replace(/\/|\_|\‾|\ |\\/g, '-').
+          # replace multiple occurences of - with one only -
+          replace(/\-+/g, '-').
+          # remove leading and trailing -
+          replace(/^-|-$/g, '')
+        )
 
       alphaNumSort: alphanum = (a, b) ->
         chunkify = (t) ->
