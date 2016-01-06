@@ -1,5 +1,8 @@
 .imago-image(
   ng-class="[{'loaded': imagoimage.loaded}, {'prevent-drag': imagoimage.opts.preventDrag}, imagoimage.opts.align, imagoimage.opts.sizemode, imagoimage.mainSide]"
+  in-view="imagoimage.visible = $inview"
+  in-view-remove="imagoimage.removeInView"
+  in-view-options="{debounce: 50}"
   )
 
   .spacer(ng-style="::imagoimage.spacerStyle")
@@ -10,10 +13,7 @@
 
   img.large(
     ng-src="{{imagoimage.imgUrl}}"
-    ng-show="::imagoimage.imgUrl"
-    visible="imagoimage.visible"
-    in-view="imagoimage.visible = $inview"
-    in-view-remove="imagoimage.removeInView")
+    ng-show="::imagoimage.imgUrl")
 
 
   //- pre sizemode: {{imagoimage.opts.sizemode}}  align: {{imagoimage.opts.align}}
