@@ -94,12 +94,13 @@ class imagoImageController extends Controller
       @removeInView = true
 
     if @opts.lazy and not @visible
-      @$scope.$applyAsync =>
-        @resize()
       watcher = @$scope.$watch 'imagoimage.visible', (value) =>
         return unless value
         watcher()
-        @getServingUrl()
+        @$scope.$applyAsync =>
+          @resize()
+          @getServingUrl()
+
     else
       @$scope.$applyAsync =>
         @resize()
@@ -144,10 +145,10 @@ class imagoImageController extends Controller
       #   servingSize = Math.round(Math.max(@height, @height * @assetRatio))
 
       if @assetRatio <= @wrapperRatio
-        # console.log 'fit full height', @width, @height, @assetRatio, @height * @assetRatio
+        # console.log 'fit full height', 'asset', @assetRatio, 'wrapper', @wrapperRatio,  "#{@height * @assetRatio} x #{@height}"
         servingSize = Math.round(Math.max(@height, @height * @assetRatio))
       else
-        # console.log 'fit full width', @width, @height, @assetRatio, @wrapperRatio
+        # console.log 'fit full width', 'asset', @assetRatio, 'wrapper', @wrapperRatio,    "#{@width} x #{@width / @assetRatio}"
         servingSize = Math.round(Math.max(@width, @width / @assetRatio))
 
     servingSize = parseInt Math.min(servingSize * @dpr, @opts.maxsize)

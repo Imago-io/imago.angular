@@ -140,18 +140,16 @@ imagoImageController = (function() {
       this.removeInView = true;
     }
     if (this.opts.lazy && !this.visible) {
-      this.$scope.$applyAsync((function(_this) {
-        return function() {
-          return _this.resize();
-        };
-      })(this));
       return watcher = this.$scope.$watch('imagoimage.visible', (function(_this) {
         return function(value) {
           if (!value) {
             return;
           }
           watcher();
-          return _this.getServingUrl();
+          return _this.$scope.$applyAsync(function() {
+            _this.resize();
+            return _this.getServingUrl();
+          });
         };
       })(this));
     } else {
