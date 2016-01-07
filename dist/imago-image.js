@@ -166,7 +166,14 @@ imagoImageController = (function() {
     this.width = this.$element.children()[0].clientWidth;
     this.height = this.$element.children()[0].clientHeight;
     this.wrapperRatio = this.width / this.height;
+    console.log('@height', this.height);
     if (!this.height) {
+      this.$timeout((function(_this) {
+        return function() {
+          console.log('timeout');
+          return _this.resize();
+        };
+      })(this), 2000);
       return;
     }
     if (this.opts.sizemode === 'crop') {
