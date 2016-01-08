@@ -79,7 +79,7 @@ class imagoImageController extends Controller
 
   init: (data) ->
     @data = data
-    @placeholderUrl = this.data.b64 or "#{@data.serving_url}=s3"
+    @placeholderUrl = @data.b64 or "#{@data.serving_url}=s3"
     @resolution =  @data.resolution.split('x')
     @assetRatio = _.first(@resolution) / _.last(@resolution)
     @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
@@ -88,7 +88,6 @@ class imagoImageController extends Controller
       @mainSide = if @assetRatio > 1 then 'height' else 'width'
     else
       @mainSide = if @assetRatio < 1 then 'height' else 'width'
-
 
     if @data.fields?.crop?.value and not @$attrs.align
       @opts.align = @data.fields.crop.value
@@ -112,10 +111,6 @@ class imagoImageController extends Controller
       @$scope.$applyAsync =>
         @resize()
         @getServingUrl()
-
-
-
-
 
   resize: ->
     console.log 'resize'
