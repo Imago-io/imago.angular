@@ -79,10 +79,16 @@ class imagoImageController extends Controller
 
   init: (data) ->
     @data = data
-    @placeholderUrl = @data.b64 or "#{@data.serving_url}=s3"
+    @placeholderUrl = this.data.b64 or "#{@data.serving_url}=s3"
     @resolution =  @data.resolution.split('x')
     @assetRatio = _.first(@resolution) / _.last(@resolution)
     @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
+
+    if @opts.sizemode is 'crop'
+      @mainSide = if @assetRatio > 1 then 'height' else 'width'
+    else
+      @mainSide = if @assetRatio < 1 then 'height' else 'width'
+
 
     if @data.fields?.crop?.value and not @$attrs.align
       @opts.align = @data.fields.crop.value
@@ -93,6 +99,7 @@ class imagoImageController extends Controller
     if @opts.lazy is false
       @removeInView = true
 
+    # lazy true
     if @opts.lazy and not @visible
       watcher = @$scope.$watch 'imagoimage.visible', (value) =>
         return unless value
@@ -107,18 +114,16 @@ class imagoImageController extends Controller
         @getServingUrl()
 
 
+
+
+
   resize: ->
+    console.log 'resize'
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
 
     @wrapperRatio = @width / @height
-    console.log '@height', @height
-    unless @height
-      @$timeout =>
-        console.log 'timeout'
-        @resize()
-      , 2000
-      return
+    return unless @height
 
     if @opts.sizemode is 'crop'
       @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'

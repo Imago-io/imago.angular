@@ -130,6 +130,11 @@ imagoImageController = (function() {
     this.spacerStyle = {
       paddingBottom: (_.last(this.resolution) / _.first(this.resolution) * 100) + "%"
     };
+    if (this.opts.sizemode === 'crop') {
+      this.mainSide = this.assetRatio > 1 ? 'height' : 'width';
+    } else {
+      this.mainSide = this.assetRatio < 1 ? 'height' : 'width';
+    }
     if (((ref = this.data.fields) != null ? (ref1 = ref.crop) != null ? ref1.value : void 0 : void 0) && !this.$attrs.align) {
       this.opts.align = this.data.fields.crop.value;
     }
@@ -163,17 +168,11 @@ imagoImageController = (function() {
   };
 
   imagoImageController.prototype.resize = function() {
+    console.log('resize');
     this.width = this.$element.children()[0].clientWidth;
     this.height = this.$element.children()[0].clientHeight;
     this.wrapperRatio = this.width / this.height;
-    console.log('@height', this.height);
     if (!this.height) {
-      this.$timeout((function(_this) {
-        return function() {
-          console.log('timeout');
-          return _this.resize();
-        };
-      })(this), 2000);
       return;
     }
     if (this.opts.sizemode === 'crop') {
