@@ -79,10 +79,16 @@ class imagoImageController extends Controller
 
   init: (data) ->
     @data = data
-    @placeholderUrl = @data.b64 or "#{@data.serving_url}=s3"
+    @placeholderUrl = this.data.b64 or "#{@data.serving_url}=s3"
     @resolution =  @data.resolution.split('x')
     @assetRatio = _.first(@resolution) / _.last(@resolution)
     @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
+
+    if @opts.sizemode is 'crop'
+      @mainSide = if @assetRatio > 1 then 'height' else 'width'
+    else
+      @mainSide = if @assetRatio < 1 then 'height' else 'width'
+
 
     if @data.fields?.crop?.value and not @$attrs.align
       @opts.align = @data.fields.crop.value
@@ -93,20 +99,26 @@ class imagoImageController extends Controller
     if @opts.lazy is false
       @removeInView = true
 
+    # lazy true
     if @opts.lazy and not @visible
-      @$scope.$applyAsync =>
-        @resize()
       watcher = @$scope.$watch 'imagoimage.visible', (value) =>
         return unless value
         watcher()
-        @getServingUrl()
+        @$scope.$applyAsync =>
+          @resize()
+          @getServingUrl()
+
     else
       @$scope.$applyAsync =>
         @resize()
         @getServingUrl()
 
 
+
+
+
   resize: ->
+    console.log 'resize'
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
 
@@ -144,10 +156,10 @@ class imagoImageController extends Controller
       #   servingSize = Math.round(Math.max(@height, @height * @assetRatio))
 
       if @assetRatio <= @wrapperRatio
-        # console.log 'fit full height', @width, @height, @assetRatio, @height * @assetRatio
+        # console.log 'fit full height', 'asset', @assetRatio, 'wrapper', @wrapperRatio,  "#{@height * @assetRatio} x #{@height}"
         servingSize = Math.round(Math.max(@height, @height * @assetRatio))
       else
-        # console.log 'fit full width', @width, @height, @assetRatio, @wrapperRatio
+        # console.log 'fit full width', 'asset', @assetRatio, 'wrapper', @wrapperRatio,    "#{@width} x #{@width / @assetRatio}"
         servingSize = Math.round(Math.max(@width, @width / @assetRatio))
 
     servingSize = parseInt Math.min(servingSize * @dpr, @opts.maxsize)

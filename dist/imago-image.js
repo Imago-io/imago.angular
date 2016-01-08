@@ -130,6 +130,11 @@ imagoImageController = (function() {
     this.spacerStyle = {
       paddingBottom: (_.last(this.resolution) / _.first(this.resolution) * 100) + "%"
     };
+    if (this.opts.sizemode === 'crop') {
+      this.mainSide = this.assetRatio > 1 ? 'height' : 'width';
+    } else {
+      this.mainSide = this.assetRatio < 1 ? 'height' : 'width';
+    }
     if (((ref = this.data.fields) != null ? (ref1 = ref.crop) != null ? ref1.value : void 0 : void 0) && !this.$attrs.align) {
       this.opts.align = this.data.fields.crop.value;
     }
@@ -140,18 +145,16 @@ imagoImageController = (function() {
       this.removeInView = true;
     }
     if (this.opts.lazy && !this.visible) {
-      this.$scope.$applyAsync((function(_this) {
-        return function() {
-          return _this.resize();
-        };
-      })(this));
       return watcher = this.$scope.$watch('imagoimage.visible', (function(_this) {
         return function(value) {
           if (!value) {
             return;
           }
           watcher();
-          return _this.getServingUrl();
+          return _this.$scope.$applyAsync(function() {
+            _this.resize();
+            return _this.getServingUrl();
+          });
         };
       })(this));
     } else {
@@ -165,6 +168,7 @@ imagoImageController = (function() {
   };
 
   imagoImageController.prototype.resize = function() {
+    console.log('resize');
     this.width = this.$element.children()[0].clientWidth;
     this.height = this.$element.children()[0].clientHeight;
     this.wrapperRatio = this.width / this.height;
