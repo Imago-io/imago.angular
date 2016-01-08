@@ -51,7 +51,7 @@ class imagoImageController extends Controller
       lazy        : true
       maxsize     : 4000
       placeholder : true
-      preventDrag : true
+      allowDrag   : true
 
     for key of @$attrs
       continue unless @opts[key]
