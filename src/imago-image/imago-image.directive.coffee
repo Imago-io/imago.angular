@@ -1,6 +1,6 @@
 class imagoImage extends Directive
 
-  constructor: ($timeout, imagoModel) ->
+  constructor: (imagoModel) ->
 
     return {
 
@@ -35,7 +35,7 @@ class imagoImage extends Directive
 
 class imagoImageController extends Controller
 
-  constructor: (@$rootScope, @$attrs, @$scope, @$element, @$timeout) ->
+  constructor: (@$rootScope, @$attrs, @$scope, @$element) ->
 
     @loaded     = false
     @imageStyle = {}
@@ -113,7 +113,6 @@ class imagoImageController extends Controller
         @getServingUrl()
 
   resize: ->
-    console.log 'resize'
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
 
