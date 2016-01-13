@@ -12,8 +12,10 @@ imagoImage = (function() {
       link: function(scope, element, attrs, imagoSlider) {
         var destroy, watcher;
         destroy = function() {
-          scope.$destroy();
-          return element.remove();
+          return scope.$applyAsync(function() {
+            scope.$destroy();
+            return element.remove();
+          });
         };
         if (attrs.imagoImage.match(/[0-9a-fA-F]{24}/)) {
           return watcher = attrs.$observe('imagoImage', function(data) {

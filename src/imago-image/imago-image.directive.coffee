@@ -12,8 +12,9 @@ class imagoImage extends Directive
       link: (scope, element, attrs, imagoSlider) ->
 
         destroy = ->
-          scope.$destroy()
-          element.remove()
+          scope.$applyAsync ->
+            scope.$destroy()
+            element.remove()
 
         if attrs.imagoImage.match(/[0-9a-fA-F]{24}/)
           watcher = attrs.$observe 'imagoImage', (data) ->
