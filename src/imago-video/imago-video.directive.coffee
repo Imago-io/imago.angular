@@ -11,8 +11,9 @@ class imagoVideo extends Directive
       link: (scope, element, attrs) ->
 
         destroy = ->
-          scope.$destroy()
-          element.remove()
+          scope.$applyAsync ->
+            scope.$destroy()
+            element.remove()
 
         if attrs.imagoVideo.match(/[0-9a-fA-F]{24}/)
           watcher = attrs.$observe 'imagoVideo', (data) ->
