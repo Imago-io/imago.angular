@@ -5,11 +5,13 @@
   .imago-video-wrapper
     .spacer(ng-style="::imagovideo.spacerStyle")
     videogular(
+        vg-auto-play="::imagovideo.opts.autoplay"
       )
       vg-media(
         vg-src="imagovideo.sources"
       )
-      vg-controls
+      vg-controls(
+        ng-if="::imagovideo.opts.controls" vg-autohide="true")
         vg-play-pause-button
         vg-time-display {{ currentTime | date:'mm:ss' }}
         vg-scrub-bar

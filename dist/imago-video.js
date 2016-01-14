@@ -81,8 +81,7 @@ imagoControlsController = (function() {
 angular.module('imago').directive('imagoControls', [imagoControls]).controller('imagoControlsController', ['$scope', imagoControlsController]);
 
 var imagoVideo, imagoVideoController,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 imagoVideo = (function() {
   function imagoVideo($timeout, $rootScope, imagoUtils, imagoModel) {
@@ -96,8 +95,10 @@ imagoVideo = (function() {
       link: function(scope, element, attrs) {
         var destroy, watcher;
         destroy = function() {
-          scope.$destroy();
-          return element.remove();
+          return scope.$applyAsync(function() {
+            scope.$destroy();
+            return element.remove();
+          });
         };
         if (attrs.imagoVideo.match(/[0-9a-fA-F]{24}/)) {
           return watcher = attrs.$observe('imagoVideo', function(data) {
@@ -221,7 +222,6 @@ imagoVideoController = (function() {
       this.opts.sizemode = this.data.fields.sizemode.value;
     }
     this.sources = [];
-    host = indexOf.call('online', data) >= 0 ? 'api.imago.io' : 'localhost:8000';
     if (!((ref4 = data.fields.formats) != null ? ref4.length : void 0)) {
       if (typeof trackJs !== "undefined" && trackJs !== null) {
         trackJs.track("Video " + data._id + " has no formats");
@@ -229,11 +229,12 @@ imagoVideoController = (function() {
       console.log("Video " + data._id + " has no formats");
       return;
     }
+    host = data === 'online' ? 'api.imago.io' : 'localhost:8000';
     ref5 = data.fields.formats;
     for (i = 0, len = ref5.length; i < len; i++) {
       source = ref5[i];
       this.sources.push({
-        src: this.$sce.trustAsResourceUrl("//api.imago.io/api/play_redirect?uuid=" + data.uuid + "&codec=" + source.codec + "&quality=sd"),
+        src: this.$sce.trustAsResourceUrl("//" + host + "/api/play_redirect?uuid=" + data.uuid + "&codec=" + source.codec + "&quality=hd"),
         type: "video/" + source.codec
       });
     }
@@ -306,4 +307,4 @@ Time = (function() {
 
 angular.module('imago').filter('time', [Time]);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-video.html","<div ng-class=\"[imagovideo.opts.align, imagovideo.opts.sizemode, imagovideo.mainSide]\" class=\"imago-video\"><div class=\"imago-video-wrapper\"><div ng-style=\"::imagovideo.spacerStyle\" class=\"spacer\"></div><videogular><vg-media vg-src=\"imagovideo.sources\"></vg-media><vg-controls><vg-play-pause-button></vg-play-pause-button><vg-time-display>{{ currentTime | date:\'mm:ss\' }}</vg-time-display><vg-scrub-bar><vg-scrub-bar-current-time></vg-scrub-bar-current-time></vg-scrub-bar><vg-time-display>{{ timeLeft | date:\'mm:ss\' }}</vg-time-display><vg-volume><vg-mute-button></vg-mute-button><vg-volume-bar></vg-volume-bar></vg-volume><vg-fullscreen-button></vg-fullscreen-button></vg-controls><vg-overlay-play></vg-overlay-play><vg-poster vg-url=\"imagovideo.poster\"></vg-poster></videogular></div></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-video.html","<div ng-class=\"[imagovideo.opts.align, imagovideo.opts.sizemode, imagovideo.mainSide]\" class=\"imago-video\"><div class=\"imago-video-wrapper\"><div ng-style=\"::imagovideo.spacerStyle\" class=\"spacer\"></div><videogular vg-auto-play=\"::imagovideo.opts.autoplay\"><vg-media vg-src=\"imagovideo.sources\"></vg-media><vg-controls ng-if=\"::imagovideo.opts.controls\" vg-autohide=\"true\"><vg-play-pause-button></vg-play-pause-button><vg-time-display>{{ currentTime | date:\'mm:ss\' }}</vg-time-display><vg-scrub-bar><vg-scrub-bar-current-time></vg-scrub-bar-current-time></vg-scrub-bar><vg-time-display>{{ timeLeft | date:\'mm:ss\' }}</vg-time-display><vg-volume><vg-mute-button></vg-mute-button><vg-volume-bar></vg-volume-bar></vg-volume><vg-fullscreen-button></vg-fullscreen-button></vg-controls><vg-overlay-play></vg-overlay-play><vg-poster vg-url=\"imagovideo.poster\"></vg-poster></videogular></div></div>");}]);

@@ -98,18 +98,15 @@ class imagoVideoController extends Controller
 
     @sources = []
 
-
-    host = if data in 'online' then 'api.imago.io' else 'localhost:8000'
-
-
     unless data.fields.formats?.length
       trackJs?.track "Video #{data._id} has no formats"
       console.log "Video #{data._id} has no formats"
       return
 
+    host = if data is 'online' then 'api.imago.io' else 'localhost:8000'
     for source in data.fields.formats
       @sources.push({
-        src: @$sce.trustAsResourceUrl("//api.imago.io/api/play_redirect?uuid=#{data.uuid}&codec=#{source.codec}&quality=sd")
+        src: @$sce.trustAsResourceUrl("//#{host}/api/play_redirect?uuid=#{data.uuid}&codec=#{source.codec}&quality=hd")
         type: "video/#{source.codec}"
       })
 
