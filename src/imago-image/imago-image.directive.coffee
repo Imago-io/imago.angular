@@ -73,7 +73,9 @@ class imagoImageController extends Controller
 
       @watchers.push @$rootScope.$on 'resizestop', =>
         return unless @visible
-        @getServingUrl()
+        @$scope.$applyAsync =>
+          @resize()
+          @getServingUrl()
 
     @$scope.$on '$destroy', =>
       watcher() for watcher in @watchers
@@ -114,8 +116,10 @@ class imagoImageController extends Controller
         @getServingUrl()
 
   resize: ->
-    @width  = @$element.children()[0].clientWidth
-    @height = @$element.children()[0].clientHeight
+    @width  = parseInt(window.getComputedStyle(@$element[0]).width) \
+              or @$element.children()[0].clientWidth
+    @height = parseInt(window.getComputedStyle(@$element[0]).height) \
+              or @$element.children()[0].clientHeight
 
     @wrapperRatio = @width / @height
     return unless @height

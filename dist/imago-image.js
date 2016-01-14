@@ -104,7 +104,10 @@ imagoImageController = (function() {
           if (!_this.visible) {
             return;
           }
-          return _this.getServingUrl();
+          return _this.$scope.$applyAsync(function() {
+            _this.resize();
+            return _this.getServingUrl();
+          });
         };
       })(this)));
     }
@@ -169,8 +172,8 @@ imagoImageController = (function() {
   };
 
   imagoImageController.prototype.resize = function() {
-    this.width = this.$element.children()[0].clientWidth;
-    this.height = this.$element.children()[0].clientHeight;
+    this.width = parseInt(window.getComputedStyle(this.$element[0]).width) || this.$element.children()[0].clientWidth;
+    this.height = parseInt(window.getComputedStyle(this.$element[0]).height) || this.$element.children()[0].clientHeight;
     this.wrapperRatio = this.width / this.height;
     if (!this.height) {
       return;
