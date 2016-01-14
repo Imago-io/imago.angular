@@ -80,8 +80,7 @@ imagoControlsController = (function() {
 
 angular.module('imago').directive('imagoControls', [imagoControls]).controller('imagoControlsController', ['$scope', imagoControlsController]);
 
-var imagoVideo, imagoVideoController,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var imagoVideo, imagoVideoController;
 
 imagoVideo = (function() {
   function imagoVideo($timeout, $rootScope, imagoUtils, imagoModel) {
@@ -144,7 +143,6 @@ imagoVideoController = (function() {
     this.$scope = $scope;
     this.$element = $element;
     this.$sce = $sce;
-    this.render = bind(this.render, this);
     this.watchers = [];
     this.dpr = Math.ceil(window.devicePixelRatio, 1) || 1;
     this.opts = {
@@ -181,11 +179,6 @@ imagoVideoController = (function() {
           });
         };
       })(this)));
-      this.watchers.push(this.$rootScope.$on('resizestop', (function(_this) {
-        return function() {
-          return console.log('resizestop');
-        };
-      })(this)));
     }
     this.$scope.$on('$destroy', (function(_this) {
       return function() {
@@ -201,11 +194,11 @@ imagoVideoController = (function() {
     })(this));
   }
 
-  imagoVideoController.prototype.init = function(data) {
-    var host, i, len, ref, ref1, ref2, ref3, ref4, ref5, source;
-    this.data = data;
-    this.placeholderUrl = this.data.b64 || (this.data.serving_url + "=s3");
-    this.resolution = this.data.resolution.split('x');
+  imagoVideoController.prototype.init = function(asset) {
+    var i, len, ref, ref1, ref2, ref3, ref4, ref5, source;
+    this.asset = asset;
+    this.placeholderUrl = this.asset.b64 || (this.asset.serving_url + "=s3");
+    this.resolution = this.asset.resolution.split('x');
     this.assetRatio = _.first(this.resolution) / _.last(this.resolution);
     this.spacerStyle = {
       paddingBottom: (_.last(this.resolution) / _.first(this.resolution) * 100) + "%"
@@ -215,30 +208,29 @@ imagoVideoController = (function() {
     } else {
       this.mainSide = this.assetRatio < 1 ? 'height' : 'width';
     }
-    if (((ref = this.data.fields) != null ? (ref1 = ref.crop) != null ? ref1.value : void 0 : void 0) && !this.$attrs.align) {
-      this.opts.align = this.data.fields.crop.value;
+    if (((ref = this.asset.fields) != null ? (ref1 = ref.crop) != null ? ref1.value : void 0 : void 0) && !this.$attrs.align) {
+      this.opts.align = this.asset.fields.crop.value;
     }
-    if (((ref2 = this.data.fields) != null ? (ref3 = ref2.sizemode) != null ? ref3.value : void 0 : void 0) && this.data.fields.sizemode.value !== 'default' && !this.$attrs.sizemode) {
-      this.opts.sizemode = this.data.fields.sizemode.value;
+    if (((ref2 = this.asset.fields) != null ? (ref3 = ref2.sizemode) != null ? ref3.value : void 0 : void 0) && this.asset.fields.sizemode.value !== 'default' && !this.$attrs.sizemode) {
+      this.opts.sizemode = this.asset.fields.sizemode.value;
     }
     this.sources = [];
-    if (!((ref4 = data.fields.formats) != null ? ref4.length : void 0)) {
+    if (!((ref4 = this.asset.fields.formats) != null ? ref4.length : void 0)) {
       if (typeof trackJs !== "undefined" && trackJs !== null) {
-        trackJs.track("Video " + data._id + " has no formats");
+        trackJs.track("Video " + this.data._id + " has no formats");
       }
-      console.log("Video " + data._id + " has no formats");
+      console.log("Video " + this.data._id + " has no formats");
       return;
     }
-    host = data === 'online' ? 'api.imago.io' : 'localhost:8000';
-    ref5 = data.fields.formats;
+    ref5 = this.asset.fields.formats;
     for (i = 0, len = ref5.length; i < len; i++) {
       source = ref5[i];
       this.sources.push({
-        src: this.$sce.trustAsResourceUrl("//" + host + "/api/play_redirect?uuid=" + data.uuid + "&codec=" + source.codec + "&quality=hd"),
+        src: this.$sce.trustAsResourceUrl("//" + host + "/api/play_redirect?uuid=" + this.asset.uuid + "&codec=" + source.codec + "&quality=hd"),
         type: "video/" + source.codec
       });
     }
-    this.poster = data.serving_url + "=s720";
+    this.poster = this.data.serving_url + "=s720";
     return this.$scope.$applyAsync((function(_this) {
       return function() {
         return _this.resize();
@@ -247,7 +239,6 @@ imagoVideoController = (function() {
   };
 
   imagoVideoController.prototype.resize = function() {
-    console.log('resize');
     this.width = this.$element.children()[0].clientWidth;
     this.height = this.$element.children()[0].clientHeight;
     this.wrapperRatio = this.width / this.height;
@@ -255,15 +246,10 @@ imagoVideoController = (function() {
       return;
     }
     if (this.opts.sizemode === 'crop') {
-      this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
+      return this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
     } else {
-      this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
+      return this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
     }
-    return console.log('@mainSide', this.mainSide);
-  };
-
-  imagoVideoController.prototype.render = function() {
-    return console.log('render');
   };
 
   return imagoVideoController;

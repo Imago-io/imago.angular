@@ -68,18 +68,18 @@ class imagoVideoController extends Controller
         @$scope.$applyAsync =>
           @resize()
 
-      @watchers.push @$rootScope.$on 'resizestop', =>
-        console.log 'resizestop'
+      # @watchers.push @$rootScope.$on 'resizestop', =>
+      #   console.log 'resizestop'
 
     @$scope.$on '$destroy', =>
       watcher() for watcher in @watchers
 
 
-  init: (data) ->
+  init: (asset) ->
 
-    @data = data
-    @placeholderUrl = @data.b64 or "#{@data.serving_url}=s3"
-    @resolution =  @data.resolution.split('x')
+    @asset = asset
+    @placeholderUrl = @asset.b64 or "#{@asset.serving_url}=s3"
+    @resolution =  @asset.resolution.split('x')
     @assetRatio = _.first(@resolution) / _.last(@resolution)
     @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
 
@@ -90,27 +90,26 @@ class imagoVideoController extends Controller
 
     # console.log '@mainSide', @mainSide, @assetRatio
 
-    if @data.fields?.crop?.value and not @$attrs.align
-      @opts.align = @data.fields.crop.value
-    if @data.fields?.sizemode?.value and \
-      @data.fields.sizemode.value isnt 'default' and not @$attrs.sizemode
-        @opts.sizemode = @data.fields.sizemode.value
+    if @asset.fields?.crop?.value and not @$attrs.align
+      @opts.align = @asset.fields.crop.value
+    if @asset.fields?.sizemode?.value and \
+      @asset.fields.sizemode.value isnt 'default' and not @$attrs.sizemode
+        @opts.sizemode = @asset.fields.sizemode.value
 
     @sources = []
 
-    unless data.fields.formats?.length
-      trackJs?.track "Video #{data._id} has no formats"
-      console.log "Video #{data._id} has no formats"
+    unless @asset.fields.formats?.length
+      trackJs?.track "Video #{@data._id} has no formats"
+      console.log "Video #{@data._id} has no formats"
       return
 
-    host = if data is 'online' then 'api.imago.io' else 'localhost:8000'
-    for source in data.fields.formats
+    for source in @asset.fields.formats
       @sources.push({
-        src: @$sce.trustAsResourceUrl("//#{host}/api/play_redirect?uuid=#{data.uuid}&codec=#{source.codec}&quality=hd")
+        src: @$sce.trustAsResourceUrl("//#{host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{source.codec}&quality=hd")
         type: "video/#{source.codec}"
       })
 
-    @poster = "#{data.serving_url}=s720"
+    @poster = "#{@data.serving_url}=s720"
 
 
     @$scope.$applyAsync =>
@@ -118,7 +117,6 @@ class imagoVideoController extends Controller
 
 
   resize: ->
-    console.log 'resize'
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
 
@@ -130,11 +128,9 @@ class imagoVideoController extends Controller
     else
       @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
 
-    # console.log 'resize', '@assetRatio', @assetRatio, '@wrapperRatio', @wrapperRatio, '@mainSide', @mainSide
-    console.log '@mainSide', @mainSide
 
-  render: =>
-    console.log 'render'
+  # render: =>
+  #   console.log 'render'
 
 
 
