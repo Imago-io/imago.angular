@@ -80,7 +80,8 @@ imagoControlsController = (function() {
 
 angular.module('imago').directive('imagoControls', [imagoControls]).controller('imagoControlsController', ['$scope', imagoControlsController]);
 
-var imagoVideo, imagoVideoController;
+var imagoVideo, imagoVideoController,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 imagoVideo = (function() {
   function imagoVideo($timeout, $rootScope, imagoUtils, imagoModel) {
@@ -100,30 +101,38 @@ imagoVideo = (function() {
           });
         };
         if (attrs.imagoVideo.match(/[0-9a-fA-F]{24}/)) {
-          return watcher = attrs.$observe('imagoVideo', function(data) {
-            if (!data) {
+          return watcher = attrs.$observe('imagoVideo', function(asset) {
+            var ref, ref1;
+            if (!asset) {
               return;
             }
             watcher();
-            data = imagoModel.find({
-              '_id': data
+            asset = imagoModel.find({
+              '_id': asset
             });
-            if (!data.serving_url) {
+            if (!((ref = asset.fields) != null ? (ref1 = ref.formats) != null ? ref1.length : void 0 : void 0)) {
+              if (typeof trackJs !== "undefined" && trackJs !== null) {
+                trackJs.track("Video " + this.asset._id + " has no formats");
+              }
               return destroy();
             }
-            return scope.imagovideo.init(data);
+            return scope.imagovideo.init(asset);
           });
         } else {
           return watcher = scope.$watch(attrs.imagoVideo, (function(_this) {
-            return function(data) {
-              if (!data) {
+            return function(asset) {
+              var ref, ref1;
+              if (!asset) {
                 return;
               }
               watcher();
-              if (!data.serving_url) {
+              if (!((ref = asset.fields) != null ? (ref1 = ref.formats) != null ? ref1.length : void 0 : void 0)) {
+                if (typeof trackJs !== "undefined" && trackJs !== null) {
+                  trackJs.track("Video " + _this.asset._id + " has no formats");
+                }
                 return destroy();
               }
-              return scope.imagovideo.init(data);
+              return scope.imagovideo.init(asset);
             };
           })(this));
         }
@@ -195,7 +204,7 @@ imagoVideoController = (function() {
   }
 
   imagoVideoController.prototype.init = function(asset) {
-    var i, len, ref, ref1, ref2, ref3, ref4, ref5, source;
+    var host, i, len, ref, ref1, ref2, ref3, ref4, source;
     this.asset = asset;
     this.placeholderUrl = this.asset.b64 || (this.asset.serving_url + "=s3");
     this.resolution = this.asset.resolution.split('x');
@@ -215,22 +224,16 @@ imagoVideoController = (function() {
       this.opts.sizemode = this.asset.fields.sizemode.value;
     }
     this.sources = [];
-    if (!((ref4 = this.asset.fields.formats) != null ? ref4.length : void 0)) {
-      if (typeof trackJs !== "undefined" && trackJs !== null) {
-        trackJs.track("Video " + this.data._id + " has no formats");
-      }
-      console.log("Video " + this.data._id + " has no formats");
-      return;
-    }
-    ref5 = this.asset.fields.formats;
-    for (i = 0, len = ref5.length; i < len; i++) {
-      source = ref5[i];
+    host = indexOf.call('online', data) >= 0 ? 'api.imago.io' : 'localhost:8000';
+    ref4 = this.asset.fields.formats;
+    for (i = 0, len = ref4.length; i < len; i++) {
+      source = ref4[i];
       this.sources.push({
         src: this.$sce.trustAsResourceUrl("//" + host + "/api/play_redirect?uuid=" + this.asset.uuid + "&codec=" + source.codec + "&quality=hd"),
         type: "video/" + source.codec
       });
     }
-    this.poster = this.data.serving_url + "=s720";
+    this.poster = this.asset.serving_url + "=s720";
     return this.$scope.$applyAsync((function(_this) {
       return function() {
         return _this.resize();

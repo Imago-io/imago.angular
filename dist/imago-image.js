@@ -18,30 +18,30 @@ imagoImage = (function() {
           });
         };
         if (attrs.imagoImage.match(/[0-9a-fA-F]{24}/)) {
-          return watcher = attrs.$observe('imagoImage', function(data) {
-            if (!data) {
+          return watcher = attrs.$observe('imagoImage', function(asset) {
+            if (!asset) {
               return;
             }
             watcher();
-            data = imagoModel.find({
-              '_id': data
+            asset = imagoModel.find({
+              '_id': asset
             });
-            if (!data.serving_url) {
+            if (!asset.serving_url) {
               return destroy();
             }
-            return scope.imagoimage.init(data);
+            return scope.imagoimage.init(asset);
           });
         } else {
           return watcher = scope.$watch(attrs.imagoImage, (function(_this) {
-            return function(data) {
-              if (!data) {
+            return function(asset) {
+              if (!asset) {
                 return;
               }
               watcher();
-              if (!data.serving_url) {
+              if (!asset.serving_url) {
                 return destroy();
               }
-              return scope.imagoimage.init(data);
+              return scope.imagoimage.init(asset);
             };
           })(this));
         }

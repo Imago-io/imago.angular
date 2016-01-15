@@ -16,20 +16,22 @@ class imagoVideo extends Directive
             element.remove()
 
         if attrs.imagoVideo.match(/[0-9a-fA-F]{24}/)
-          watcher = attrs.$observe 'imagoVideo', (data) ->
-            return unless data
+          watcher = attrs.$observe 'imagoVideo', (asset) ->
+            return unless asset
             watcher()
-            data = imagoModel.find('_id': data)
-            unless data.serving_url
+            asset = imagoModel.find('_id': asset)
+            unless asset.fields?.formats?.length
+              trackJs?.track "Video #{@asset._id} has no formats"
               return destroy()
-            scope.imagovideo.init(data)
+            scope.imagovideo.init(asset)
         else
-          watcher = scope.$watch attrs.imagoVideo, (data) =>
-            return unless data
+          watcher = scope.$watch attrs.imagoVideo, (asset) =>
+            return unless asset
             watcher()
-            unless data.serving_url
+            unless asset.fields?.formats?.length
+              trackJs?.track "Video #{@asset._id} has no formats"
               return destroy()
-            scope.imagovideo.init(data)
+            scope.imagovideo.init(asset)
 
     }
 
@@ -76,7 +78,6 @@ class imagoVideoController extends Controller
 
 
   init: (asset) ->
-
     @asset = asset
     @placeholderUrl = @asset.b64 or "#{@asset.serving_url}=s3"
     @resolution =  @asset.resolution.split('x')
@@ -98,10 +99,7 @@ class imagoVideoController extends Controller
 
     @sources = []
 
-    unless @asset.fields.formats?.length
-      trackJs?.track "Video #{@data._id} has no formats"
-      console.log "Video #{@data._id} has no formats"
-      return
+    host = if data in 'online' then 'api.imago.io' else 'localhost:8000'
 
     for source in @asset.fields.formats
       @sources.push({
@@ -109,7 +107,7 @@ class imagoVideoController extends Controller
         type: "video/#{source.codec}"
       })
 
-    @poster = "#{@data.serving_url}=s720"
+    @poster = "#{@asset.serving_url}=s720"
 
 
     @$scope.$applyAsync =>

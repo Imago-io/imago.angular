@@ -17,20 +17,20 @@ class imagoImage extends Directive
             element.remove()
 
         if attrs.imagoImage.match(/[0-9a-fA-F]{24}/)
-          watcher = attrs.$observe 'imagoImage', (data) ->
-            return unless data
+          watcher = attrs.$observe 'imagoImage', (asset) ->
+            return unless asset
             watcher()
-            data = imagoModel.find('_id': data)
-            unless data.serving_url
+            asset = imagoModel.find('_id': asset)
+            unless asset.serving_url
               return destroy()
-            scope.imagoimage.init(data)
+            scope.imagoimage.init(asset)
         else
-          watcher = scope.$watch attrs.imagoImage, (data) =>
-            return unless data
+          watcher = scope.$watch attrs.imagoImage, (asset) =>
+            return unless asset
             watcher()
-            unless data.serving_url
+            unless asset.serving_url
               return destroy()
-            scope.imagoimage.init(data)
+            scope.imagoimage.init(asset)
 
     }
 
