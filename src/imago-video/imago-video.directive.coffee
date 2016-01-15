@@ -21,7 +21,7 @@ class imagoVideo extends Directive
             watcher()
             asset = imagoModel.find('_id': asset)
             unless asset.fields?.formats?.length
-              trackJs?.track "Video #{@asset._id} has no formats"
+              trackJs?.track "Video #{asset._id} has no formats"
               return destroy()
             scope.imagovideo.init(asset)
         else
@@ -29,7 +29,7 @@ class imagoVideo extends Directive
             return unless asset
             watcher()
             unless asset.fields?.formats?.length
-              trackJs?.track "Video #{@asset._id} has no formats"
+              trackJs?.track "Video #{asset._id} has no formats"
               return destroy()
             scope.imagovideo.init(asset)
 
@@ -99,7 +99,7 @@ class imagoVideoController extends Controller
 
     @sources = []
 
-    host = if data in 'online' then 'api.imago.io' else 'localhost:8000'
+    host = if data is 'online' then 'api.imago.io' else 'localhost:8000'
 
     for source in @asset.fields.formats
       @sources.push({

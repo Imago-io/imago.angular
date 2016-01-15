@@ -80,8 +80,7 @@ imagoControlsController = (function() {
 
 angular.module('imago').directive('imagoControls', [imagoControls]).controller('imagoControlsController', ['$scope', imagoControlsController]);
 
-var imagoVideo, imagoVideoController,
-  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+var imagoVideo, imagoVideoController;
 
 imagoVideo = (function() {
   function imagoVideo($timeout, $rootScope, imagoUtils, imagoModel) {
@@ -112,7 +111,7 @@ imagoVideo = (function() {
             });
             if (!((ref = asset.fields) != null ? (ref1 = ref.formats) != null ? ref1.length : void 0 : void 0)) {
               if (typeof trackJs !== "undefined" && trackJs !== null) {
-                trackJs.track("Video " + this.asset._id + " has no formats");
+                trackJs.track("Video " + asset._id + " has no formats");
               }
               return destroy();
             }
@@ -128,7 +127,7 @@ imagoVideo = (function() {
               watcher();
               if (!((ref = asset.fields) != null ? (ref1 = ref.formats) != null ? ref1.length : void 0 : void 0)) {
                 if (typeof trackJs !== "undefined" && trackJs !== null) {
-                  trackJs.track("Video " + _this.asset._id + " has no formats");
+                  trackJs.track("Video " + asset._id + " has no formats");
                 }
                 return destroy();
               }
@@ -224,7 +223,7 @@ imagoVideoController = (function() {
       this.opts.sizemode = this.asset.fields.sizemode.value;
     }
     this.sources = [];
-    host = indexOf.call('online', data) >= 0 ? 'api.imago.io' : 'localhost:8000';
+    host = data === 'online' ? 'api.imago.io' : 'localhost:8000';
     ref4 = this.asset.fields.formats;
     for (i = 0, len = ref4.length; i < len; i++) {
       source = ref4[i];
