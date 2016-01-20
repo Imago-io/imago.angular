@@ -1,10 +1,10 @@
 @font-face {
   font-family: "imago-icons";
-  src: url('i/fonts/imago-icons.eot?923657236854');
+  src: url('i/fonts/imago-icons.eot?629913849756');
   src: url('i/fonts/imago-icons.eot?#iefix') format('eot'),
-    url('i/fonts/imago-icons.woff2?923657236854') format('woff2'),
-    url('i/fonts/imago-icons.woff?923657236854') format('woff'),
-    url('i/fonts/imago-icons.ttf?923657236854') format('truetype'),
+    url('i/fonts/imago-icons.woff2?629913849756') format('woff2'),
+    url('i/fonts/imago-icons.woff?629913849756') format('woff'),
+    url('i/fonts/imago-icons.ttf?629913849756') format('truetype'),
     url('i/fonts/imago-icons.svg#imago-icons') format('svg');
   font-weight: normal;
   font-style: normal;
@@ -42,43 +42,43 @@
   text-align: center;
 }
 
-.ii--fw {
+.ii-fw {
   width: 1.28571429em;
   text-align: center;
 }
-.ii--ul {
+.ii-ul {
   padding-left: 0;
   margin-left: 2.14285714em;
   list-style-type: none;
 }
-.ii--ul > li {
+.ii-ul > li {
   position: relative;
 }
-.ii--li {
+.ii-li {
   position: absolute;
   left: -2.14285714em;
   width: 2.14285714em;
   top: 0.14285714em;
   text-align: center;
 }
-.ii--li.ii--lg {
+.ii-li.ii-lg {
   left: -1.85714286em;
 }
-.ii--border {
+.ii-border {
   padding: .2em .25em .15em;
   border: solid 0.08em #eeeeee;
   border-radius: .1em;
 }
-/*.pull-right {
+.pull-right {
   float: right;
 }
 .pull-left {
   float: left;
-}*/
-.ii-.pull-left {
+}
+.ii.pull-left {
   margin-right: .3em;
 }
-.ii-.pull-right {
+.ii.pull-right {
   margin-left: .3em;
 }
 
@@ -120,3 +120,4 @@
 .ii-caret-up-line:before { content: "\F737" }
 .ii-bars:before { content: "\F738" }
 .ii-menu:before { content: "\F739" }
+.ii-code:before { content: "\F740" }
