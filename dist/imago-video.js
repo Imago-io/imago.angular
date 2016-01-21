@@ -232,7 +232,9 @@ imagoVideoController = (function() {
         type: "video/" + source.codec
       });
     }
-    this.poster = this.asset.serving_url + "=s720";
+    if (this.asset.serving_url) {
+      this.poster = this.asset.serving_url + "=s720";
+    }
     return this.$scope.$applyAsync((function(_this) {
       return function() {
         return _this.resize();

@@ -18,7 +18,7 @@ imagoImage = (function() {
           });
         };
         if (attrs.imagoImage.match(/[0-9a-fA-F]{24}/)) {
-          return watcher = attrs.$observe('imagoImage', function(asset) {
+          watcher = attrs.$observe('imagoImage', function(asset) {
             if (!asset) {
               return;
             }
@@ -32,7 +32,7 @@ imagoImage = (function() {
             return scope.imagoimage.init(asset);
           });
         } else {
-          return watcher = scope.$watch(attrs.imagoImage, (function(_this) {
+          watcher = scope.$watch(attrs.imagoImage, (function(_this) {
             return function(asset) {
               if (!asset) {
                 return;
@@ -45,6 +45,12 @@ imagoImage = (function() {
             };
           })(this));
         }
+        return scope.setServingSize = function(servingSize) {
+          if (!imagoSlider) {
+            return;
+          }
+          return imagoSlider.setServingSize(servingSize);
+        };
       }
     };
   }
@@ -125,11 +131,11 @@ imagoImageController = (function() {
     })(this));
   }
 
-  imagoImageController.prototype.init = function(data) {
+  imagoImageController.prototype.init = function(asset) {
     var ref, ref1, ref2, ref3, watcher;
-    this.data = data;
-    this.placeholderUrl = this.data.b64 || (this.data.serving_url + "=s3");
-    this.resolution = this.data.resolution.split('x');
+    this.asset = asset;
+    this.placeholderUrl = this.asset.b64 || (this.asset.serving_url + "=s3");
+    this.resolution = this.asset.resolution.split('x');
     this.assetRatio = _.first(this.resolution) / _.last(this.resolution);
     this.spacerStyle = {
       paddingBottom: (_.last(this.resolution) / _.first(this.resolution) * 100) + "%"
@@ -139,11 +145,11 @@ imagoImageController = (function() {
     } else {
       this.mainSide = this.assetRatio < 1 ? 'height' : 'width';
     }
-    if (((ref = this.data.fields) != null ? (ref1 = ref.crop) != null ? ref1.value : void 0 : void 0) && !this.$attrs.align) {
-      this.opts.align = this.data.fields.crop.value;
+    if (((ref = this.asset.fields) != null ? (ref1 = ref.crop) != null ? ref1.value : void 0 : void 0) && !this.$attrs.align) {
+      this.opts.align = this.asset.fields.crop.value;
     }
-    if (((ref2 = this.data.fields) != null ? (ref3 = ref2.sizemode) != null ? ref3.value : void 0 : void 0) && this.data.fields.sizemode.value !== 'default' && !this.$attrs.sizemode) {
-      this.opts.sizemode = this.data.fields.sizemode.value;
+    if (((ref2 = this.asset.fields) != null ? (ref3 = ref2.sizemode) != null ? ref3.value : void 0 : void 0) && this.asset.fields.sizemode.value !== 'default' && !this.$attrs.sizemode) {
+      this.opts.sizemode = this.asset.fields.sizemode.value;
     }
     if (this.opts.lazy === false) {
       this.removeInView = true;
@@ -207,7 +213,8 @@ imagoImageController = (function() {
       return;
     }
     this.servingSize = Math.max(servingSize, 60);
-    this.opts.servingUrl = this.data.serving_url + "=s" + (this.servingSize * this.opts.scale);
+    this.opts.servingUrl = this.asset.serving_url + "=s" + (this.servingSize * this.opts.scale);
+    this.$scope.setServingSize("=s" + (servingSize * this.opts.scale));
     return this.render();
   };
 

@@ -1,6 +1,6 @@
 class imagoSlider extends Directive
 
-  constructor: ($rootScope, $document, $interval, $location) ->
+  constructor: ($rootScope, $document, $interval, $location, $timeout) ->
 
     return {
 
@@ -13,51 +13,40 @@ class imagoSlider extends Directive
 
       link: (scope, element, attrs, ctrl, transclude) ->
 
+        transclude scope, (clone) ->
+          element.children().children().eq(0).append(clone)
+
         watchers = []
 
-        scope.imagoslider.length = attrs.length or scope.imagoslider.assets?.length
-
-        transclude scope, (clone) ->
-          element.children().append(clone)
-
-        for key, value of attrs
-          continue unless key.charAt(0) isnt '$'
-          if value in ['true', 'false']
-            value = JSON.parse value
-          scope.imagoslider.conf[key] = value
-
-        if angular.isDefined attrs.length
-          attrs.$observe 'length', (data) ->
-            scope.imagoslider.length = data
-        else
-          scope.$watchCollection 'imagoslider.assets', (data) ->
-            return if not data or not _.isArray data
-            scope.imagoslider.length = data.length
-            scope.prefetch('initial')
+        scope.$watchCollection 'imagoslider.assets', (data) ->
+          return if not data or not _.isArray data
+          scope.imagoslider.length = data.length
+          scope.imagoslider.init()
+          scope.prefetch('initial')
 
         scope.setSiblings = ->
-          scope.imagoslider.conf.siblings = !!(scope.imagoslider.conf.next and scope.imagoslider.conf.prev)
+          scope.imagoslider.opts.siblings = !!(scope.imagoslider.opts.next and scope.imagoslider.opts.prev)
 
         scope.setSiblings()
 
         if angular.isDefined attrs.prev
           attrs.$observe 'prev', ->
-            scope.imagoslider.conf.prev = attrs.prev
+            scope.imagoslider.opts.prev = attrs.prev
             scope.setSiblings()
 
         if angular.isDefined attrs.next
           attrs.$observe 'next', ->
-            scope.imagoslider.conf.next = attrs.next
+            scope.imagoslider.opts.next = attrs.next
             scope.setSiblings()
 
         if $location.path().indexOf('last')
-          scope.currentIndex = parseInt(scope.imagoslider.conf.current)
+          scope.currentIndex = parseInt(scope.imagoslider.opts.current)
         else
           scope.currentIndex = scope.getLast()
 
         scope.clearInterval = ->
-          return unless scope.imagoslider.conf.interval
-          $interval.cancel(scope.imagoslider.conf.interval)
+          return unless scope.imagoslider.opts.interval
+          $interval.cancel(scope.imagoslider.opts.interval)
 
         scope.imagoslider.goPrev = (ev) ->
           if typeof ev is 'object'
@@ -65,23 +54,23 @@ class imagoSlider extends Directive
             ev.stopPropagation()
 
           # no loop
-          if not scope.imagoslider.conf.loop
+          if not scope.imagoslider.opts.loop
             scope.imagoslider.setCurrent(
               if (scope.currentIndex > 0) then scope.currentIndex - 1 else scope.currentIndex
             )
 
           # loop through current collection
-          else if scope.imagoslider.conf.loop and not scope.imagoslider.conf.siblings
+          else if scope.imagoslider.opts.loop and not scope.imagoslider.opts.siblings
             scope.imagoslider.setCurrent(
               if (scope.currentIndex > 0) then scope.currentIndex - 1 else parseInt(scope.imagoslider.length) - 1
             )
 
           # loop through sibling collections
-          else if scope.imagoslider.conf.loop and scope.imagoslider.conf.siblings
+          else if scope.imagoslider.opts.loop and scope.imagoslider.opts.siblings
             if (scope.currentIndex > 0)
               scope.imagoslider.setCurrent(scope.currentIndex - 1)
             else
-              $location.path scope.imagoslider.conf.prev
+              $location.path scope.imagoslider.opts.prev
 
           scope.prefetch('prev')
 
@@ -91,28 +80,28 @@ class imagoSlider extends Directive
             ev.stopPropagation() if ev
 
           # no loop
-          if not scope.imagoslider.conf.loop
+          if not scope.imagoslider.opts.loop
             scope.imagoslider.setCurrent(
               if (scope.currentIndex < scope.imagoslider.length - 1) then scope.currentIndex + 1 else scope.currentIndex
             )
 
           # loop through current collection
-          else if scope.imagoslider.conf.loop and not scope.imagoslider.conf.siblings
+          else if scope.imagoslider.opts.loop and not scope.imagoslider.opts.siblings
             scope.imagoslider.setCurrent(
               if (scope.currentIndex < scope.imagoslider.length - 1) then scope.currentIndex + 1 else 0
             )
 
           # loop through sibling collections
-          else if scope.imagoslider.conf.loop and scope.imagoslider.conf.siblings
+          else if scope.imagoslider.opts.loop and scope.imagoslider.opts.siblings
             if (scope.currentIndex < scope.imagoslider.length - 1)
               scope.imagoslider.setCurrent(scope.currentIndex + 1)
             else
-              $location.path scope.imagoslider.conf.next
+              $location.path scope.imagoslider.opts.next
 
           scope.prefetch('next')
 
         scope.prefetch = (direction) ->
-          return if not scope.imagoslider.conf.prefetch or not scope.imagoslider.assets?.length
+          return if not scope.imagoslider.opts.prefetch or not scope.imagoslider.assets?.length
           if scope.currentIndex is scope.getLast()
             idx = 0
           else if direction is 'initial'
@@ -136,8 +125,8 @@ class imagoSlider extends Directive
         scope.imagoslider.setCurrent = (index) ->
           scope.action = switch
             # make last to first infinit if loop over one collection
-            when index is 0 and scope.currentIndex is (parseInt(@length) - 1) and not @conf.siblings then 'next'
-            when index is (parseInt(@length) - 1) and scope.currentIndex is 0 and not @conf.siblings then 'prev'
+            when index is 0 and scope.currentIndex is (parseInt(@length) - 1) and not scope.imagoslider.opts.siblings then 'next'
+            when index is (parseInt(@length) - 1) and scope.currentIndex is 0 and not scope.imagoslider.opts.siblings then 'prev'
             when index > scope.currentIndex then 'next'
             when index < scope.currentIndex then 'prev'
             else ''
@@ -146,12 +135,12 @@ class imagoSlider extends Directive
 
           # console.log 'scope.action', scope.action
           scope.currentIndex = index
-          $rootScope.$emit "#{@conf.namespace}:changed", index
+          $rootScope.$emit "#{scope.imagoslider.opts.namespace}:changed", index
 
         if !_.isUndefined attrs.autoplay
           scope.$watch attrs.autoplay, (value) =>
             if parseInt(value) > 0
-              scope.imagoslider.conf.interval = $interval =>
+              scope.imagoslider.opts.interval = $interval =>
                 scope.imagoslider.goNext('', false)
               , parseInt(value)
             else
@@ -166,10 +155,10 @@ class imagoSlider extends Directive
               scope.$apply ->
                 scope.imagoslider.goNext()
 
-        if scope.imagoslider.conf.enablekeys
+        if scope.imagoslider.opts.enablekeys
           $document.on 'keydown', keyboardBinding
 
-        watchers.push $rootScope.$on "#{scope.imagoslider.conf.namespace}:change", (evt, index) ->
+        watchers.push $rootScope.$on "#{scope.imagoslider.opts.namespace}:change", (evt, index) ->
           scope.clearInterval()
           scope.imagoslider.setCurrent(index)
 
@@ -178,29 +167,56 @@ class imagoSlider extends Directive
           scope.clearInterval()
           for watch in watchers
             watch()
-
   }
 
 
 class imagoSliderController extends Controller
 
-  constructor: ($scope) ->
+  constructor: (@$scope, @$attrs, @$element) ->
 
-    @conf =
-      animation:    'fade'
-      enablekeys:   true
-      enablearrows: true
-      loop:         true
-      current:      0
-      namespace:    'slider'
-      autoplay:     0
-      next:         null
-      prev:         null
-      prefetch:     true
+    @opts =
+      animation    : 'fade'
+      enablekeys   : true
+      enablearrows : true
+      loop         : true
+      current      : 0
+      namespace    : 'slider'
+      autoplay     : 0
+      next         : null
+      prev         : null
+      prefetch     : true
 
-    @setServingSize = (value) =>
-      if @servingSize
-        @servingSize = value
+    for key of @$attrs
+      continue unless @opts[key]
+      if @$attrs[key] in ['true', 'false']
+        @opts[key] = JSON.parse @$attrs[key]
+      else if not isNaN @$attrs[key]
+        @opts[key] = Number @$attrs[key]
       else
-        @servingSize = value
-        $scope.prefetch('initial')
+        @opts[key] = @$attrs[key]
+
+  init: ->
+    @slider = new Swiper(@$element.children(), {
+      loop: true
+      initialSlide: 0
+      showNavButtons: true
+      slidesPerView: 1
+      slidesPerColumn: 1
+      lazyLoading: true
+      preloadImages: false
+      spaceBetween: 0
+      direction: 'horizontal'
+      pagination: '.swiper-pagination'
+      nextButton: '.swiper-button-next'
+      prevButton: '.swiper-button-prev'
+      # scrollbar: '.swiper-scrollbar'
+    })
+
+    @slider.on 'slideChangeStart', =>
+      @goNext()
+
+  setServingSize: (value) =>
+    if @servingSize
+      return @servingSize = value
+    @servingSize = value
+    @$scope.prefetch('initial')
