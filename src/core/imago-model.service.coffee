@@ -548,7 +548,8 @@ class imagoModel extends Service
 
           for key of toedit.fields
             copy['fields'] or= {}
-            copy['fields'][key] or= []
+            copy['fields'][key] or= {}
+            copy['fields'][key].value or= []
             if copy['fields'][key].value.indexOf(toedit.fields[key]) is -1
               copy['fields'][key].value.push(toedit.fields[key])
 
@@ -559,7 +560,7 @@ class imagoModel extends Service
 
     @update assets, {save: true}
 
-  batchChange: (assets) =>
+  batchChange: (assets, keyOnly) =>
     for asset, idx in assets
       original = @find('_id' : asset._id)
 
@@ -575,7 +576,12 @@ class imagoModel extends Service
         if key is 'fields'
           for key of toedit.fields
             copy['fields'] or= {}
-            copy['fields'][key] = toedit.fields[key]
+            if keyOnly
+              copy['fields'][key] or= {}
+              copy['fields'][key].value or= {}
+              copy['fields'][key].value[keyOnly] = toedit.fields[key].value[keyOnly]
+            else
+              copy['fields'][key] = toedit.fields[key]
 
         else
           copy[key] = toedit[key]

@@ -853,7 +853,7 @@ imagoModel = (function() {
   };
 
   imagoModel.prototype.batchAddTag = function(assets) {
-    var asset, base, copy, idx, j, key, len, original, toedit, value;
+    var asset, base, base1, copy, idx, j, key, len, original, toedit, value;
     for (idx = j = 0, len = assets.length; j < len; idx = ++j) {
       asset = assets[idx];
       original = this.find({
@@ -872,7 +872,8 @@ imagoModel = (function() {
         if (key === 'fields') {
           for (key in toedit.fields) {
             copy['fields'] || (copy['fields'] = {});
-            (base = copy['fields'])[key] || (base[key] = []);
+            (base = copy['fields'])[key] || (base[key] = {});
+            (base1 = copy['fields'][key]).value || (base1.value = []);
             if (copy['fields'][key].value.indexOf(toedit.fields[key]) === -1) {
               copy['fields'][key].value.push(toedit.fields[key]);
             }
@@ -888,8 +889,8 @@ imagoModel = (function() {
     });
   };
 
-  imagoModel.prototype.batchChange = function(assets) {
-    var asset, copy, idx, j, key, len, original, toedit;
+  imagoModel.prototype.batchChange = function(assets, keyOnly) {
+    var asset, base, base1, copy, idx, j, key, len, original, toedit;
     for (idx = j = 0, len = assets.length; j < len; idx = ++j) {
       asset = assets[idx];
       original = this.find({
@@ -907,7 +908,13 @@ imagoModel = (function() {
         if (key === 'fields') {
           for (key in toedit.fields) {
             copy['fields'] || (copy['fields'] = {});
-            copy['fields'][key] = toedit.fields[key];
+            if (keyOnly) {
+              (base = copy['fields'])[key] || (base[key] = {});
+              (base1 = copy['fields'][key]).value || (base1.value = {});
+              copy['fields'][key].value[keyOnly] = toedit.fields[key].value[keyOnly];
+            } else {
+              copy['fields'][key] = toedit.fields[key];
+            }
           }
         } else {
           copy[key] = toedit[key];
