@@ -2093,6 +2093,24 @@ NotSupportedController = (function() {
 
 angular.module('imago').directive('notSupported', [NotSupported]).controller('notSupportedController', ['$scope', '$element', '$attrs', NotSupportedController]);
 
+var Page;
+
+Page = (function() {
+  function Page(promiseData) {
+    var asset, i, len;
+    for (i = 0, len = promiseData.length; i < len; i++) {
+      asset = promiseData[i];
+      this.data = asset;
+      break;
+    }
+  }
+
+  return Page;
+
+})();
+
+angular.module('imago').controller('page', ['promiseData', Page]);
+
 var TenantSettings;
 
 TenantSettings = (function() {
