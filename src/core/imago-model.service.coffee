@@ -47,8 +47,9 @@ class imagoModel extends Service
       download: (ids, res) =>
         @$http.post "#{@imagoSettings.host}/api/assets/download", {assets: ids, resolution: res}
 
-      pdfrequest: (ids) =>
-        @$http.post "#{@imagoSettings.host}/api/assets/pdf", {assets: ids}
+      pdfRequest: (ids, orientation) =>
+        console.log 'imagomodel pdfRequest'
+        @$http.post "#{@imagoSettings.host}/api/assets/pdf", {assets: ids, orientation}
 
       repair: (id) =>
         @$http.put "#{@imagoSettings.host}/api/assets/repairorder", {_id: id}
