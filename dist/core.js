@@ -156,10 +156,12 @@ imagoModel = (function() {
           });
         };
       })(this),
-      pdfrequest: (function(_this) {
-        return function(ids) {
+      pdfRequest: (function(_this) {
+        return function(ids, orientation) {
+          console.log('imagomodel pdfRequest');
           return _this.$http.post(_this.imagoSettings.host + "/api/assets/pdf", {
-            assets: ids
+            assets: ids,
+            orientation: orientation
           });
         };
       })(this),
