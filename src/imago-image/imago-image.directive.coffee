@@ -82,15 +82,10 @@ class imagoImageController extends Controller
 
   init: (data) ->
     @data = data
-    @placeholderUrl = @data.b64 or "#{@data.serving_url}=s3"
     @resolution =  @data.resolution.split('x')
     @assetRatio = _.first(@resolution) / _.last(@resolution)
     @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
 
-    if @opts.sizemode is 'crop'
-      @mainSide = if @assetRatio > 1 then 'height' else 'width'
-    else
-      @mainSide = if @assetRatio < 1 then 'height' else 'width'
 
     if @data.fields?.crop?.value and not @$attrs.align
       @opts.align = @data.fields.crop.value
@@ -101,65 +96,101 @@ class imagoImageController extends Controller
     if @opts.lazy is false
       @removeInView = true
 
-    # lazy true
-    if @opts.lazy and not @visible
-      watcher = @$scope.$watch 'imagoimage.visible', (value) =>
-        return unless value
-        watcher()
+
+    # get the intial size magic
+
+    @placeholderUrl = @data.b64 or "#{@data.serving_url}=s3"
+
+    @$scope.$applyAsync =>
+      @getSize()
+
+      if @height is 0 and @width is 0
+        return console.log 'need width or/and height for static or relative positioning'
+
+      if @position in ['static', 'relative']
+
+        @opts.sizemode = 'fit'
+
+        if @height > 0
+          @mainSide = 'autoheight'
+
+        else if @width > 0 and @height is 0
+          @mainSide = 'autowidth'
+
+
+      else # position absolute and fixed
+
+        if @opts.sizemode is 'crop'
+          @mainSide = if @assetRatio > 1 then 'height' else 'width'
+        else
+          @mainSide = if @assetRatio < 1 then 'height' else 'width'
+
+
+
+      # console.log '@width, @height, @mainSide', @width, @height, @mainSide, @opts.sizemode, @position
+      # return
+
+      # lazy true
+      if @opts.lazy and not @visible
+        watcher = @$scope.$watch 'imagoimage.visible', (value) =>
+          return unless value
+          watcher()
+          @$scope.$applyAsync =>
+            @resize()
+            @getServingUrl()
+
+      else
         @$scope.$applyAsync =>
           @resize()
           @getServingUrl()
 
-    else
-      @$scope.$applyAsync =>
-        @resize()
-        @getServingUrl()
+  getSize: ->
+    style = window.getComputedStyle(@$element[0])
+    @position = window.getComputedStyle(@$element.children()[0]).position
+    @width    = parseInt(window.getComputedStyle(@$element.children()[0]).width)  #or @$element.children()[0].clientWidth
+    @height   = parseInt(window.getComputedStyle(@$element.children()[0]).height) #or @$element.children()[0].clientHeight
+    console.log 'getSize', @width, @height, @position, @$element[0]
 
   resize: ->
-    @width  = parseInt(window.getComputedStyle(@$element[0]).width) \
-              or @$element.children()[0].clientWidth
-    @height = parseInt(window.getComputedStyle(@$element[0]).height) \
-              or @$element.children()[0].clientHeight
+    @getSize()
 
     @wrapperRatio = @width / @height
-    return unless @height
+    # console.log 'resize @width, @height, @wrapperraito', @width, @height, @wrapperRatio
+    # return unless @height
 
-    if @opts.sizemode is 'crop'
-      @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
-    else
-      @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
+    if @position not in ['static', 'relative']
+      if @opts.sizemode is 'crop'
+        @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
+      else
+        @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
 
 
   getServingUrl: ->
     @visible = true
 
-    if @opts.sizemode is 'crop' and @height
-      if @assetRatio <= @wrapperRatio
-        # console.log 'crop full @width'
-        servingSize = Math.round(Math.max(@width, @width / @assetRatio))
-      else
-        # console.log 'crop full @height'
-        servingSize = Math.round(Math.max(@height, @height * @assetRatio))
+    if @position in ['relative', 'static']
 
-    # sizemode fit
+      servingSize = Math.round(Math.max(@width, @height))
+      # console.log 'servingSize', @width, @width, servingSize
+
     else
-      # # console.log 'assetratio: ', @assetRatio, 'wrapperraito: ' , @wrapperRatio
-      # if not @height or @opts.autosize is 'height'
-      #   @opts.autosize = 'height'
-      #   # console.log '@opts.autosize inside', @opts.autosize, @width, height, @assetRatio, @opts.autosize
-      #   servingSize = Math.round(Math.max(@width, @width / @assetRatio))
 
-      # else if not @width or @opts.autosize is 'width'
-      #   @opts.autosize = 'width'
-      #   # console.log '@opts.autosize inside', @opts.autosize
-      #   servingSize = Math.round(Math.max(@height, @height * @assetRatio))
+      if @opts.sizemode is 'crop' and @height
+        if @assetRatio <= @wrapperRatio
+          # console.log 'crop full @width'
+          servingSize = Math.round(Math.max(@width, @width / @assetRatio))
+        else
+          # console.log 'crop full @height'
+          servingSize = Math.round(Math.max(@height, @height * @assetRatio))
 
-      if @assetRatio <= @wrapperRatio
-        # console.log 'fit full height', 'asset', @assetRatio, 'wrapper', @wrapperRatio,  "#{@height * @assetRatio} x #{@height}"
-        servingSize = Math.round(Math.max(@height, @height * @assetRatio))
-      else
-        # console.log 'fit full width', 'asset', @assetRatio, 'wrapper', @wrapperRatio,    "#{@width} x #{@width / @assetRatio}"
-        servingSize = Math.round(Math.max(@width, @width / @assetRatio))
+
+      else # sizemode fit
+        if @assetRatio <= @wrapperRatio
+          # console.log 'fit full height', 'asset', @assetRatio, 'wrapper', @wrapperRatio,  "#{@height * @assetRatio} x #{@height}"
+          servingSize = Math.round(Math.max(@height, @height * @assetRatio))
+        else
+          # console.log 'fit full width', 'asset', @assetRatio, 'wrapper', @wrapperRatio,    "#{@width} x #{@width / @assetRatio}"
+          servingSize = Math.round(Math.max(@width, @width / @assetRatio))
 
     servingSize = parseInt Math.min(servingSize * @dpr, @opts.maxsize)
 

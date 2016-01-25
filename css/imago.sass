@@ -4,6 +4,9 @@
   position: relative
   overflow: hidden
   box-sizing: border-box
+  &.noplaceholder
+    img.small
+      visibility: hidden
 
   pre
     position: absolute
@@ -29,6 +32,22 @@
     height: 100%
   &.fit.width img
     width: 100%
+
+  &.fit.autoheight
+    .spacer
+      display: none
+    img
+      position: static
+      height: 100%
+      transform: none
+
+  &.fit.autowidth
+    .spacer
+      display: none
+    img
+      position: static
+      width: 100%
+      transform: none
 
   &.crop.height img
     height: 100%
