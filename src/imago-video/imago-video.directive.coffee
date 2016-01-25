@@ -107,8 +107,7 @@ class imagoVideoController extends Controller
         type: "video/#{source.codec}"
       })
 
-    @poster = "#{@asset.serving_url}=s720"
-
+    @poster = "#{@asset.serving_url}=s720" if @asset.serving_url
 
     @$scope.$applyAsync =>
       @resize()

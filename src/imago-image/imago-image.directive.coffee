@@ -32,6 +32,12 @@ class imagoImage extends Directive
               return destroy()
             scope.imagoimage.init(asset)
 
+        # Imago Slider
+
+        scope.setServingSize = (servingSize) ->
+          return unless imagoSlider
+          imagoSlider.setServingSize(servingSize)
+
     }
 
 class imagoImageController extends Controller
@@ -80,18 +86,19 @@ class imagoImageController extends Controller
     @$scope.$on '$destroy', =>
       watcher() for watcher in @watchers
 
-  init: (data) ->
-    @data = data
-    @resolution =  @data.resolution.split('x')
+  init: (asset) ->
+    @asset = asset
+    @placeholderUrl = @asset.b64 or "#{@asset.serving_url}=s3"
+    @resolution =  @asset.resolution.split('x')
     @assetRatio = _.first(@resolution) / _.last(@resolution)
     @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
 
 
-    if @data.fields?.crop?.value and not @$attrs.align
-      @opts.align = @data.fields.crop.value
-    if @data.fields?.sizemode?.value and \
-      @data.fields.sizemode.value isnt 'default' and not @$attrs.sizemode
-        @opts.sizemode = @data.fields.sizemode.value
+    if @asset.fields?.crop?.value and not @$attrs.align
+      @opts.align = @asset.fields.crop.value
+    if @asset.fields?.sizemode?.value and \
+      @asset.fields.sizemode.value isnt 'default' and not @$attrs.sizemode
+        @opts.sizemode = @asset.fields.sizemode.value
 
     if @opts.lazy is false
       @removeInView = true
@@ -202,10 +209,9 @@ class imagoImageController extends Controller
 
     @servingSize = Math.max servingSize, 60
 
-    @opts.servingUrl = "#{ @data.serving_url }=s#{ @servingSize * @opts.scale }"
+    @opts.servingUrl = "#{ @asset.serving_url }=s#{ @servingSize * @opts.scale }"
 
-    # if imagoSlider
-    #   imagoSlider.setServingSize("=s#{ servingSize * @opts.scale }")
+    @$scope.setServingSize("=s#{ servingSize * @opts.scale }")
 
     # console.log '@servingUrl', @servingUrl
 
