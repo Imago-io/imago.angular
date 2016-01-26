@@ -158,11 +158,16 @@ imagoModel = (function() {
       })(this),
       pdfRequest: (function(_this) {
         return function(ids, orientation) {
-          console.log('imagomodel pdfRequest');
           return _this.$http.post(_this.imagoSettings.host + "/api/assets/pdf", {
             assets: ids,
             orientation: orientation
           });
+        };
+      })(this),
+      spreadRequest: (function(_this) {
+        return function(data) {
+          console.log('data', data);
+          return _this.$http.post(_this.imagoSettings.host + "/api/assets/spread", data);
         };
       })(this),
       repair: (function(_this) {
