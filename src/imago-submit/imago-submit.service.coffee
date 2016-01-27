@@ -1,11 +1,11 @@
 class imagoSubmit extends Service
 
-  constructor: ($http, imagoUtils, imagoSettings) ->
+  constructor: ($http, imagoUtils, imagoModel) ->
 
     return {
 
       getxsrf: ->
-        url = imagoSettings.host + "/getxsrf"
+        url = imagoModel.host + "/getxsrf"
         $http.get(url)
 
       formatForm: (form) ->
@@ -22,7 +22,7 @@ class imagoSubmit extends Service
         return obj
 
       send: (data) ->
-        postUrl =  imagoSettings.host + '/api/contact'
+        postUrl =  imagoModel.host + '/api/contact'
 
         $http.post(postUrl, @formatForm(data)).then (response) =>
           console.log 'success: ', response

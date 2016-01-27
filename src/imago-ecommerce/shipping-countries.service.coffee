@@ -3,11 +3,11 @@ class ShippingCountries extends Service
   data: []
   loaded: false
 
-  constructor: (@$http, @imagoSettings) ->
+  constructor: (@$http, @imagoModel) ->
     @get()
 
   get: ->
-    @$http.get(@imagoSettings.host + '/api/shippingmethods').then (response) =>
+    @$http.get(@imagoModel.host + '/api/shippingmethods').then (response) =>
 
       for method in response.data
         for country in method.countries

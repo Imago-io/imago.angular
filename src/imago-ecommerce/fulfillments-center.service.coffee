@@ -4,11 +4,11 @@ class FulfillmentsCenter extends Service
   loaded: false
   selected: {}
 
-  constructor: (@$http, @$rootScope, @geoIp, @imagoSettings, @imagoUtils) ->
+  constructor: (@$http, @$rootScope, @geoIp, @imagoModel, @imagoUtils) ->
     @get()
 
   get: ->
-    @$http.get(@imagoSettings.host + '/api/fulfillmentcenters').then (response) =>
+    @$http.get(@imagoModel.host + '/api/fulfillmentcenters').then (response) =>
       @data = response.data
       @getOptions()
 

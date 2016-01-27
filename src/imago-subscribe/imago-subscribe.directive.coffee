@@ -15,7 +15,7 @@ class ImagoSubscribe extends Directive
 
 class ImagoSubscribeController extends Controller
 
-  constructor:($scope, $attrs, $http, $parse, imagoSettings) ->
+  constructor:($scope, $attrs, $http, $parse, imagoModel) ->
 
     @submit = (validate) ->
       return if validate.$invalid
@@ -23,7 +23,7 @@ class ImagoSubscribeController extends Controller
 
       @submitted = true
 
-      $http.post("#{imagoSettings.host}/api/subscribe", form).then (response) =>
+      $http.post("#{imagoModel.host}/api/subscribe", form).then (response) =>
         @error = false
         console.log 'response', response
       , (error) ->

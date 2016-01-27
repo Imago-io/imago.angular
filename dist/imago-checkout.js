@@ -23,13 +23,13 @@ Calculation = (function() {
 
   Calculation.prototype.error = {};
 
-  function Calculation($q, $state, $http, $auth, imagoUtils, imagoSettings) {
+  function Calculation($q, $state, $http, $auth, imagoUtils, imagoModel) {
     this.$q = $q;
     this.$state = $state;
     this.$http = $http;
     this.$auth = $auth;
     this.imagoUtils = imagoUtils;
-    this.imagoSettings = imagoSettings;
+    this.imagoModel = imagoModel;
     this.submit = bind(this.submit, this);
     this.calculate = bind(this.calculate, this);
     this.calculateTotal = bind(this.calculateTotal, this);
@@ -51,7 +51,7 @@ Calculation = (function() {
   }
 
   Calculation.prototype.updateCart = function() {
-    this.$http.put(this.imagoSettings.host + '/api/carts/' + this.cart._id, this.cart);
+    this.$http.put(this.imagoModel.host + '/api/carts/' + this.cart._id, this.cart);
     return this.calculate();
   };
 
@@ -103,7 +103,7 @@ Calculation = (function() {
       this.calculate();
       return;
     }
-    return this.$http.get(this.imagoSettings.host + '/api/coupons?code=' + code).then((function(_this) {
+    return this.$http.get(this.imagoModel.host + '/api/coupons?code=' + code).then((function(_this) {
       return function(response) {
         if (response.data.length === 1) {
           _this.coupon = response.data[0];
@@ -485,7 +485,7 @@ Calculation = (function() {
     if (!(this.zip || (((ref = this.zip) != null ? ref.length : void 0) > 4))) {
       deferred.resolve();
     } else {
-      this.$http.get((this.imagoSettings.host + "/api/ziptax?zipcode=") + this.zip).then((function(_this) {
+      this.$http.get((this.imagoModel.host + "/api/ziptax?zipcode=") + this.zip).then((function(_this) {
         return function(response) {
           _this.costs.taxRate = response.data.taxUse;
           return deferred.resolve();
@@ -550,7 +550,7 @@ Calculation = (function() {
       }
     }
     if (changed) {
-      this.$http.put(this.imagoSettings.host + '/api/carts/' + this.cart._id, this.cart);
+      this.$http.put(this.imagoModel.host + '/api/carts/' + this.cart._id, this.cart);
     }
     return cb();
   };
@@ -609,7 +609,7 @@ Calculation = (function() {
     this.process.form.cartId = angular.copy(this.cart._id);
     this.process.form.billing_address.name = angular.copy((ref = this.process.form.user) != null ? ref.name : void 0);
     this.process.form = this.formatForm(this.process.form);
-    return this.$http.post(this.imagoSettings.host + '/api/checkout', this.process.form);
+    return this.$http.post(this.imagoModel.host + '/api/checkout', this.process.form);
   };
 
   Calculation.prototype.saveCart = function() {
@@ -620,14 +620,14 @@ Calculation = (function() {
     form.data.paymentType = angular.copy(this.paymentType);
     form.data.differentshipping = this.differentshipping;
     form.data = this.formatForm(form.data);
-    return this.$http.put(this.imagoSettings.host + '/api/carts/' + this.cart._id, form);
+    return this.$http.put(this.imagoModel.host + '/api/carts/' + this.cart._id, form);
   };
 
   return Calculation;
 
 })();
 
-angular.module('imago').service('calculation', ['$q', '$state', '$http', '$auth', 'imagoUtils', 'imagoSettings', Calculation]);
+angular.module('imago').service('calculation', ['$q', '$state', '$http', '$auth', 'imagoUtils', 'imagoModel', Calculation]);
 
 var Costs, CostsController;
 

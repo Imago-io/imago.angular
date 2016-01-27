@@ -2,10 +2,10 @@ class VariantsStorage extends Service
 
   data: []
 
-  constructor: (@$http, @$q, @imagoModel, @imagoSettings) ->
+  constructor: (@$http, @$q, @imagoModel) ->
 
   search: (id) ->
-    return @$http.get("#{@imagoSettings.host}/api/variants/#{id}")
+    return @$http.get("#{@imagoModel.host}/api/variants/#{id}")
 
   get: (parent) ->
     defer = @$q.defer()

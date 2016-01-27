@@ -4,7 +4,7 @@ class imagoCart extends Service
   itemsLength: 0
   settings: []
 
-  constructor: (@$q, @$rootScope, @$location, @$window, @$http, @imagoUtils, @imagoModel, @fulfillmentsCenter, @geoIp, @imagoSettings, tenantSettings, @imagoCartUtils) ->
+  constructor: (@$q, @$rootScope, @$location, @$window, @$http, @imagoUtils, @imagoModel, @fulfillmentsCenter, @geoIp, tenantSettings, @imagoCartUtils) ->
 
     @cart =
       items: []
@@ -47,7 +47,7 @@ class imagoCart extends Service
     @calculate()
 
   checkStatus: (id) =>
-    @$http.get("#{@imagoSettings.host}/api/carts?cartid=#{id}").then (response) =>
+    @$http.get("#{@imagoModel.host}/api/carts?cartid=#{id}").then (response) =>
       console.log 'check cart', response.data
       _.assign @cart, response.data
       unless @fulfillmentsCenter.loaded
@@ -83,7 +83,7 @@ class imagoCart extends Service
     defer.promise
 
   create: (cart) =>
-    return @$http.post("#{@imagoSettings.host}/api/carts", cart)
+    return @$http.post("#{@imagoModel.host}/api/carts", cart)
 
   add: (item, options, fields) ->
     return console.log 'item required' unless item
@@ -144,7 +144,7 @@ class imagoCart extends Service
 
   update: =>
     return unless @cart._id
-    @$http.put("#{@imagoSettings.host}/api/carts/#{@cart._id}", @cart)
+    @$http.put("#{@imagoModel.host}/api/carts/#{@cart._id}", @cart)
 
   remove: (item) =>
     _.remove(@cart.items, {'_id': item._id})

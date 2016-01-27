@@ -18,7 +18,7 @@ ImagoSubscribe = (function() {
 })();
 
 ImagoSubscribeController = (function() {
-  function ImagoSubscribeController($scope, $attrs, $http, $parse, imagoSettings) {
+  function ImagoSubscribeController($scope, $attrs, $http, $parse, imagoModel) {
     this.submit = function(validate) {
       var form;
       if (validate.$invalid) {
@@ -26,7 +26,7 @@ ImagoSubscribeController = (function() {
       }
       form = $parse($attrs.imagoSubscribe)($scope);
       this.submitted = true;
-      return $http.post(imagoSettings.host + "/api/subscribe", form).then((function(_this) {
+      return $http.post(imagoModel.host + "/api/subscribe", form).then((function(_this) {
         return function(response) {
           _this.error = false;
           return console.log('response', response);
@@ -42,6 +42,6 @@ ImagoSubscribeController = (function() {
 
 })();
 
-angular.module('imago').directive('imagoSubscribe', [ImagoSubscribe]).controller('imagoSubscribeController', ['$scope', '$attrs', '$http', '$parse', 'imagoSettings', ImagoSubscribeController]);
+angular.module('imago').directive('imagoSubscribe', [ImagoSubscribe]).controller('imagoSubscribeController', ['$scope', '$attrs', '$http', '$parse', 'imagoModel', ImagoSubscribeController]);
 
 angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-subscribe.html","<div class=\"imago-subscribe\"><div ng-transclude=\"ng-transclude\" ng-hide=\"imagosubscribe.submitted &amp;&amp; !imagosubscribe.error\"></div><div ng-show=\"imagosubscribe.submitted &amp;&amp; imagosubscribe.error\" class=\"error\">please try again later</div><div ng-show=\"imagosubscribe.submitted &amp;&amp; !imagosubscribe.error\" class=\"submitted\">subscription created</div></div>");}]);

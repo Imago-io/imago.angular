@@ -2,11 +2,11 @@ var imagoSubmit,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 imagoSubmit = (function() {
-  function imagoSubmit($http, imagoUtils, imagoSettings) {
+  function imagoSubmit($http, imagoUtils, imagoModel) {
     return {
       getxsrf: function() {
         var url;
-        url = imagoSettings.host + "/getxsrf";
+        url = imagoModel.host + "/getxsrf";
         return $http.get(url);
       },
       formatForm: function(form) {
@@ -27,7 +27,7 @@ imagoSubmit = (function() {
       },
       send: function(data) {
         var postUrl;
-        postUrl = imagoSettings.host + '/api/contact';
+        postUrl = imagoModel.host + '/api/contact';
         return $http.post(postUrl, this.formatForm(data)).then((function(_this) {
           return function(response) {
             console.log('success: ', response);
@@ -51,4 +51,4 @@ imagoSubmit = (function() {
 
 })();
 
-angular.module('imago').service('imagoSubmit', ['$http', 'imagoUtils', 'imagoSettings', imagoSubmit]);
+angular.module('imago').service('imagoSubmit', ['$http', 'imagoUtils', 'imagoModel', imagoSubmit]);

@@ -11,11 +11,11 @@ class Calculation extends Service
   taxincluded     : undefined
   error           : {}
 
-  constructor: (@$q, @$state, @$http, @$auth, @imagoUtils, @imagoSettings) ->
+  constructor: (@$q, @$state, @$http, @$auth, @imagoUtils, @imagoModel) ->
     @countries = @imagoUtils.COUNTRIES
 
   updateCart: =>
-    @$http.put(@imagoSettings.host + '/api/carts/' + @cart._id, @cart)
+    @$http.put(@imagoModel.host + '/api/carts/' + @cart._id, @cart)
     @calculate()
 
   deleteItem: (item) =>
@@ -58,7 +58,7 @@ class Calculation extends Service
       @calculate()
       return
 
-    @$http.get(@imagoSettings.host + '/api/coupons?code=' + code).then (response) =>
+    @$http.get(@imagoModel.host + '/api/coupons?code=' + code).then (response) =>
       if response.data.length is 1
         @coupon = response.data[0]
         @couponState = 'valid'
@@ -279,7 +279,7 @@ class Calculation extends Service
     if not (@zip or (@zip?.length > 4))
       deferred.resolve()
     else
-      @$http.get("#{@imagoSettings.host}/api/ziptax?zipcode="+@zip)
+      @$http.get("#{@imagoModel.host}/api/ziptax?zipcode="+@zip)
         .then (response) =>
           @costs.taxRate = response.data.taxUse
           deferred.resolve()
@@ -318,7 +318,7 @@ class Calculation extends Service
         @cartError[item._id] = {'noStock': true} if stock is 0
 
     if changed
-      @$http.put(@imagoSettings.host + '/api/carts/' + @cart._id, @cart)
+      @$http.put(@imagoModel.host + '/api/carts/' + @cart._id, @cart)
 
     cb()
 
@@ -363,7 +363,7 @@ class Calculation extends Service
     @process.form.billing_address.name = angular.copy @process.form.user?.name
     @process.form = @formatForm(@process.form)
 
-    return @$http.post(@imagoSettings.host + '/api/checkout', @process.form)
+    return @$http.post(@imagoModel.host + '/api/checkout', @process.form)
 
   saveCart: ->
     form = angular.copy @cart
@@ -373,4 +373,4 @@ class Calculation extends Service
     form.data.differentshipping = @differentshipping
     form.data = @formatForm(form.data)
 
-    return @$http.put(@imagoSettings.host + '/api/carts/' + @cart._id, form)
+    return @$http.put(@imagoModel.host + '/api/carts/' + @cart._id, form)

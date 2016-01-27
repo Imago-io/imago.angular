@@ -43,1009 +43,931 @@ ImagoClick = (function() {
 
 angular.module('imago').directive('imagoClick', ['$parse', ImagoClick]);
 
-var imagoModel,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var imagoModel;
 
 imagoModel = (function() {
-  function imagoModel($rootScope, $http, $location, $document, $q, imagoUtils, imagoWorker, imagoSettings) {
-    this.$rootScope = $rootScope;
-    this.$http = $http;
-    this.$location = $location;
-    this.$document = $document;
-    this.$q = $q;
-    this.imagoUtils = imagoUtils;
-    this.imagoWorker = imagoWorker;
-    this.imagoSettings = imagoSettings;
-    this.prepareCreation = bind(this.prepareCreation, this);
-    this.isDuplicated = bind(this.isDuplicated, this);
-    this.batchChange = bind(this.batchChange, this);
-    this.batchAddTag = bind(this.batchAddTag, this);
-    this.reorder = bind(this.reorder, this);
-    this.reindexAll = bind(this.reindexAll, this);
-    this.reSort = bind(this.reSort, this);
-    this.paste = bind(this.paste, this);
-    this.move = bind(this.move, this);
-    this.copy = bind(this.copy, this);
-    this.trash = bind(this.trash, this);
-    this["delete"] = bind(this["delete"], this);
-    this.update = bind(this.update, this);
-    this.add = bind(this.add, this);
-    this.updateCount = bind(this.updateCount, this);
-    this.filterAssets = bind(this.filterAssets, this);
-    this.findIdx = bind(this.findIdx, this);
-    this.find = bind(this.find, this);
-    this.findByAttr = bind(this.findByAttr, this);
-    this.findParent = bind(this.findParent, this);
-    this.findChildren = bind(this.findChildren, this);
-    this.create = bind(this.create, this);
-    this.populateData = bind(this.populateData, this);
-    this.addAsset = bind(this.addAsset, this);
-    this.getData = bind(this.getData, this);
-    this.getLocalData = bind(this.getLocalData, this);
-    this.assets = {
-      get: (function(_this) {
-        return function(id) {
-          return _this.$http.get(_this.imagoSettings.host + "/api/assets/" + id);
-        };
-      })(this),
-      create: (function(_this) {
-        return function(assets) {
-          return _this.$http.post(_this.imagoSettings.host + "/api/assets", assets);
-        };
-      })(this),
-      update: (function(_this) {
-        return function(item) {
-          return _this.$http.put(_this.imagoSettings.host + "/api/assets/" + item._id, item);
-        };
-      })(this),
-      "delete": (function(_this) {
-        return function(id) {
-          return _this.$http["delete"](_this.imagoSettings.host + "/api/assets/" + id);
-        };
-      })(this),
-      trash: (function(_this) {
-        return function(assets) {
-          return _this.$http.post(_this.imagoSettings.host + "/api/assets/trash", assets);
-        };
-      })(this),
-      move: (function(_this) {
-        return function(items, src, dest) {
-          var data;
-          data = {
-            src: src,
-            dest: dest,
-            items: items
-          };
-          return _this.$http.post(_this.imagoSettings.host + "/api/assets/move", data);
-        };
-      })(this),
-      copy: (function(_this) {
-        return function(items, src, dest) {
-          var data;
-          data = {
-            src: src,
-            dest: dest,
-            items: items
-          };
-          return _this.$http.post(_this.imagoSettings.host + "/api/assets/copy", data);
-        };
-      })(this),
-      batch: (function(_this) {
-        return function(list) {
-          var defer, j, len, promises, request;
-          defer = _this.$q.defer();
-          promises = [];
-          list = _.chunk(list, 100);
-          for (j = 0, len = list.length; j < len; j++) {
-            request = list[j];
-            promises.push(_this.$http.put(_this.imagoSettings.host + "/api/assets/update", {
-              assets: request
-            }));
+  function imagoModel() {
+    var host, indexRange, sortWorker;
+    sortWorker = 'sort.worker.js';
+    host = '//api.imago.io';
+    indexRange = 10000;
+    this.setSortWorker = function(value) {
+      return sortWorker = value;
+    };
+    this.setIndexRange = function(value) {
+      return indexRange = value;
+    };
+    this.setHost = function(value) {
+      return host = value;
+    };
+    this.$get = function($rootScope, $http, $location, $document, $q, imagoUtils, imagoWorker) {
+      return {
+        host: host,
+        sortWorker: sortWorker,
+        indexRange: indexRange,
+        assets: {
+          get: function(id) {
+            return $http.get(host + "/api/assets/" + id);
+          },
+          create: function(assets) {
+            return $http.post(host + "/api/assets", assets);
+          },
+          update: function(item) {
+            return $http.put(host + "/api/assets/" + item._id, item);
+          },
+          "delete": function(id) {
+            return $http["delete"](host + "/api/assets/" + id);
+          },
+          trash: function(assets) {
+            return $http.post(host + "/api/assets/trash", assets);
+          },
+          move: function(items, src, dest) {
+            var data;
+            data = {
+              src: src,
+              dest: dest,
+              items: items
+            };
+            return $http.post(host + "/api/assets/move", data);
+          },
+          copy: function(items, src, dest) {
+            var data;
+            data = {
+              src: src,
+              dest: dest,
+              items: items
+            };
+            return $http.post(host + "/api/assets/copy", data);
+          },
+          batch: function(list) {
+            var j, len, promises, request;
+            promises = [];
+            list = _.chunk(list, 100);
+            for (j = 0, len = list.length; j < len; j++) {
+              request = list[j];
+              promises.push($http.put(host + "/api/assets/update", {
+                assets: request
+              }));
+            }
+            return $q.all(promises);
+          },
+          download: function(ids, res) {
+            return $http.post(host + "/api/assets/download", {
+              assets: ids,
+              resolution: res
+            });
+          },
+          pdfRequest: function(ids, orientation) {
+            return $http.post(host + "/api/assets/pdf", {
+              assets: ids,
+              orientation: orientation
+            });
+          },
+          spreadRequest: function(data) {
+            return $http.post(host + "/api/assets/spread", data);
+          },
+          transformRequest: function(data) {
+            return $http.post(host + "/api/assets/transform", data);
+          },
+          repair: function(id) {
+            return $http.put(host + "/api/assets/repairorder", {
+              _id: id
+            });
           }
-          _this.$q.all(promises).then(function() {
+        },
+        data: [],
+        currentCollection: void 0,
+        search: function(query) {
+          var params;
+          console.log('host', host);
+          params = _.map(query, this.formatQuery);
+          if (!params.length) {
+            return $q.when();
+          }
+          return $http.post(host + "/api/search", angular.toJson(params));
+        },
+        getLocalData: function(query, options) {
+          if (options == null) {
+            options = {};
+          }
+          return $q((function(_this) {
+            return function(resolve, reject) {
+              var asset, key, localQuery, path, value;
+              for (key in options) {
+                value = options[key];
+                if (key === 'localData' && value === false) {
+                  return reject(query);
+                }
+              }
+              for (key in query) {
+                value = query[key];
+                if (key === 'fts') {
+                  return reject(query);
+                } else if (key === 'collection') {
+                  query = imagoUtils.renameKey('collection', 'path', query);
+                  path = value;
+                } else if (key === 'kind') {
+                  query = imagoUtils.renameKey('kind', 'type', query);
+                } else if (key === 'metakind') {
+                  query = imagoUtils.renameKey('metakind', 'type', query);
+                } else if (key === 'path') {
+                  console.log('value', key, value);
+                  path = value;
+                }
+              }
+              if ((path != null ? path.slice(-1) : void 0) === '/') {
+                path = path.substring(0, path.length - 1);
+                query.path = path;
+              }
+              if (!path) {
+                return reject(query);
+              }
+              localQuery = {
+                'path': _.isString(path) ? path : _.first(path)
+              };
+              asset = _this.find(localQuery);
+              if (!asset) {
+                return reject(query);
+              }
+              asset.assets = _this.findChildren(asset);
+              if ((asset.count || asset.assets.length) || asset.count === 0) {
+                if (asset.assets.length !== asset.count || asset.count === 0) {
+                  return reject(query);
+                } else {
+                  asset.assets = _this.filterAssets(asset.assets, query);
+                  return resolve(asset);
+                }
+              } else {
+                return resolve(asset);
+              }
+            };
+          })(this));
+        },
+        getData: function(query, options) {
+          if (options == null) {
+            options = {};
+          }
+          return $q((function(_this) {
+            return function(resolve, reject) {
+              var data, fetch, fetches, promises, rejected;
+              query = angular.copy(query);
+              if (!query) {
+                query = $location.path();
+              }
+              if (_.isString(query)) {
+                query = [
+                  {
+                    path: query
+                  }
+                ];
+              }
+              query = imagoUtils.toArray(query);
+              promises = [];
+              fetches = [];
+              data = [];
+              rejected = [];
+              fetch = function() {
+                fetches.push(_this.search(rejected).then(function(response) {
+                  var j, len, ref, res, results;
+                  if (rejected != null ? rejected.length : void 0) {
+                    console.log('not in the model. fetching...', rejected);
+                  }
+                  if (!(response != null ? response.data : void 0)) {
+                    return;
+                  }
+                  ref = response.data;
+                  results = [];
+                  for (j = 0, len = ref.length; j < len; j++) {
+                    res = ref[j];
+                    results.push(data.push(_this.create(res)));
+                  }
+                  return results;
+                }));
+                return $q.all(fetches).then(function() {
+                  var ref, ref1;
+                  if (options.title) {
+                    $document.prop('title', options.title);
+                  } else if (data.length === 1 && ((ref = data[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {
+                    $document.prop('title', data[0].fields.title.value);
+                  } else if (data.length === 1 && data[0].name) {
+                    $document.prop('title', data[0].name);
+                  }
+                  return resolve(data);
+                });
+              };
+              _.forEach(query, function(value) {
+                return promises.push(_this.getLocalData(value, options).then(function(result) {
+                  var worker;
+                  if (result.assets) {
+                    worker = {
+                      assets: result.assets,
+                      order: result.sortorder,
+                      path: sortWorker
+                    };
+                    return fetches.push(imagoWorker.work(worker).then(function(response) {
+                      result.assets = response.assets;
+                      data.push(result);
+                      return data = _.flatten(data);
+                    }));
+                  } else {
+                    data.push(result);
+                    return data = _.flatten(data);
+                  }
+                }, function(rejection) {
+                  return rejected.push(rejection);
+                }));
+              });
+              return $q.all(promises).then(fetch);
+            };
+          })(this));
+        },
+        formatQuery: function(query) {
+          var elem, j, k, key, len, len1, querydict, ref, value;
+          querydict = {};
+          if (_.isArray(query)) {
+            for (j = 0, len = query.length; j < len; j++) {
+              elem = query[j];
+              for (key in elem) {
+                value = elem[key];
+                querydict[key] || (querydict[key] = []);
+                querydict[key].push(value);
+              }
+            }
+          } else if (_.isPlainObject(query)) {
+            for (key in query) {
+              value = query[key];
+              querydict[key] = angular.isArray(value) ? value : [value];
+            }
+          } else if (_.isString(query)) {
+            querydict['path'] = [query];
+          }
+          ref = ['page', 'pagesize'];
+          for (k = 0, len1 = ref.length; k < len1; k++) {
+            key = ref[k];
+            if (querydict.hasOwnProperty(key)) {
+              querydict[key] = querydict[key][0];
+            }
+          }
+          return querydict;
+        },
+        addAsset: function(asset) {
+          if (!this.find({
+            '_id': asset._id
+          })) {
+            this.data.push(asset);
+          }
+          return this.populateData(asset.assets);
+        },
+        populateData: function(assets) {
+          var asset, j, len, results;
+          if (!_.isArray(assets)) {
+            return;
+          }
+          results = [];
+          for (j = 0, len = assets.length; j < len; j++) {
+            asset = assets[j];
+            results.push(this.addAsset(asset));
+          }
+          return results;
+        },
+        getById: function(id) {
+          var asset;
+          asset = this.find({
+            '_id': id
+          });
+          if (asset) {
+            asset.assets = this.findChildren(asset);
+            return $q.when(asset);
+          }
+          return this.assets.get(id).then(function(response) {
+            return response.data;
+          });
+        },
+        create: function(data) {
+          var collection;
+          collection = data;
+          this.populateData(data.assets);
+          if (!this.find({
+            '_id': collection._id
+          })) {
+            if (collection.type === 'collection') {
+              collection = _.omit(collection, 'assets');
+            }
+            this.data.push(collection);
+          }
+          return data;
+        },
+        findChildren: function(asset) {
+          return _.filter(this.data, {
+            parent: asset._id
+          });
+        },
+        findParent: function(asset) {
+          return _.find(this.data, {
+            '_id': asset.parent
+          });
+        },
+        findByAttr: function(options) {
+          if (options == null) {
+            options = {};
+          }
+          return _.filter(this.data, options);
+        },
+        find: function(options) {
+          if (options == null) {
+            options = {};
+          }
+          return _.find(this.data, options);
+        },
+        findIdx: function(options) {
+          if (options == null) {
+            options = {};
+          }
+          return _.findIndex(this.data, options);
+        },
+        filterAssets: function(assets, query) {
+          var j, key, len, params, value;
+          query = _.omit(query, 'path');
+          if (_.keys(query).length) {
+            for (key in query) {
+              value = query[key];
+              for (j = 0, len = value.length; j < len; j++) {
+                params = value[j];
+                if (key !== 'path') {
+                  assets = _.filter(assets, function(asset) {
+                    var elem, k, len1, ref;
+                    if ((ref = asset.fields) != null ? ref.hasOwnProperty(key) : void 0) {
+                      value = asset.fields[key]['value'];
+                      if (_.isString(value)) {
+                        if (value.match(new RegExp(params, 'i'))) {
+                          return true;
+                        }
+                      }
+                      if (_.isNumber(value)) {
+                        if (ParseFloat(value === ParseFloat(params))) {
+                          return true;
+                        }
+                      }
+                      if (_.isArray(value)) {
+                        for (k = 0, len1 = value.length; k < len1; k++) {
+                          elem = value[k];
+                          if (elem.match(new RegExp(params, 'i'))) {
+                            return true;
+                          }
+                        }
+                      }
+                      return false;
+                    } else if (asset[key]) {
+                      value = asset[key];
+                      if (_.isString(value)) {
+                        if (value.match(new RegExp(params, 'i'))) {
+                          return true;
+                        }
+                      }
+                      if (_.isNumber(value)) {
+                        if (ParseFloat(value === ParseFloat(params))) {
+                          return true;
+                        }
+                      }
+                      return false;
+                    }
+                  });
+                }
+              }
+            }
+          }
+          return assets;
+        },
+        updateCount: function(parent, number) {
+          parent.count = parent.count + number;
+          return this.update(parent, {
+            stream: false
+          });
+        },
+        add: function(assets, options) {
+          var asset, defer, j, len;
+          if (options == null) {
+            options = {};
+          }
+          defer = $q.defer();
+          if (_.isUndefined(options.stream)) {
+            options.stream = true;
+          }
+          if (_.isUndefined(options.push)) {
+            options.push = true;
+          }
+          if (options.save) {
+            this.assets.create(assets).then((function(_this) {
+              return function(result) {
+                var asset, j, len, ref;
+                if (options.push) {
+                  ref = result.data.data;
+                  for (j = 0, len = ref.length; j < len; j++) {
+                    asset = ref[j];
+                    _this.data.push(asset);
+                  }
+                }
+                defer.resolve(result.data.data);
+                if (options.stream) {
+                  return $rootScope.$emit('assets:add', result.data.data);
+                }
+              };
+            })(this));
+          } else {
+            if (options.push) {
+              for (j = 0, len = assets.length; j < len; j++) {
+                asset = assets[j];
+                this.data.push(asset);
+              }
+            }
+            defer.resolve();
+            if (options.stream) {
+              $rootScope.$emit('assets:add', assets);
+            }
+          }
+          return defer.promise;
+        },
+        update: function(data, options) {
+          var asset, attribute, copy, defer, idx, j, len, query;
+          if (options == null) {
+            options = {};
+          }
+          defer = $q.defer();
+          if (_.isUndefined(options.stream)) {
+            options.stream = true;
+          }
+          attribute = (options.attribute ? options.attribute : '_id');
+          copy = angular.copy(data);
+          if (_.isPlainObject(copy)) {
+            query = {};
+            query[attribute] = copy[attribute];
+            if (!copy[attribute]) {
+              return;
+            }
+            if (copy.assets) {
+              delete copy.assets;
+            }
+            idx = this.findIdx(query);
+            if (idx !== -1) {
+              this.data[idx] = _.assign(this.data[idx], copy);
+            } else {
+              this.data.push(copy);
+            }
+            if (options.save) {
+              if (copy.base64_url) {
+                delete copy.base64_url;
+              }
+              defer.resolve(this.assets.update(copy));
+            } else {
+              defer.resolve(copy);
+            }
+          } else if (_.isArray(copy)) {
+            for (j = 0, len = copy.length; j < len; j++) {
+              asset = copy[j];
+              query = {};
+              query[attribute] = asset[attribute];
+              if (asset.assets) {
+                delete asset.assets;
+              }
+              idx = this.findIdx(query);
+              if (idx !== -1) {
+                _.assign(this.data[idx], asset);
+              } else {
+                this.data.push(asset);
+              }
+              if (asset.base64_url) {
+                delete asset.base64_url;
+              }
+            }
+            if (options.save) {
+              defer.resolve(this.assets.batch(copy));
+            } else {
+              defer.resolve(copy);
+            }
+          }
+          if (options.stream) {
+            $rootScope.$emit('assets:update', copy);
+          }
+          return defer.promise;
+        },
+        "delete": function(assets, options) {
+          var asset, defer, j, len, promises;
+          if (options == null) {
+            options = {};
+          }
+          if (!assets) {
+            return;
+          }
+          defer = $q.defer();
+          if (_.isUndefined(options.stream)) {
+            options.stream = true;
+          }
+          promises = [];
+          for (j = 0, len = assets.length; j < len; j++) {
+            asset = assets[j];
+            _.remove(this.data, {
+              '_id': asset._id
+            });
+            if (options.save) {
+              promises.push(this.assets["delete"](asset._id));
+            }
+          }
+          if (promises.length) {
+            defer.resolve($q.all(promises));
+          } else {
+            defer.resolve(assets);
+          }
+          if (options.stream) {
+            $rootScope.$emit('assets:delete', assets);
+          }
+          return defer.promise;
+        },
+        trash: function(assets) {
+          var asset, j, len, newAsset, request;
+          request = [];
+          for (j = 0, len = assets.length; j < len; j++) {
+            asset = assets[j];
+            newAsset = {
+              '_id': asset._id,
+              'name': asset.name
+            };
+            request.push(newAsset);
+          }
+          this.assets.trash(request);
+          return this["delete"](assets);
+        },
+        copy: function(assets, sourceId, parentId) {
+          var defer;
+          defer = $q.defer();
+          this.paste(assets).then((function(_this) {
+            return function(pasted) {
+              var asset, j, len, newAsset, request;
+              request = [];
+              for (j = 0, len = pasted.length; j < len; j++) {
+                asset = pasted[j];
+                newAsset = {
+                  '_id': asset._id,
+                  'order': asset.order,
+                  'name': asset.name
+                };
+                request.push(newAsset);
+              }
+              return _this.assets.copy(request, sourceId, parentId).then(function(result) {
+                if (_this.currentCollection.sortorder === '-order') {
+                  return defer.resolve(_this.update(result.data));
+                } else {
+                  _this.update(result.data, {
+                    stream: false
+                  });
+                  return _this.reSort(_this.currentCollection).then(function() {
+                    return defer.resolve();
+                  });
+                }
+              });
+            };
+          })(this));
+          return defer.promise;
+        },
+        move: function(assets, sourceId, parentId) {
+          var defer;
+          defer = $q.defer();
+          this.paste(assets).then((function(_this) {
+            return function(pasted) {
+              var asset, formatted, j, len, request;
+              if (_this.currentCollection.sortorder === '-order') {
+                _this.update(pasted).then(function() {
+                  return defer.resolve();
+                });
+              } else {
+                _this.update(pasted, {
+                  stream: false
+                });
+                _this.reSort(_this.currentCollection).then(function() {
+                  return defer.resolve();
+                });
+              }
+              request = [];
+              for (j = 0, len = pasted.length; j < len; j++) {
+                asset = pasted[j];
+                formatted = {
+                  '_id': asset._id,
+                  'order': asset.order,
+                  'name': asset.name
+                };
+                request.push(formatted);
+              }
+              return _this.assets.move(request, sourceId, parentId);
+            };
+          })(this));
+          return defer.promise;
+        },
+        paste: function(assets, options) {
+          var asset, assetsChildren, checkAsset, defer, j, len, queue;
+          if (options == null) {
+            options = {};
+          }
+          defer = $q.defer();
+          if (_.isUndefined(options.checkdups)) {
+            options.checkdups = true;
+          }
+          assetsChildren = this.findChildren(this.currentCollection);
+          checkAsset = (function(_this) {
+            return function(asset) {
+              var deferAsset, exists, i, original_name;
+              deferAsset = $q.defer();
+              if (!options.checkdups || _.filter(assetsChildren, {
+                name: asset.name
+              }).length === 0) {
+                deferAsset.resolve(asset);
+              } else {
+                i = 1;
+                exists = true;
+                original_name = asset.name;
+                while (exists) {
+                  asset.name = original_name + "_" + i;
+                  i++;
+                  exists = (_.filter(assetsChildren, {
+                    name: asset.name
+                  }).length ? true : false);
+                }
+                deferAsset.resolve(asset);
+              }
+              return deferAsset.promise;
+            };
+          })(this);
+          queue = [];
+          for (j = 0, len = assets.length; j < len; j++) {
+            asset = assets[j];
+            queue.push(checkAsset(asset));
+          }
+          $q.all(queue).then((function(_this) {
+            return function(result) {
+              return defer.resolve(result);
+            };
+          })(this));
+          return defer.promise;
+        },
+        reSort: function(collection) {
+          var defer, orderedList;
+          defer = $q.defer();
+          if (!collection.assets || collection.sortorder === '-order') {
+            return;
+          }
+          orderedList = this.reindexAll(collection.assets);
+          this.update(orderedList, {
+            stream: false,
+            save: true
+          });
+          collection.sortorder = '-order';
+          this.update(collection, {
+            save: true
+          }).then(function() {
             return defer.resolve();
           });
           return defer.promise;
-        };
-      })(this),
-      download: (function(_this) {
-        return function(ids, res) {
-          return _this.$http.post(_this.imagoSettings.host + "/api/assets/download", {
-            assets: ids,
-            resolution: res
-          });
-        };
-      })(this),
-      pdfRequest: (function(_this) {
-        return function(ids, orientation) {
-          return _this.$http.post(_this.imagoSettings.host + "/api/assets/pdf", {
-            assets: ids,
-            orientation: orientation
-          });
-        };
-      })(this),
-      spreadRequest: (function(_this) {
-        return function(data) {
-          return _this.$http.post(_this.imagoSettings.host + "/api/assets/spread", data);
-        };
-      })(this),
-      transformRequest: (function(_this) {
-        return function(data) {
-          return _this.$http.post(_this.imagoSettings.host + "/api/assets/transform", data);
-        };
-      })(this),
-      repair: (function(_this) {
-        return function(id) {
-          return _this.$http.put(_this.imagoSettings.host + "/api/assets/repairorder", {
-            _id: id
-          });
-        };
-      })(this)
-    };
-  }
-
-  imagoModel.prototype.data = [];
-
-  imagoModel.prototype.currentCollection = void 0;
-
-  imagoModel.prototype.search = function(query) {
-    var defer, params;
-    params = _.map(query, this.formatQuery);
-    if (!params.length) {
-      defer = this.$q.defer();
-      defer.resolve();
-      return defer.promise;
-    }
-    return this.$http.post(this.imagoSettings.host + "/api/search", angular.toJson(params));
-  };
-
-  imagoModel.prototype.getLocalData = function(query, options) {
-    var asset, defer, key, localQuery, path, value;
-    if (options == null) {
-      options = {};
-    }
-    defer = this.$q.defer();
-    for (key in options) {
-      value = options[key];
-      if (key === 'localData' && value === false) {
-        defer.reject(query);
-      }
-    }
-    for (key in query) {
-      value = query[key];
-      if (key === 'fts') {
-        defer.reject(query);
-      } else if (key === 'collection') {
-        query = this.imagoUtils.renameKey('collection', 'path', query);
-        path = value;
-      } else if (key === 'kind') {
-        query = this.imagoUtils.renameKey('kind', 'type', query);
-      } else if (key === 'metakind') {
-        query = this.imagoUtils.renameKey('metakind', 'type', query);
-      } else if (key === 'path') {
-        path = value;
-      }
-    }
-    if ((path != null ? path.slice(-1) : void 0) === '/') {
-      path = path.substring(0, path.length - 1);
-      query.path = path;
-    }
-    if (path) {
-      localQuery = {
-        'path': _.isString(path) ? path : _.first(path)
-      };
-      asset = this.find(localQuery);
-      if (asset) {
-        asset.assets = this.findChildren(asset);
-        if ((asset.count || asset.assets.length) || asset.count === 0) {
-          if (asset.assets.length !== asset.count || asset.count === 0) {
-            defer.reject(query);
-          } else {
-            asset.assets = this.filterAssets(asset.assets, query);
-            defer.resolve(asset);
-          }
-        } else {
-          defer.resolve(asset);
-        }
-      } else {
-        defer.reject(query);
-      }
-    } else {
-      defer.reject(query);
-    }
-    return defer.promise;
-  };
-
-  imagoModel.prototype.getData = function(query, options) {
-    var data, defer, fetches, promises, rejected, resolve;
-    if (options == null) {
-      options = {};
-    }
-    defer = this.$q.defer();
-    query = angular.copy(query);
-    if (!query) {
-      query = this.$location.path();
-    }
-    if (_.isString(query)) {
-      query = [
-        {
-          path: query
-        }
-      ];
-    }
-    query = this.imagoUtils.toArray(query);
-    promises = [];
-    fetches = [];
-    data = [];
-    rejected = [];
-    resolve = (function(_this) {
-      return function() {
-        fetches.push(_this.search(rejected).then(function(response) {
-          var j, len, ref, res, results;
-          if (rejected != null ? rejected.length : void 0) {
-            console.log('not in the model. fetching...', rejected);
-          }
-          if (!(response != null ? response.data : void 0)) {
-            return;
-          }
-          ref = response.data;
-          results = [];
-          for (j = 0, len = ref.length; j < len; j++) {
-            res = ref[j];
-            results.push(data.push(_this.create(res)));
-          }
-          return results;
-        }));
-        return _this.$q.all(fetches).then(function(resolve) {
-          var ref, ref1;
-          if (options.title) {
-            _this.$document.prop('title', options.title);
-          } else if (data.length === 1 && ((ref = data[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {
-            _this.$document.prop('title', data[0].fields.title.value);
-          } else if (data.length === 1 && data[0].name) {
-            _this.$document.prop('title', data[0].name);
-          }
-          return defer.resolve(data);
-        });
-      };
-    })(this);
-    _.forEach(query, (function(_this) {
-      return function(value) {
-        return promises.push(_this.getLocalData(value, options).then(function(result) {
-          var worker;
-          if (result.assets) {
-            worker = {
-              assets: result.assets,
-              order: result.sortorder,
-              path: _this.imagoSettings.sort_worker
+        },
+        reindexAll: (function(_this) {
+          return function(list) {
+            var asset, count, j, key, len, newList, ordered;
+            newList = [];
+            count = list.length;
+            for (key = j = 0, len = list.length; j < len; key = ++j) {
+              asset = list[key];
+              asset.order = (count - key) * indexRange;
+              ordered = {
+                '_id': asset._id,
+                'order': asset.order
+              };
+              newList.push(ordered);
+            }
+            return newList;
+          };
+        })(this),
+        reorder: (function(_this) {
+          return function(dropped, list, selection, options) {
+            var count, data, idxOne, idxTwo, minusOrder, repair;
+            if (options == null) {
+              options = {};
+            }
+            if (_.isUndefined(options.process)) {
+              options.process = true;
+            }
+            if (options.reverse) {
+              count = dropped - selection.length;
+              idxOne = list[count];
+              idxTwo = list[dropped + 1] ? list[dropped + 1] : {
+                order: 0
+              };
+              selection = selection.reverse();
+            } else if (options.process === false) {
+              idxOne = list[dropped - 1];
+              idxTwo = list[dropped] ? list[dropped] : {
+                order: 0
+              };
+            } else {
+              count = dropped + selection.length;
+              idxOne = list[dropped - 1] ? list[dropped - 1] : void 0;
+              idxTwo = list[count];
+            }
+            if (!idxOne) {
+              minusOrder = indexRange;
+            } else {
+              minusOrder = (idxOne.order - idxTwo.order) / (selection.length + 1);
+              if (minusOrder <= 0.05) {
+                repair = true;
+              }
+            }
+            data = {
+              minus: minusOrder,
+              order: idxTwo.order + minusOrder,
+              repair: repair
             };
-            return fetches.push(_this.imagoWorker.work(worker).then(function(response) {
-              result.assets = response.assets;
-              data.push(result);
-              return data = _.flatten(data);
-            }));
-          } else {
-            data.push(result);
-            return data = _.flatten(data);
+            return data;
+          };
+        })(this),
+        batchAddTag: function(assets) {
+          var asset, base, base1, copy, idx, j, key, len, original, toedit, value;
+          for (idx = j = 0, len = assets.length; j < len; idx = ++j) {
+            asset = assets[idx];
+            original = this.find({
+              '_id': asset._id
+            });
+            if (!original) {
+              return;
+            }
+            copy = {
+              fields: original.fields,
+              parent: original.parent
+            };
+            toedit = angular.copy(asset);
+            for (key in toedit) {
+              value = toedit[key];
+              if (key === 'fields') {
+                for (key in toedit.fields) {
+                  copy['fields'] || (copy['fields'] = {});
+                  (base = copy['fields'])[key] || (base[key] = {});
+                  (base1 = copy['fields'][key]).value || (base1.value = []);
+                  if (copy['fields'][key].value.indexOf(toedit.fields[key]) === -1) {
+                    copy['fields'][key].value.push(toedit.fields[key]);
+                  }
+                }
+              } else {
+                copy[key] = toedit[key];
+              }
+            }
+            assets[idx] = copy;
           }
-        }, function(reject) {
-          return rejected.push(reject);
-        }));
-      };
-    })(this));
-    this.$q.all(promises).then(function(response) {
-      return resolve();
-    });
-    return defer.promise;
-  };
-
-  imagoModel.prototype.formatQuery = function(query) {
-    var elem, j, k, key, len, len1, querydict, ref, value;
-    querydict = {};
-    if (_.isArray(query)) {
-      for (j = 0, len = query.length; j < len; j++) {
-        elem = query[j];
-        for (key in elem) {
-          value = elem[key];
-          querydict[key] || (querydict[key] = []);
-          querydict[key].push(value);
-        }
-      }
-    } else if (_.isPlainObject(query)) {
-      for (key in query) {
-        value = query[key];
-        querydict[key] = angular.isArray(value) ? value : [value];
-      }
-    } else if (_.isString(query)) {
-      querydict['path'] = [query];
-    }
-    ref = ['page', 'pagesize'];
-    for (k = 0, len1 = ref.length; k < len1; k++) {
-      key = ref[k];
-      if (querydict.hasOwnProperty(key)) {
-        querydict[key] = querydict[key][0];
-      }
-    }
-    return querydict;
-  };
-
-  imagoModel.prototype.addAsset = function(asset) {
-    if (!this.find({
-      '_id': asset._id
-    })) {
-      this.data.push(asset);
-    }
-    return this.populateData(asset.assets);
-  };
-
-  imagoModel.prototype.populateData = function(assets) {
-    var asset, j, len, results;
-    if (!_.isArray(assets)) {
-      return;
-    }
-    results = [];
-    for (j = 0, len = assets.length; j < len; j++) {
-      asset = assets[j];
-      results.push(this.addAsset(asset));
-    }
-    return results;
-  };
-
-  imagoModel.prototype.getById = function(id) {
-    var asset, defer;
-    defer = this.$q.defer();
-    asset = this.find({
-      '_id': id
-    });
-    if (asset) {
-      asset.assets = this.findChildren(asset);
-      defer.resolve(asset);
-    } else {
-      this.assets.get(id).then(function(response) {
-        return defer.resolve(response.data);
-      });
-    }
-    return defer.promise;
-  };
-
-  imagoModel.prototype.create = function(data) {
-    var collection;
-    collection = data;
-    this.populateData(data.assets);
-    if (!this.find({
-      '_id': collection._id
-    })) {
-      if (collection.type === 'collection') {
-        collection = _.omit(collection, 'assets');
-      }
-      this.data.push(collection);
-    }
-    return data;
-  };
-
-  imagoModel.prototype.findChildren = function(asset) {
-    return _.filter(this.data, {
-      parent: asset._id
-    });
-  };
-
-  imagoModel.prototype.findParent = function(asset) {
-    return _.find(this.data, {
-      '_id': asset.parent
-    });
-  };
-
-  imagoModel.prototype.findByAttr = function(options) {
-    if (options == null) {
-      options = {};
-    }
-    return _.filter(this.data, options);
-  };
-
-  imagoModel.prototype.find = function(options) {
-    if (options == null) {
-      options = {};
-    }
-    return _.find(this.data, options);
-  };
-
-  imagoModel.prototype.findIdx = function(options) {
-    if (options == null) {
-      options = {};
-    }
-    return _.findIndex(this.data, options);
-  };
-
-  imagoModel.prototype.filterAssets = function(assets, query) {
-    var j, key, len, params, value;
-    query = _.omit(query, 'path');
-    if (_.keys(query).length) {
-      for (key in query) {
-        value = query[key];
-        for (j = 0, len = value.length; j < len; j++) {
-          params = value[j];
-          if (key !== 'path') {
-            assets = _.filter(assets, function(asset) {
-              var elem, k, len1, ref;
-              if ((ref = asset.fields) != null ? ref.hasOwnProperty(key) : void 0) {
-                value = asset.fields[key]['value'];
-                if (_.isString(value)) {
-                  if (value.match(new RegExp(params, 'i'))) {
-                    return true;
+          return this.update(assets, {
+            save: true
+          });
+        },
+        batchChange: function(assets, keyOnly) {
+          var asset, base, base1, copy, idx, j, key, len, original, toedit;
+          for (idx = j = 0, len = assets.length; j < len; idx = ++j) {
+            asset = assets[idx];
+            original = this.find({
+              '_id': asset._id
+            });
+            if (!original) {
+              continue;
+            }
+            copy = {
+              fields: original.fields,
+              parent: original.parent
+            };
+            toedit = angular.copy(asset);
+            for (key in toedit) {
+              if (key === 'fields') {
+                for (key in toedit.fields) {
+                  copy['fields'] || (copy['fields'] = {});
+                  if (keyOnly) {
+                    (base = copy['fields'])[key] || (base[key] = {});
+                    (base1 = copy['fields'][key]).value || (base1.value = {});
+                    copy['fields'][key].value[keyOnly] = toedit.fields[key].value[keyOnly];
+                  } else {
+                    copy['fields'][key] = toedit.fields[key];
                   }
                 }
-                if (_.isNumber(value)) {
-                  if (ParseFloat(value === ParseFloat(params))) {
-                    return true;
-                  }
-                }
-                if (_.isArray(value)) {
-                  for (k = 0, len1 = value.length; k < len1; k++) {
-                    elem = value[k];
-                    if (elem.match(new RegExp(params, 'i'))) {
-                      return true;
-                    }
-                  }
-                }
-                return false;
-              } else if (asset[key]) {
-                value = asset[key];
-                if (_.isString(value)) {
-                  if (value.match(new RegExp(params, 'i'))) {
-                    return true;
-                  }
-                }
-                if (_.isNumber(value)) {
-                  if (ParseFloat(value === ParseFloat(params))) {
-                    return true;
-                  }
-                }
+              } else {
+                copy[key] = toedit[key];
+              }
+            }
+            if (_.isEmpty(copy.fields)) {
+              delete copy.fields;
+            }
+            assets[idx] = copy;
+          }
+          return this.update(assets, {
+            save: true
+          });
+        },
+        isDuplicated: function(asset, assets, options) {
+          var assetsChildren, defer, exists, findName, i, name, original_name, result;
+          if (options == null) {
+            options = {};
+          }
+          if (_.isUndefined(options.rename)) {
+            options.rename = false;
+          }
+          defer = $q.defer();
+          if (!asset.name) {
+            defer.reject(asset.name);
+          }
+          name = _.kebabCase(asset.name);
+          result = void 0;
+          assetsChildren = _.filter(assets, (function(_this) {
+            return function(chr) {
+              if (!chr.name) {
                 return false;
               }
-            });
-          }
-        }
-      }
-    }
-    return assets;
-  };
-
-  imagoModel.prototype.updateCount = function(parent, number) {
-    parent.count = parent.count + number;
-    return this.update(parent, {
-      stream: false
-    });
-  };
-
-  imagoModel.prototype.add = function(assets, options) {
-    var asset, defer, j, len;
-    if (options == null) {
-      options = {};
-    }
-    defer = this.$q.defer();
-    if (_.isUndefined(options.stream)) {
-      options.stream = true;
-    }
-    if (_.isUndefined(options.push)) {
-      options.push = true;
-    }
-    if (options.save) {
-      this.assets.create(assets).then((function(_this) {
-        return function(result) {
-          var asset, j, len, ref;
-          if (options.push) {
-            ref = result.data.data;
-            for (j = 0, len = ref.length; j < len; j++) {
-              asset = ref[j];
-              _this.data.push(asset);
-            }
-          }
-          defer.resolve(result.data.data);
-          if (options.stream) {
-            return _this.$rootScope.$emit('assets:add', result.data.data);
-          }
-        };
-      })(this));
-    } else {
-      if (options.push) {
-        for (j = 0, len = assets.length; j < len; j++) {
-          asset = assets[j];
-          this.data.push(asset);
-        }
-        defer.resolve();
-      }
-      if (options.stream) {
-        this.$rootScope.$emit('assets:add', assets);
-      }
-    }
-    return defer.promise;
-  };
-
-  imagoModel.prototype.update = function(data, options) {
-    var asset, attribute, copy, defer, idx, j, len, query;
-    if (options == null) {
-      options = {};
-    }
-    defer = this.$q.defer();
-    if (_.isUndefined(options.stream)) {
-      options.stream = true;
-    }
-    attribute = (options.attribute ? options.attribute : '_id');
-    copy = angular.copy(data);
-    if (_.isPlainObject(copy)) {
-      query = {};
-      query[attribute] = copy[attribute];
-      if (!copy[attribute]) {
-        return;
-      }
-      if (copy.assets) {
-        delete copy.assets;
-      }
-      idx = this.findIdx(query);
-      if (idx !== -1) {
-        this.data[idx] = _.assign(this.data[idx], copy);
-      } else {
-        this.data.push(copy);
-      }
-      if (options.save) {
-        if (copy.base64_url) {
-          delete copy.base64_url;
-        }
-        this.assets.update(copy).then(function() {
-          return defer.resolve();
-        });
-      }
-    } else if (_.isArray(copy)) {
-      for (j = 0, len = copy.length; j < len; j++) {
-        asset = copy[j];
-        query = {};
-        query[attribute] = asset[attribute];
-        if (asset.assets) {
-          delete asset.assets;
-        }
-        idx = this.findIdx(query);
-        if (idx !== -1) {
-          _.assign(this.data[idx], asset);
-        } else {
-          this.data.push(asset);
-        }
-        if (asset.base64_url) {
-          delete asset.base64_url;
-        }
-      }
-      if (options.save) {
-        this.assets.batch(copy).then(function() {
-          return defer.resolve();
-        });
-      } else {
-        defer.resolve();
-      }
-    }
-    if (options.stream) {
-      this.$rootScope.$emit('assets:update', copy);
-    }
-    return defer.promise;
-  };
-
-  imagoModel.prototype["delete"] = function(assets, options) {
-    var asset, defer, j, len;
-    if (options == null) {
-      options = {};
-    }
-    if (!assets) {
-      return;
-    }
-    defer = this.$q.defer();
-    if (_.isUndefined(options.stream)) {
-      options.stream = true;
-    }
-    for (j = 0, len = assets.length; j < len; j++) {
-      asset = assets[j];
-      _.remove(this.data, {
-        '_id': asset._id
-      });
-      if (options.save) {
-        this.assets["delete"](asset._id);
-      }
-    }
-    defer.resolve(assets);
-    if (options.stream) {
-      this.$rootScope.$emit('assets:delete', assets);
-    }
-    return defer.promise;
-  };
-
-  imagoModel.prototype.trash = function(assets) {
-    var asset, j, len, newAsset, request;
-    request = [];
-    for (j = 0, len = assets.length; j < len; j++) {
-      asset = assets[j];
-      newAsset = {
-        '_id': asset._id,
-        'name': asset.name
-      };
-      request.push(newAsset);
-    }
-    this.assets.trash(request);
-    return this["delete"](assets);
-  };
-
-  imagoModel.prototype.copy = function(assets, sourceId, parentId) {
-    var defer;
-    defer = this.$q.defer();
-    this.paste(assets).then((function(_this) {
-      return function(pasted) {
-        var asset, j, len, newAsset, request;
-        request = [];
-        for (j = 0, len = pasted.length; j < len; j++) {
-          asset = pasted[j];
-          newAsset = {
-            '_id': asset._id,
-            'order': asset.order,
-            'name': asset.name
-          };
-          request.push(newAsset);
-        }
-        return _this.assets.copy(request, sourceId, parentId).then(function(result) {
-          if (_this.currentCollection.sortorder === '-order') {
-            return _this.update(result.data).then(function() {
-              return defer.resolve();
-            });
-          } else {
-            _this.update(result.data, {
-              stream: false
-            });
-            return _this.reSort(_this.currentCollection).then(function() {
-              return defer.resolve();
-            });
-          }
-        });
-      };
-    })(this));
-    return defer.promise;
-  };
-
-  imagoModel.prototype.move = function(assets, sourceId, parentId) {
-    var defer;
-    defer = this.$q.defer();
-    this.paste(assets).then((function(_this) {
-      return function(pasted) {
-        var asset, formatted, j, len, request;
-        if (_this.currentCollection.sortorder === '-order') {
-          _this.update(pasted).then(function() {
-            return defer.resolve();
-          });
-        } else {
-          _this.update(pasted, {
-            stream: false
-          });
-          _this.reSort(_this.currentCollection).then(function() {
-            return defer.resolve();
-          });
-        }
-        request = [];
-        for (j = 0, len = pasted.length; j < len; j++) {
-          asset = pasted[j];
-          formatted = {
-            '_id': asset._id,
-            'order': asset.order,
-            'name': asset.name
-          };
-          request.push(formatted);
-        }
-        return _this.assets.move(request, sourceId, parentId);
-      };
-    })(this));
-    return defer.promise;
-  };
-
-  imagoModel.prototype.paste = function(assets, options) {
-    var asset, assetsChildren, checkAsset, defer, j, len, queue;
-    if (options == null) {
-      options = {};
-    }
-    defer = this.$q.defer();
-    if (_.isUndefined(options.checkdups)) {
-      options.checkdups = true;
-    }
-    assetsChildren = this.findChildren(this.currentCollection);
-    checkAsset = (function(_this) {
-      return function(asset) {
-        var deferAsset, exists, i, original_name;
-        deferAsset = _this.$q.defer();
-        if (!options.checkdups || _.filter(assetsChildren, {
-          name: asset.name
-        }).length === 0) {
-          deferAsset.resolve(asset);
-        } else {
-          i = 1;
-          exists = true;
-          original_name = asset.name;
-          while (exists) {
-            asset.name = original_name + "_" + i;
-            i++;
-            exists = (_.filter(assetsChildren, {
-              name: asset.name
-            }).length ? true : false);
-          }
-          deferAsset.resolve(asset);
-        }
-        return deferAsset.promise;
-      };
-    })(this);
-    queue = [];
-    for (j = 0, len = assets.length; j < len; j++) {
-      asset = assets[j];
-      queue.push(checkAsset(asset));
-    }
-    this.$q.all(queue).then((function(_this) {
-      return function(result) {
-        return defer.resolve(result);
-      };
-    })(this));
-    return defer.promise;
-  };
-
-  imagoModel.prototype.reSort = function(collection) {
-    var defer, orderedList;
-    defer = this.$q.defer();
-    if (!collection.assets || collection.sortorder === '-order') {
-      return;
-    }
-    orderedList = this.reindexAll(collection.assets);
-    this.update(orderedList, {
-      stream: false,
-      save: true
-    });
-    collection.sortorder = '-order';
-    this.update(collection, {
-      save: true
-    }).then(function() {
-      return defer.resolve();
-    });
-    return defer.promise;
-  };
-
-  imagoModel.prototype.reindexAll = function(list) {
-    var asset, count, j, key, len, newList, ordered;
-    newList = [];
-    count = list.length;
-    for (key = j = 0, len = list.length; j < len; key = ++j) {
-      asset = list[key];
-      asset.order = (count - key) * this.imagoSettings.index;
-      ordered = {
-        '_id': asset._id,
-        'order': asset.order
-      };
-      newList.push(ordered);
-    }
-    return newList;
-  };
-
-  imagoModel.prototype.reorder = function(dropped, list, selection, options) {
-    var count, data, idxOne, idxTwo, minusOrder, repair;
-    if (options == null) {
-      options = {};
-    }
-    if (_.isUndefined(options.process)) {
-      options.process = true;
-    }
-    if (options.reverse) {
-      count = dropped - selection.length;
-      idxOne = list[count];
-      idxTwo = list[dropped + 1] ? list[dropped + 1] : {
-        order: 0
-      };
-      selection = selection.reverse();
-    } else if (options.process === false) {
-      idxOne = list[dropped - 1];
-      idxTwo = list[dropped] ? list[dropped] : {
-        order: 0
-      };
-    } else {
-      count = dropped + selection.length;
-      idxOne = list[dropped - 1] ? list[dropped - 1] : void 0;
-      idxTwo = list[count];
-    }
-    if (!idxOne) {
-      minusOrder = this.imagoSettings.index;
-    } else {
-      minusOrder = (idxOne.order - idxTwo.order) / (selection.length + 1);
-      if (minusOrder <= 0.05) {
-        repair = true;
-      }
-    }
-    data = {
-      minus: minusOrder,
-      order: idxTwo.order + minusOrder,
-      repair: repair
-    };
-    return data;
-  };
-
-  imagoModel.prototype.batchAddTag = function(assets) {
-    var asset, base, base1, copy, idx, j, key, len, original, toedit, value;
-    for (idx = j = 0, len = assets.length; j < len; idx = ++j) {
-      asset = assets[idx];
-      original = this.find({
-        '_id': asset._id
-      });
-      if (!original) {
-        return;
-      }
-      copy = {
-        fields: original.fields,
-        parent: original.parent
-      };
-      toedit = angular.copy(asset);
-      for (key in toedit) {
-        value = toedit[key];
-        if (key === 'fields') {
-          for (key in toedit.fields) {
-            copy['fields'] || (copy['fields'] = {});
-            (base = copy['fields'])[key] || (base[key] = {});
-            (base1 = copy['fields'][key]).value || (base1.value = []);
-            if (copy['fields'][key].value.indexOf(toedit.fields[key]) === -1) {
-              copy['fields'][key].value.push(toedit.fields[key]);
-            }
-          }
-        } else {
-          copy[key] = toedit[key];
-        }
-      }
-      assets[idx] = copy;
-    }
-    return this.update(assets, {
-      save: true
-    });
-  };
-
-  imagoModel.prototype.batchChange = function(assets, keyOnly) {
-    var asset, base, base1, copy, idx, j, key, len, original, toedit;
-    for (idx = j = 0, len = assets.length; j < len; idx = ++j) {
-      asset = assets[idx];
-      original = this.find({
-        '_id': asset._id
-      });
-      if (!original) {
-        continue;
-      }
-      copy = {
-        fields: original.fields,
-        parent: original.parent
-      };
-      toedit = angular.copy(asset);
-      for (key in toedit) {
-        if (key === 'fields') {
-          for (key in toedit.fields) {
-            copy['fields'] || (copy['fields'] = {});
-            if (keyOnly) {
-              (base = copy['fields'])[key] || (base[key] = {});
-              (base1 = copy['fields'][key]).value || (base1.value = {});
-              copy['fields'][key].value[keyOnly] = toedit.fields[key].value[keyOnly];
-            } else {
-              copy['fields'][key] = toedit.fields[key];
-            }
-          }
-        } else {
-          copy[key] = toedit[key];
-        }
-      }
-      if (_.isEmpty(copy.fields)) {
-        delete copy.fields;
-      }
-      assets[idx] = copy;
-    }
-    return this.update(assets, {
-      save: true
-    });
-  };
-
-  imagoModel.prototype.isDuplicated = function(asset, assets, options) {
-    var assetsChildren, defer, exists, findName, i, name, original_name, result;
-    if (options == null) {
-      options = {};
-    }
-    if (_.isUndefined(options.rename)) {
-      options.rename = false;
-    }
-    defer = this.$q.defer();
-    if (!asset.name) {
-      defer.reject(asset.name);
-    }
-    name = _.kebabCase(asset.name);
-    result = void 0;
-    assetsChildren = _.filter(assets, (function(_this) {
-      return function(chr) {
-        if (!chr.name) {
-          return false;
-        }
-        return name === _.kebabCase(chr.name);
-      };
-    })(this));
-    if (assetsChildren.length) {
-      if (assetsChildren.length === 1 && assetsChildren[0]._id === asset._id) {
-        defer.resolve(false);
-      }
-      if (options.rename) {
-        i = 1;
-        exists = true;
-        original_name = name;
-        while (exists) {
-          name = original_name + "_" + i;
-          i++;
-          findName = _.find(assets, (function(_this) {
-            return function(chr) {
-              return _.kebabCase(name) === _.kebabCase(chr.name);
+              return name === _.kebabCase(chr.name);
             };
           })(this));
-          exists = (findName ? true : false);
-        }
-        defer.resolve(name);
-      } else {
-        defer.resolve(true);
-      }
-    } else {
-      defer.resolve(false);
-    }
-    return defer.promise;
-  };
-
-  imagoModel.prototype.prepareCreation = function(asset, parent, order, rename) {
-    var defer;
-    if (rename == null) {
-      rename = false;
-    }
-    defer = this.$q.defer();
-    if (!asset.name) {
-      defer.reject(asset.name);
-    }
-    this.isDuplicated(asset, parent.assets, {
-      rename: rename
-    }).then((function(_this) {
-      return function(isDuplicated) {
-        var assets, orderedList;
-        if (isDuplicated && _.isBoolean(isDuplicated)) {
-          return defer.resolve('duplicated');
-        } else {
-          if (_.isString(isDuplicated)) {
-            asset.name = isDuplicated;
-          }
-          if (order) {
-            asset.order = order;
-          } else {
-            if (parent.sortorder === '-order') {
-              assets = parent.assets;
-              asset.order = (assets.length ? assets[0].order + _this.imagoSettings.index : _this.imagoSettings.index);
-            } else {
-              if (parent.assets.length) {
-                orderedList = _this.reindexAll(parent.assets);
-                _this.update(orderedList, {
-                  save: true
-                });
-                asset.order = orderedList[0].order + _this.imagoSettings.index;
-              } else {
-                asset.order = _this.imagoSettings.index;
-              }
-              parent.sortorder = '-order';
-              _this.update(parent, {
-                save: true
-              });
+          if (assetsChildren.length) {
+            if (assetsChildren.length === 1 && assetsChildren[0]._id === asset._id) {
+              defer.resolve(false);
             }
+            if (options.rename) {
+              i = 1;
+              exists = true;
+              original_name = name;
+              while (exists) {
+                name = original_name + "_" + i;
+                i++;
+                findName = _.find(assets, (function(_this) {
+                  return function(chr) {
+                    return _.kebabCase(name) === _.kebabCase(chr.name);
+                  };
+                })(this));
+                exists = (findName ? true : false);
+              }
+              defer.resolve(name);
+            } else {
+              defer.resolve(true);
+            }
+          } else {
+            defer.resolve(false);
           }
-          asset.parent = parent._id;
-          return defer.resolve(asset);
+          return defer.promise;
+        },
+        prepareCreation: function(asset, parent, order, rename) {
+          var defer;
+          if (rename == null) {
+            rename = false;
+          }
+          defer = $q.defer();
+          if (!asset.name) {
+            defer.reject(asset.name);
+          }
+          this.isDuplicated(asset, parent.assets, {
+            rename: rename
+          }).then((function(_this) {
+            return function(isDuplicated) {
+              var assets, orderedList;
+              if (isDuplicated && _.isBoolean(isDuplicated)) {
+                return defer.resolve('duplicated');
+              } else {
+                if (_.isString(isDuplicated)) {
+                  asset.name = isDuplicated;
+                }
+                if (order) {
+                  asset.order = order;
+                } else {
+                  if (parent.sortorder === '-order') {
+                    assets = parent.assets;
+                    asset.order = (assets.length ? assets[0].order + indexRange : indexRange);
+                  } else {
+                    if (parent.assets.length) {
+                      orderedList = _this.reindexAll(parent.assets);
+                      _this.update(orderedList, {
+                        save: true
+                      });
+                      asset.order = orderedList[0].order + indexRange;
+                    } else {
+                      asset.order = indexRange;
+                    }
+                    parent.sortorder = '-order';
+                    _this.update(parent, {
+                      save: true
+                    });
+                  }
+                }
+                asset.parent = parent._id;
+                return defer.resolve(asset);
+              }
+            };
+          })(this));
+          return defer.promise;
         }
       };
-    })(this));
-    return defer.promise;
-  };
+    };
+  }
 
   return imagoModel;
 
 })();
 
-angular.module('imago').service('imagoModel', ['$rootScope', '$http', '$location', '$document', '$q', 'imagoUtils', 'imagoWorker', 'imagoSettings', imagoModel]);
+angular.module('imago').provider('imagoModel', [imagoModel]);
 
 var imagoPage;
 
@@ -2129,15 +2051,15 @@ TenantSettings = (function() {
 
   TenantSettings.prototype.loaded = false;
 
-  function TenantSettings($http, $rootScope, imagoSettings) {
+  function TenantSettings($http, $rootScope, imagoModel) {
     this.$http = $http;
     this.$rootScope = $rootScope;
-    this.imagoSettings = imagoSettings;
+    this.imagoModel = imagoModel;
     this.get();
   }
 
   TenantSettings.prototype.get = function() {
-    return this.$http.get(this.imagoSettings.host + "/api/settings").then((function(_this) {
+    return this.$http.get(this.imagoModel.host + "/api/settings").then((function(_this) {
       return function(response) {
         return _this.reorder(response.data);
       };
@@ -2167,7 +2089,7 @@ TenantSettings = (function() {
 
 })();
 
-angular.module('imago').service('tenantSettings', ['$http', '$rootScope', 'imagoSettings', TenantSettings]);
+angular.module('imago').service('tenantSettings', ['$http', '$rootScope', 'imagoModel', TenantSettings]);
 
 var WebStorage;
 

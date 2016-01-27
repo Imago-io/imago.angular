@@ -3,11 +3,11 @@ class TenantSettings extends Service
   data: {}
   loaded: false
 
-  constructor: (@$http, @$rootScope, @imagoSettings) ->
+  constructor: (@$http, @$rootScope, @imagoModel) ->
     @get()
 
   get: ->
-    @$http.get("#{@imagoSettings.host}/api/settings").then (response) =>
+    @$http.get("#{@imagoModel.host}/api/settings").then (response) =>
       @reorder response.data
 
   reorder: (data) ->

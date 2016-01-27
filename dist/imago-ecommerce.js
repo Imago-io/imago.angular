@@ -8,17 +8,17 @@ FulfillmentsCenter = (function() {
 
   FulfillmentsCenter.prototype.selected = {};
 
-  function FulfillmentsCenter($http, $rootScope, geoIp, imagoSettings, imagoUtils) {
+  function FulfillmentsCenter($http, $rootScope, geoIp, imagoModel, imagoUtils) {
     this.$http = $http;
     this.$rootScope = $rootScope;
     this.geoIp = geoIp;
-    this.imagoSettings = imagoSettings;
+    this.imagoModel = imagoModel;
     this.imagoUtils = imagoUtils;
     this.get();
   }
 
   FulfillmentsCenter.prototype.get = function() {
-    return this.$http.get(this.imagoSettings.host + '/api/fulfillmentcenters').then((function(_this) {
+    return this.$http.get(this.imagoModel.host + '/api/fulfillmentcenters').then((function(_this) {
       return function(response) {
         _this.data = response.data;
         return _this.getOptions();
@@ -79,7 +79,7 @@ FulfillmentsCenter = (function() {
 
 })();
 
-angular.module('imago').service('fulfillmentsCenter', ['$http', '$rootScope', 'geoIp', 'imagoSettings', 'imagoUtils', FulfillmentsCenter]);
+angular.module('imago').service('fulfillmentsCenter', ['$http', '$rootScope', 'geoIp', 'imagoModel', 'imagoUtils', FulfillmentsCenter]);
 
 var GeoIp;
 
@@ -244,7 +244,7 @@ imagoCart = (function() {
 
   imagoCart.prototype.settings = [];
 
-  function imagoCart($q, $rootScope, $location, $window, $http, imagoUtils, imagoModel, fulfillmentsCenter, geoIp, imagoSettings, tenantSettings, imagoCartUtils) {
+  function imagoCart($q, $rootScope, $location, $window, $http, imagoUtils, imagoModel, fulfillmentsCenter, geoIp, tenantSettings, imagoCartUtils) {
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.$location = $location;
@@ -254,7 +254,6 @@ imagoCart = (function() {
     this.imagoModel = imagoModel;
     this.fulfillmentsCenter = fulfillmentsCenter;
     this.geoIp = geoIp;
-    this.imagoSettings = imagoSettings;
     this.imagoCartUtils = imagoCartUtils;
     this.remove = bind(this.remove, this);
     this.update = bind(this.update, this);
@@ -323,7 +322,7 @@ imagoCart = (function() {
   };
 
   imagoCart.prototype.checkStatus = function(id) {
-    return this.$http.get(this.imagoSettings.host + "/api/carts?cartid=" + id).then((function(_this) {
+    return this.$http.get(this.imagoModel.host + "/api/carts?cartid=" + id).then((function(_this) {
       return function(response) {
         var watcher;
         console.log('check cart', response.data);
@@ -381,7 +380,7 @@ imagoCart = (function() {
   };
 
   imagoCart.prototype.create = function(cart) {
-    return this.$http.post(this.imagoSettings.host + "/api/carts", cart);
+    return this.$http.post(this.imagoModel.host + "/api/carts", cart);
   };
 
   imagoCart.prototype.add = function(item, options, fields) {
@@ -473,7 +472,7 @@ imagoCart = (function() {
     if (!this.cart._id) {
       return;
     }
-    return this.$http.put(this.imagoSettings.host + "/api/carts/" + this.cart._id, this.cart);
+    return this.$http.put(this.imagoModel.host + "/api/carts/" + this.cart._id, this.cart);
   };
 
   imagoCart.prototype.remove = function(item) {
@@ -529,7 +528,7 @@ imagoCart = (function() {
 
 })();
 
-angular.module('imago').service('imagoCart', ['$q', '$rootScope', '$location', '$window', '$http', 'imagoUtils', 'imagoModel', 'fulfillmentsCenter', 'geoIp', 'imagoSettings', 'tenantSettings', 'imagoCartUtils', imagoCart]);
+angular.module('imago').service('imagoCart', ['$q', '$rootScope', '$location', '$window', '$http', 'imagoUtils', 'imagoModel', 'fulfillmentsCenter', 'geoIp', 'tenantSettings', 'imagoCartUtils', imagoCart]);
 
 var imagoFindPrice, imagoFindPriceController;
 
@@ -816,14 +815,14 @@ ShippingCountries = (function() {
 
   ShippingCountries.prototype.loaded = false;
 
-  function ShippingCountries($http, imagoSettings) {
+  function ShippingCountries($http, imagoModel) {
     this.$http = $http;
-    this.imagoSettings = imagoSettings;
+    this.imagoModel = imagoModel;
     this.get();
   }
 
   ShippingCountries.prototype.get = function() {
-    return this.$http.get(this.imagoSettings.host + '/api/shippingmethods').then((function(_this) {
+    return this.$http.get(this.imagoModel.host + '/api/shippingmethods').then((function(_this) {
       return function(response) {
         var country, i, j, len, len1, method, ref, ref1;
         ref = response.data;
@@ -845,22 +844,21 @@ ShippingCountries = (function() {
 
 })();
 
-angular.module('imago').service('shippingCountries', ['$http', 'imagoSettings', ShippingCountries]);
+angular.module('imago').service('shippingCountries', ['$http', 'imagoModel', ShippingCountries]);
 
 var VariantsStorage;
 
 VariantsStorage = (function() {
   VariantsStorage.prototype.data = [];
 
-  function VariantsStorage($http, $q, imagoModel, imagoSettings) {
+  function VariantsStorage($http, $q, imagoModel) {
     this.$http = $http;
     this.$q = $q;
     this.imagoModel = imagoModel;
-    this.imagoSettings = imagoSettings;
   }
 
   VariantsStorage.prototype.search = function(id) {
-    return this.$http.get(this.imagoSettings.host + "/api/variants/" + id);
+    return this.$http.get(this.imagoModel.host + "/api/variants/" + id);
   };
 
   VariantsStorage.prototype.get = function(parent) {
@@ -886,7 +884,7 @@ VariantsStorage = (function() {
 
 })();
 
-angular.module('imago').service('variantsStorage', ['$http', '$q', 'imagoModel', 'imagoSettings', VariantsStorage]);
+angular.module('imago').service('variantsStorage', ['$http', '$q', 'imagoModel', VariantsStorage]);
 
 angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-cart-messages.html","<div class=\"imago-cart-messages\"><div ng-repeat=\"key in item.updates\" ng-swich=\"key\" class=\"message\"><p ng-swich-wen=\"price\">price has changed.</p><p ng-swich-wen=\"quantity\">quantity has been updated.</p></div></div>");
 $templateCache.put("/imago/imago-cart.html","<div class=\"imago-cart\"><div ng-class=\"{\'message\': cart.imagoCart.newmessages}\" ng-mouseenter=\"cart.imagoCart.show = true\" ng-click=\"cart.imagoCart.show = !cart.imagoCart.show\" analytics-on=\"click\" analytics-event=\"Show Cart {{cart.imagoCart.show}}\" class=\"icon\"><div ng-bind=\"cart.imagoCart.itemsLength\" class=\"counter\"></div></div><div ng-show=\"cart.imagoCart.show\" stop-scroll=\"stop-scroll\" class=\"box\"><div ng-transclude=\"ng-transclude\"></div><div ng-show=\"cart.imagoCart.itemsLength\" class=\"itemnumber\">{{cart.imagoCart.itemsLength}}<span ng-show=\"cart.imagoCart.itemsLength === 1\"> item</span><span ng-show=\"cart.imagoCart.itemsLength &gt; 1\"> items</span></div><div ng-show=\"cart.imagoCart.itemsLength === 0\" class=\"noitems\">cart empty</div><div ng-show=\"cart.imagoCart.itemsLength\" class=\"subtotal\">subtotal:<span ng-bind-html=\"cart.imagoCart.currency | currencySymbol\" class=\"currency\"></span><span class=\"amount\">{{cart.imagoCart.subtotal | price:0}}</span></div><button ng-show=\"cart.imagoCart.cart.items.length\" type=\"submit\" ng-click=\"cart.imagoCart.checkout()\" analytics-on=\"click\" analytics-event=\"Go to Checkout\" class=\"checkout\">checkout</button></div></div>");
