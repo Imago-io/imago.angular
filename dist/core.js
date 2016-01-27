@@ -166,8 +166,12 @@ imagoModel = (function() {
       })(this),
       spreadRequest: (function(_this) {
         return function(data) {
-          console.log('data', data);
           return _this.$http.post(_this.imagoSettings.host + "/api/assets/spread", data);
+        };
+      })(this),
+      transformRequest: (function(_this) {
+        return function(data) {
+          return _this.$http.post(_this.imagoSettings.host + "/api/assets/transform", data);
         };
       })(this),
       repair: (function(_this) {

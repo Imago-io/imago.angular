@@ -52,8 +52,10 @@ class imagoModel extends Service
         @$http.post "#{@imagoSettings.host}/api/assets/pdf", {assets: ids, orientation}
 
       spreadRequest: (data) =>
-        console.log 'data', data
         @$http.post "#{@imagoSettings.host}/api/assets/spread", data
+
+      transformRequest: (data) =>
+        @$http.post "#{@imagoSettings.host}/api/assets/transform", data
 
       repair: (id) =>
         @$http.put "#{@imagoSettings.host}/api/assets/repairorder", {_id: id}
