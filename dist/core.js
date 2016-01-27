@@ -139,7 +139,6 @@ imagoModel = (function() {
         currentCollection: void 0,
         search: function(query) {
           var params;
-          console.log('host', host);
           params = _.map(query, this.formatQuery);
           if (!params.length) {
             return $q.when();

@@ -78,7 +78,6 @@ class imagoModel extends Provider
       currentCollection: undefined
 
       search: (query) ->
-        console.log 'host', host
         # console.log 'search...', query
         params = _.map query, @formatQuery
         # console.log 'params', params
