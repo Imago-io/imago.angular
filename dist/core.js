@@ -60,6 +60,9 @@ imagoModel = (function() {
     this.setHost = function(value) {
       return host = value;
     };
+    this.getHost = function() {
+      return host;
+    };
     this.$get = function($rootScope, $http, $location, $document, $q, imagoUtils, imagoWorker) {
       return {
         host: host,

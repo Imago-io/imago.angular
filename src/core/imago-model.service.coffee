@@ -15,6 +15,9 @@ class imagoModel extends Provider
     @setHost = (value) ->
       host = value
 
+    @getHost = ->
+      return host
+
     @$get = ($rootScope, $http, $location, $document, $q, imagoUtils, imagoWorker) ->
       host       : host
       sortWorker : sortWorker

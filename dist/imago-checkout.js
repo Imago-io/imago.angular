@@ -312,48 +312,50 @@ Calculation = (function() {
   };
 
   Calculation.prototype.calcShipping = function(rate) {
-    var count, defer, i, item, j, len, len1, range, ref, ref1, ref2, ref3, ref4, ref5, ref6, shipping, with_shippingcost;
-    defer = this.$q.defer();
-    count = 0;
-    with_shippingcost = [];
-    shipping = 0;
-    ref = this.cart.items;
-    for (i = 0, len = ref.length; i < len; i++) {
-      item = ref[i];
-      if ((ref1 = item.fields.overwriteShippingCosts) != null ? (ref2 = ref1.value) != null ? ref2[this.currency] : void 0 : void 0) {
-        with_shippingcost.push(item);
-      } else if ((ref3 = item.fields.calculateShippingCosts) != null ? ref3.value : void 0) {
-        if (rate.type === 'weight') {
-          count += (((ref4 = item.fields.weight) != null ? ref4.value : void 0) || 1) * item.qty;
-        } else {
-          count += item.qty;
+    return this.$q((function(_this) {
+      return function(resolve, reject) {
+        var count, i, item, j, len, len1, range, ref, ref1, ref2, ref3, ref4, ref5, ref6, shipping, with_shippingcost;
+        count = 0;
+        with_shippingcost = [];
+        shipping = 0;
+        ref = _this.cart.items;
+        for (i = 0, len = ref.length; i < len; i++) {
+          item = ref[i];
+          if ((ref1 = item.fields.overwriteShippingCosts) != null ? (ref2 = ref1.value) != null ? ref2[_this.currency] : void 0 : void 0) {
+            with_shippingcost.push(item);
+          } else if ((ref3 = item.fields.calculateShippingCosts) != null ? ref3.value : void 0) {
+            if (rate.type === 'weight') {
+              count += (((ref4 = item.fields.weight) != null ? ref4.value : void 0) || 1) * item.qty;
+            } else {
+              count += item.qty;
+            }
+          }
         }
-      }
-    }
-    if (count === 0 && rate.type !== 'weight' && !with_shippingcost.length) {
-      defer.resolve({
-        'shipping': 0,
-        'rate': rate
-      });
-    }
-    range = _.find(rate.ranges, function(range) {
-      return count <= range.to_unit && count >= range.from_unit;
-    });
-    if (!range) {
-      range = rate.ranges[rate.ranges.length - 1] || 0;
-    }
-    if (count) {
-      shipping = range.price[this.currency];
-    }
-    for (j = 0, len1 = with_shippingcost.length; j < len1; j++) {
-      item = with_shippingcost[j];
-      shipping += (((ref5 = item.fields.overwriteShippingCosts) != null ? (ref6 = ref5.value) != null ? ref6[this.currency] : void 0 : void 0) || 0) * item.qty;
-    }
-    defer.resolve({
-      'shipping': shipping,
-      'rate': rate
-    });
-    return defer.promise;
+        if (count === 0 && rate.type !== 'weight' && !with_shippingcost.length) {
+          return resolve({
+            'shipping': 0,
+            'rate': rate
+          });
+        }
+        range = _.find(rate.ranges, function(range) {
+          return count <= range.to_unit && count >= range.from_unit;
+        });
+        if (!range) {
+          range = _.last(rate.ranges);
+        }
+        if (count) {
+          shipping = range.price[_this.currency];
+        }
+        for (j = 0, len1 = with_shippingcost.length; j < len1; j++) {
+          item = with_shippingcost[j];
+          shipping += (((ref5 = item.fields.overwriteShippingCosts) != null ? (ref6 = ref5.value) != null ? ref6[_this.currency] : void 0 : void 0) || 0) * item.qty;
+        }
+        return resolve({
+          'shipping': shipping,
+          'rate': rate
+        });
+      };
+    })(this));
   };
 
   Calculation.prototype.calculateTax = function() {
