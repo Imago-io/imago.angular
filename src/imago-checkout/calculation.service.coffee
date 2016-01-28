@@ -183,34 +183,31 @@ class Calculation extends Service
     return deferred.promise
 
   calcShipping: (rate) =>
-    defer = @$q.defer()
-    count = 0
-    with_shippingcost = []
-    shipping = 0
-    for item in @cart.items
+    @$q (resolve, reject) =>
+      count = 0
+      with_shippingcost = []
+      shipping = 0
+      for item in @cart.items
 
-      if item.fields.overwriteShippingCosts?.value?[@currency]
-        with_shippingcost.push(item)
-      else if item.fields.calculateShippingCosts?.value
-        if rate.type is 'weight'
-          count += (item.fields.weight?.value or 1) * item.qty
-        else
-          count += item.qty
+        if item.fields.overwriteShippingCosts?.value?[@currency]
+          with_shippingcost.push(item)
+        else if item.fields.calculateShippingCosts?.value
+          if rate.type is 'weight'
+            count += (item.fields.weight?.value or 1) * item.qty
+          else
+            count += item.qty
 
-    if count is 0 and rate.type isnt 'weight' and not with_shippingcost.length
-      defer.resolve({'shipping': 0, 'rate': rate})
+      if count is 0 and rate.type isnt 'weight' and not with_shippingcost.length
+        return resolve({'shipping': 0, 'rate': rate})
 
-    range = _.find rate.ranges, (range) -> count <= range.to_unit and count >= range.from_unit
-    range = rate.ranges[rate.ranges.length - 1] or 0 if not range
+      range = _.find rate.ranges, (range) -> count <= range.to_unit and count >= range.from_unit
+      range = _.last(rate.ranges) if not range
 
-    shipping = range.price[@currency] if count
+      shipping = range.price[@currency] if count
 
-    for item in with_shippingcost
-      shipping += (item.fields.overwriteShippingCosts?.value?[@currency] or 0) * item.qty
-    defer.resolve({'shipping': shipping, 'rate': rate})
-
-    defer.promise
-
+      for item in with_shippingcost
+        shipping += (item.fields.overwriteShippingCosts?.value?[@currency] or 0) * item.qty
+      return resolve({'shipping': shipping, 'rate': rate})
 
   calculateTax: ->
     deferred = @$q.defer()
@@ -365,7 +362,7 @@ class Calculation extends Service
 
     return @$http.post(@imagoModel.host + '/api/checkout', @process.form)
 
-  saveCart: ->
+  saveCart: (async) ->
     form = angular.copy @cart
     form.currency = @currency
     form.data = angular.copy @process.form
@@ -373,4 +370,11 @@ class Calculation extends Service
     form.data.differentshipping = @differentshipping
     form.data = @formatForm(form.data)
 
-    return @$http.put(@imagoModel.host + '/api/carts/' + @cart._id, form)
+    if async
+      form = angular.toJson form
+      xhttp = new XMLHttpRequest
+      xhttp.open 'PUT', "#{@imagoModel.host}/api/carts/#{@cart._id}", false
+      xhttp.setRequestHeader('Content-type', 'application/json')
+      xhttp.send form
+    else
+      return @$http.put(@imagoModel.host + '/api/carts/' + @cart._id, form)

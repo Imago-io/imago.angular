@@ -612,15 +612,23 @@ Calculation = (function() {
     return this.$http.post(this.imagoModel.host + '/api/checkout', this.process.form);
   };
 
-  Calculation.prototype.saveCart = function() {
-    var form;
+  Calculation.prototype.saveCart = function(async) {
+    var form, xhttp;
     form = angular.copy(this.cart);
     form.currency = this.currency;
     form.data = angular.copy(this.process.form);
     form.data.paymentType = angular.copy(this.paymentType);
     form.data.differentshipping = this.differentshipping;
     form.data = this.formatForm(form.data);
-    return this.$http.put(this.imagoModel.host + '/api/carts/' + this.cart._id, form);
+    if (async) {
+      form = angular.toJson(form);
+      xhttp = new XMLHttpRequest;
+      xhttp.open('PUT', this.imagoModel.host + "/api/carts/" + this.cart._id, false);
+      xhttp.setRequestHeader('Content-type', 'application/json');
+      return xhttp.send(form);
+    } else {
+      return this.$http.put(this.imagoModel.host + '/api/carts/' + this.cart._id, form);
+    }
   };
 
   return Calculation;
