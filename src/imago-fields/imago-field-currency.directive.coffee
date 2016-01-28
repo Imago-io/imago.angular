@@ -14,9 +14,15 @@ class ImagoFieldCurrency extends Directive
       templateUrl: '/imago/imago-field-currency.html'
 
       link: (scope, element, attrs, ngModelController) ->
-        return console.log 'no currencies!!' unless scope.currencies
+        return console.log 'no currencies!!' unless scope.currencies?.length
 
         scope.currency = scope.currencies[0]
+
+        scope.$watchCollection 'ngModel', (value) ->
+          return scope.notComplete = true if !_.isPlainObject scope.ngModel
+          for currency in scope.currencies
+            return scope.notComplete = true unless angular.isDefined scope.ngModel[currency]
+          return scope.notComplete = false
 
         scope.update = (value) ->
           for key of value
