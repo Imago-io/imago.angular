@@ -1,6 +1,6 @@
 class imagoShare extends Directive
 
-  constructor: ($compile, $templateCache, $http) ->
+  constructor: () ->
 
     return {
 
