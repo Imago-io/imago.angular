@@ -11,28 +11,35 @@ class ImagoFieldCurrency extends Directive
         ngModel: '='
         save: '&ngChange'
       transclude: true
+      controller: 'imagoFieldCurrencyController as fieldcurrency'
+      bindToController: true
       templateUrl: '/imago/imago-field-currency.html'
 
       link: (scope, element, attrs, ngModelController) ->
-        return console.log 'no currencies!!' unless scope.currencies?.length
+        return console.log 'no currencies!!' unless scope.fieldcurrency.currencies?.length
 
-        scope.currency = scope.currencies[0]
-
-        scope.$watchCollection 'ngModel', (value) ->
-          return if !_.isPlainObject scope.ngModel
-          scope.notComplete = {}
-          for currency in scope.currencies
-            continue if angular.isDefined scope.ngModel[currency]
-            scope.notComplete[currency] = true
+        scope.$watchCollection 'fieldcurrency.ngModel', (value) ->
+          return if !_.isPlainObject scope.fieldcurrency.ngModel
+          scope.fieldcurrency.notComplete = {}
+          for currency in scope.fieldcurrency.currencies
+            continue if angular.isDefined scope.fieldcurrency.ngModel[currency]
+            scope.fieldcurrency.notComplete[currency] = true
 
         scope.update = (value) ->
           for key of value
             value[key] = parseFloat value[key]
           ngModelController.$setViewValue(value)
           ngModelController.$render()
-          scope.save()
+          scope.fieldcurrency.save()
 
     }
+
+class ImagoFieldCurrencyController extends Controller
+
+  constructor: ->
+    return unless @currencies?.length
+    @currency = angular.copy @currencies[0]
+
 
 class imagoFilterCurrency extends Directive
 

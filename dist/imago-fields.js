@@ -38,7 +38,7 @@ ImagoFieldCheckbox = (function() {
 
 angular.module('imago').directive('imagoFieldCheckbox', [ImagoFieldCheckbox]);
 
-var ImagoFieldCurrency, imagoFilterCurrency;
+var ImagoFieldCurrency, ImagoFieldCurrencyController, imagoFilterCurrency;
 
 ImagoFieldCurrency = (function() {
   function ImagoFieldCurrency() {
@@ -51,27 +51,28 @@ ImagoFieldCurrency = (function() {
         save: '&ngChange'
       },
       transclude: true,
+      controller: 'imagoFieldCurrencyController as fieldcurrency',
+      bindToController: true,
       templateUrl: '/imago/imago-field-currency.html',
       link: function(scope, element, attrs, ngModelController) {
         var ref;
-        if (!((ref = scope.currencies) != null ? ref.length : void 0)) {
+        if (!((ref = scope.fieldcurrency.currencies) != null ? ref.length : void 0)) {
           return console.log('no currencies!!');
         }
-        scope.currency = scope.currencies[0];
-        scope.$watchCollection('ngModel', function(value) {
+        scope.$watchCollection('fieldcurrency.ngModel', function(value) {
           var currency, i, len, ref1, results;
-          if (!_.isPlainObject(scope.ngModel)) {
+          if (!_.isPlainObject(scope.fieldcurrency.ngModel)) {
             return;
           }
-          scope.notComplete = {};
-          ref1 = scope.currencies;
+          scope.fieldcurrency.notComplete = {};
+          ref1 = scope.fieldcurrency.currencies;
           results = [];
           for (i = 0, len = ref1.length; i < len; i++) {
             currency = ref1[i];
-            if (angular.isDefined(scope.ngModel[currency])) {
+            if (angular.isDefined(scope.fieldcurrency.ngModel[currency])) {
               continue;
             }
-            results.push(scope.notComplete[currency] = true);
+            results.push(scope.fieldcurrency.notComplete[currency] = true);
           }
           return results;
         });
@@ -82,13 +83,26 @@ ImagoFieldCurrency = (function() {
           }
           ngModelController.$setViewValue(value);
           ngModelController.$render();
-          return scope.save();
+          return scope.fieldcurrency.save();
         };
       }
     };
   }
 
   return ImagoFieldCurrency;
+
+})();
+
+ImagoFieldCurrencyController = (function() {
+  function ImagoFieldCurrencyController() {
+    var ref;
+    if (!((ref = this.currencies) != null ? ref.length : void 0)) {
+      return;
+    }
+    this.currency = angular.copy(this.currencies[0]);
+  }
+
+  return ImagoFieldCurrencyController;
 
 })();
 
@@ -125,7 +139,7 @@ imagoFilterCurrency = (function() {
 
 })();
 
-angular.module('imago').directive('imagoFieldCurrency', [ImagoFieldCurrency]).directive('imagoFilterCurrency', [imagoFilterCurrency]);
+angular.module('imago').directive('imagoFieldCurrency', [ImagoFieldCurrency]).controller('imagoFieldCurrencyController', [ImagoFieldCurrencyController]).directive('imagoFilterCurrency', [imagoFilterCurrency]);
 
 var ImagoFieldDate;
 
@@ -306,7 +320,7 @@ ImagoFieldString = (function() {
 angular.module('imago').directive('imagoFieldString', [ImagoFieldString]);
 
 angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-field-checkbox.html","<div class=\"imago-checkbox\"><label ng-class=\"{active: ngModel, disabled: disabled}\" ng-click=\"update(ngModel)\" class=\"topcoat-checkbox\"><div class=\"topcoat-checkbox__checkmark\"></div><span ng-transclude=\"ng-transclude\"></span></label></div>");
-$templateCache.put("/imago/imago-field-currency.html","<div ng-class=\"{expanded: input.expanded}\" class=\"imago-field currency\"><button ng-click=\"input.expanded = !input.expanded\" class=\"ii ii-caret-left\"></button><div class=\"fields\"><div ng-if=\"!input.expanded\" ng-class=\"{focus:onfocus}\" class=\"wrapper compact\"><label><span ng-repeat=\"cur in currencies\" ng-click=\"currency = cur\" ng-class=\"{active: currency === cur, invalid: notComplete[cur]}\">{{cur}}</span></label><input type=\"text\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"ngModel[currency]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-change=\"update(ngModel); onfocus = false\" ng-disabled=\"!currency\" ng-focus=\"onfocus = true\"/></div><div ng-repeat=\"cur in currencies\" ng-if=\"input.expanded\" ng-class=\"{invalid: notComplete[cur]}\" class=\"wrapper expanded\"><div class=\"imago-field\"><label>{{cur}}</label><input type=\"text\" currency=\"{{cur}}\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"ngModel[cur]\" ng-focus=\"onFocus(input)\" ng-blur=\"unbindSave(input); saveOnBlur(input);\"/></div></div></div></div>");
+$templateCache.put("/imago/imago-field-currency.html","<div ng-class=\"{expanded: fieldcurrency.expanded}\" class=\"imago-field currency\"><button ng-click=\"fieldcurrency.expanded = !fieldcurrency.expanded\" class=\"ii ii-caret-left\"></button><div class=\"fields\"><div ng-if=\"!fieldcurrency.expanded\" ng-class=\"{focus:onfocus}\" class=\"wrapper compact\"><label><span ng-repeat=\"cur in fieldcurrency.currencies\" ng-click=\"fieldcurrency.currency = cur\" ng-class=\"{active: fieldcurrency.currency === cur, invalid: fieldcurrency.notComplete[cur]}\">{{cur}}</span></label><input type=\"text\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"fieldcurrency.ngModel[fieldcurrency.currency]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-change=\"update(fieldcurrency.ngModel); onfocus = false\" ng-disabled=\"!fieldcurrency.currency\" ng-focus=\"onfocus = true\"/></div><div ng-repeat=\"cur in fieldcurrency.currencies\" ng-if=\"fieldcurrency.expanded\" ng-class=\"{invalid: fieldcurrency.notComplete[cur]}\" class=\"wrapper expanded\"><div class=\"imago-field\"><label>{{cur}}</label><input type=\"text\" currency=\"{{cur}}\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"fieldcurrency.ngModel[cur]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-blur=\"update(fieldcurrency.ngModel)\"/></div></div></div></div>");
 $templateCache.put("/imago/imago-field-date.html","<div class=\"imago-field date\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" date-time=\"date-time\" dismiss=\"true\" ng-model=\"ngModel\" ng-blur=\"update(ngModel)\" view=\"date\" min-view=\"date\" partial=\"true\"/></div>");
 $templateCache.put("/imago/imago-field-email.html","<div class=\"imago-field email\"><div ng-transclude=\"ng-transclude\"></div><input type=\"email\" ng-model=\"ngModel\" ng-blur=\"update(ngModel)\" ng-required=\"required\"/></div>");
 $templateCache.put("/imago/imago-field-number.html","<div class=\"imago-field number\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" ng-model=\"ngModel\" ng-model-options=\"{\'updateOn\': \'blur\'}\" ng-change=\"update(ngModel)\"/><button type=\"button\" ng-disabled=\"isOverMin() || disabled\" ng-click=\"decrement()\" class=\"decrement\"></button><button type=\"button\" ng-disabled=\"isOverMax() || disabled\" ng-click=\"increment()\" class=\"increment\"></button></div>");
