@@ -490,7 +490,7 @@ imagoModel = (function() {
           return defer.promise;
         },
         update: function(data, options) {
-          var asset, attribute, copy, defer, idx, j, len, query;
+          var asset, attribute, copy, defer, find, idx, j, len, query;
           if (options == null) {
             options = {};
           }
@@ -531,14 +531,17 @@ imagoModel = (function() {
               if (asset.assets) {
                 delete asset.assets;
               }
-              idx = this.findIdx(query);
-              if (idx !== -1) {
-                _.assign(this.data[idx], asset);
+              find = this.find(query);
+              if (find) {
+                if (find.base64_url && asset.serving_url) {
+                  asset.base64_url = null;
+                }
+                _.assign(find, asset);
               } else {
                 this.data.push(asset);
               }
               if (asset.base64_url) {
-                delete asset.base64_url;
+                asset.base64_url = null;
               }
             }
             if (options.save) {
@@ -864,102 +867,101 @@ imagoModel = (function() {
           });
         },
         isDuplicated: function(asset, assets, options) {
-          var assetsChildren, defer, exists, findName, i, name, original_name, result;
           if (options == null) {
             options = {};
           }
-          if (_.isUndefined(options.rename)) {
-            options.rename = false;
-          }
-          defer = $q.defer();
-          if (!asset.name) {
-            defer.reject(asset.name);
-          }
-          name = _.kebabCase(asset.name);
-          result = void 0;
-          assetsChildren = _.filter(assets, (function(_this) {
-            return function(chr) {
-              if (!chr.name) {
-                return false;
-              }
-              return name === _.kebabCase(chr.name);
-            };
-          })(this));
-          if (assetsChildren.length) {
-            if (assetsChildren.length === 1 && assetsChildren[0]._id === asset._id) {
-              defer.resolve(false);
+          return $q(function(resolve, reject) {
+            var assetsChildren, exists, findName, i, name, original_name, result;
+            if (_.isUndefined(options.rename)) {
+              options.rename = false;
             }
-            if (options.rename) {
-              i = 1;
-              exists = true;
-              original_name = name;
-              while (exists) {
-                name = original_name + "_" + i;
-                i++;
-                findName = _.find(assets, (function(_this) {
-                  return function(chr) {
-                    return _.kebabCase(name) === _.kebabCase(chr.name);
-                  };
-                })(this));
-                exists = (findName ? true : false);
+            if (!asset.name) {
+              return reject(asset.name);
+            }
+            name = _.kebabCase(asset.name);
+            result = void 0;
+            assetsChildren = _.filter(assets, (function(_this) {
+              return function(chr) {
+                if (!chr.name) {
+                  return false;
+                }
+                return name === _.kebabCase(chr.name);
+              };
+            })(this));
+            if (assetsChildren.length) {
+              if (assetsChildren.length === 1 && assetsChildren[0]._id === asset._id) {
+                return resolve(false);
               }
-              defer.resolve(name);
+              if (options.rename) {
+                i = 1;
+                exists = true;
+                original_name = name;
+                while (exists) {
+                  name = original_name + "_" + i;
+                  i++;
+                  findName = _.find(assets, (function(_this) {
+                    return function(chr) {
+                      return _.kebabCase(name) === _.kebabCase(chr.name);
+                    };
+                  })(this));
+                  exists = (findName ? true : false);
+                }
+                return resolve(name);
+              } else {
+                return resolve(true);
+              }
             } else {
-              defer.resolve(true);
+              return resolve(false);
             }
-          } else {
-            defer.resolve(false);
-          }
-          return defer.promise;
+          });
         },
         prepareCreation: function(asset, parent, order, rename) {
-          var defer;
           if (rename == null) {
             rename = false;
           }
-          defer = $q.defer();
-          if (!asset.name) {
-            defer.reject(asset.name);
-          }
-          this.isDuplicated(asset, parent.assets, {
-            rename: rename
-          }).then((function(_this) {
-            return function(isDuplicated) {
-              var assets, orderedList;
-              if (isDuplicated && _.isBoolean(isDuplicated)) {
-                return defer.resolve('duplicated');
-              } else {
-                if (_.isString(isDuplicated)) {
-                  asset.name = isDuplicated;
-                }
-                if (order) {
-                  asset.order = order;
+          return $q((function(_this) {
+            return function(resolve, reject) {
+              if (!asset.name) {
+                return reject(asset.name);
+              }
+              return _this.isDuplicated(asset, parent.assets, {
+                rename: rename
+              }).then(function(isDuplicated) {
+                var assets, orderedList;
+                if (isDuplicated && _.isBoolean(isDuplicated)) {
+                  return resolve('duplicated');
                 } else {
-                  if (parent.sortorder === '-order') {
-                    assets = parent.assets;
-                    asset.order = (assets.length ? assets[0].order + indexRange : indexRange);
+                  if (_.isString(isDuplicated)) {
+                    asset.name = isDuplicated;
+                  }
+                  if (order) {
+                    asset.order = order;
                   } else {
-                    if (parent.assets.length) {
-                      orderedList = _this.reindexAll(parent.assets);
-                      _this.update(orderedList, {
+                    if (parent.sortorder === '-order') {
+                      assets = parent.assets;
+                      asset.order = (assets.length ? assets[0].order + indexRange : indexRange);
+                    } else {
+                      if (parent.assets.length) {
+                        orderedList = _this.reindexAll(parent.assets);
+                        _this.update(orderedList, {
+                          save: true
+                        });
+                        asset.order = orderedList[0].order + indexRange;
+                      } else {
+                        asset.order = indexRange;
+                      }
+                      parent.sortorder = '-order';
+                      _this.update(parent, {
                         save: true
                       });
-                      asset.order = orderedList[0].order + indexRange;
-                    } else {
-                      asset.order = indexRange;
                     }
-                    parent.sortorder = '-order';
-                    _this.update(parent, {
-                      save: true
-                    });
                   }
+                  asset.parent = parent._id;
+                  return resolve(asset);
                 }
-                asset.parent = parent._id;
-                return defer.resolve(asset);
-              }
+              });
             };
           })(this));
-          return defer.promise;
         }
       };
     };

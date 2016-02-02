@@ -348,13 +348,16 @@ class imagoModel extends Provider
             query = {}
             query[attribute] = asset[attribute]
             delete asset.assets if asset.assets
-            idx = @findIdx(query)
-            if idx isnt -1
-              _.assign(@data[idx], asset)
+            find = @find(query)
+            if find
+              if find.base64_url and asset.serving_url
+                asset.base64_url = null
+              _.assign(find, asset)
             else
               @data.push asset
 
-            delete asset.base64_url if asset.base64_url
+            if asset.base64_url
+              asset.base64_url = null
 
           if options.save
             defer.resolve @assets.batch(copy)
@@ -599,78 +602,73 @@ class imagoModel extends Provider
         @update assets, {save: true}
 
       isDuplicated: (asset, assets, options={}) ->
-        options.rename = false if _.isUndefined options.rename
+        return $q (resolve, reject) ->
 
-        defer = $q.defer()
-        defer.reject(asset.name) unless asset.name
+          options.rename = false if _.isUndefined options.rename
 
-        name = _.kebabCase(asset.name)
-        result = undefined
+          return reject(asset.name) unless asset.name
 
-        assetsChildren = _.filter assets, (chr) =>
-          return false unless chr.name
-          return name is _.kebabCase(chr.name)
+          name = _.kebabCase(asset.name)
+          result = undefined
 
-        if assetsChildren.length
+          assetsChildren = _.filter assets, (chr) =>
+            return false unless chr.name
+            return name is _.kebabCase(chr.name)
 
-          if assetsChildren.length is 1 and assetsChildren[0]._id is asset._id
-            defer.resolve false
+          if assetsChildren.length
 
-          if options.rename
-            i = 1
-            exists = true
-            original_name = name
-            while exists
-              name = "#{original_name}_#{i}"
-              i++
-              findName = _.find assets, (chr) =>
-                return _.kebabCase(name) is _.kebabCase(chr.name)
-              exists = (if findName then true else false)
+            if assetsChildren.length is 1 and assetsChildren[0]._id is asset._id
+              return resolve false
 
-            defer.resolve name
+            if options.rename
+              i = 1
+              exists = true
+              original_name = name
+              while exists
+                name = "#{original_name}_#{i}"
+                i++
+                findName = _.find assets, (chr) =>
+                  return _.kebabCase(name) is _.kebabCase(chr.name)
+                exists = (if findName then true else false)
 
+              return resolve name
+            else
+              return resolve true
           else
-            defer.resolve true
-
-        else
-          defer.resolve false
-
-        defer.promise
+            return resolve false
 
       prepareCreation: (asset, parent, order, rename = false) ->
-        defer = $q.defer()
-        defer.reject(asset.name) unless asset.name
+        return $q (resolve, reject) =>
+          return reject(asset.name) unless asset.name
 
-        @isDuplicated(asset, parent.assets, {rename: rename}).then (isDuplicated) =>
+          @isDuplicated(asset, parent.assets, {rename: rename}).then (isDuplicated) =>
 
-          if isDuplicated and _.isBoolean isDuplicated
-            defer.resolve('duplicated')
-
-          else
-            if _.isString isDuplicated
-              asset.name = isDuplicated
-
-            if order
-              asset.order = order
+            if isDuplicated and _.isBoolean isDuplicated
+              return resolve('duplicated')
 
             else
-              if parent.sortorder is '-order'
-                assets = parent.assets
-                asset.order = (if assets.length then assets[0].order + indexRange else indexRange)
+              if _.isString isDuplicated
+                asset.name = isDuplicated
+
+              if order
+                asset.order = order
 
               else
-                if parent.assets.length
-                  orderedList = @reindexAll(parent.assets)
-                  @update orderedList, {save: true}
-                  asset.order = orderedList[0].order + indexRange
+                if parent.sortorder is '-order'
+                  assets = parent.assets
+                  asset.order = (if assets.length then assets[0].order + indexRange else indexRange)
 
                 else
-                  asset.order = indexRange
+                  if parent.assets.length
+                    orderedList = @reindexAll(parent.assets)
+                    @update orderedList, {save: true}
+                    asset.order = orderedList[0].order + indexRange
 
-                parent.sortorder = '-order'
-                @update parent, {save: true}
+                  else
+                    asset.order = indexRange
 
-            asset.parent = parent._id
-            defer.resolve asset
+                  parent.sortorder = '-order'
+                  @update parent, {save: true}
 
-        defer.promise
+              asset.parent = parent._id
+              return resolve asset

@@ -13,8 +13,10 @@
     //- )
 
     label
-      span(ng-repeat="cur in currencies"
-        ng-click="currency = cur") {{cur}}
+      span(
+        ng-repeat="cur in currencies"
+        ng-click="currency = cur"
+        ng-class="{active: currency === cur, invalid: notComplete[cur]}") {{cur}}
     input(
       type="text"
       imago-filter-currency
@@ -28,6 +30,7 @@
   .wrapper.expanded(
     ng-repeat="cur in currencies"
     ng-if="input.expanded"
+    ng-class="{invalid: notComplete[cur]}"
     )
 
     .imago-field
@@ -39,5 +42,3 @@
         ng-focus="onFocus(input)"
         ng-blur="unbindSave(input); saveOnBlur(input);"
         )
-
-  .imago-message-info(ng-show="notComplete") somes currencies do not have any valued

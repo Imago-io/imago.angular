@@ -183,7 +183,7 @@ class Calculation extends Service
     return deferred.promise
 
   calcShipping: (rate) =>
-    @$q (resolve, reject) =>
+    return @$q (resolve, reject) =>
       count = 0
       with_shippingcost = []
       shipping = 0

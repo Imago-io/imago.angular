@@ -19,10 +19,11 @@ class ImagoFieldCurrency extends Directive
         scope.currency = scope.currencies[0]
 
         scope.$watchCollection 'ngModel', (value) ->
-          return scope.notComplete = true if !_.isPlainObject scope.ngModel
+          return if !_.isPlainObject scope.ngModel
+          scope.notComplete = {}
           for currency in scope.currencies
-            return scope.notComplete = true unless angular.isDefined scope.ngModel[currency]
-          return scope.notComplete = false
+            continue if angular.isDefined scope.ngModel[currency]
+            scope.notComplete[currency] = true
 
         scope.update = (value) ->
           for key of value
