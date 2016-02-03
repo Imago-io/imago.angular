@@ -1,323 +1,341 @@
-var ImagoFieldCheckbox;
+(function() {
+  var ImagoFieldCheckbox;
 
-ImagoFieldCheckbox = (function() {
-  function ImagoFieldCheckbox() {
-    return {
-      replace: true,
-      require: 'ngModel',
-      scope: {
-        ngModel: '='
-      },
-      transclude: true,
-      templateUrl: '/imago/imago-field-checkbox.html',
-      link: function(scope, element, attrs, ngModelController) {
-        if (attrs.disabled) {
-          scope.disabled = true;
-        }
-        attrs.$observe('disabled', function(value) {
-          return scope.disabled = value;
-        });
-        return scope.update = function(value) {
-          if (scope.disabled) {
-            return;
+  ImagoFieldCheckbox = (function() {
+    function ImagoFieldCheckbox() {
+      return {
+        replace: true,
+        require: 'ngModel',
+        scope: {
+          ngModel: '='
+        },
+        transclude: true,
+        templateUrl: '/imago/imago-field-checkbox.html',
+        link: function(scope, element, attrs, ngModelController) {
+          if (attrs.disabled) {
+            scope.disabled = true;
           }
-          value = !value;
-          ngModelController.$setViewValue(value);
-          ngModelController.$render();
-          if (attrs.required) {
-            return ngModelController.$setValidity('required', value);
-          }
-        };
-      }
-    };
-  }
-
-  return ImagoFieldCheckbox;
-
-})();
-
-angular.module('imago').directive('imagoFieldCheckbox', [ImagoFieldCheckbox]);
-
-var ImagoFieldCurrency, ImagoFieldCurrencyController, imagoFilterCurrency;
-
-ImagoFieldCurrency = (function() {
-  function ImagoFieldCurrency() {
-    return {
-      replace: true,
-      require: 'ngModel',
-      scope: {
-        currencies: '=',
-        ngModel: '=',
-        save: '&ngChange'
-      },
-      transclude: true,
-      controller: 'imagoFieldCurrencyController as fieldcurrency',
-      bindToController: true,
-      templateUrl: '/imago/imago-field-currency.html',
-      link: function(scope, element, attrs, ngModelController) {
-        var ref;
-        if (!((ref = scope.fieldcurrency.currencies) != null ? ref.length : void 0)) {
-          return console.log('no currencies!!');
-        }
-        scope.$watchCollection('fieldcurrency.ngModel', function(value) {
-          var currency, i, len, ref1, results;
-          if (!_.isPlainObject(scope.fieldcurrency.ngModel)) {
-            return;
-          }
-          scope.fieldcurrency.notComplete = {};
-          ref1 = scope.fieldcurrency.currencies;
-          results = [];
-          for (i = 0, len = ref1.length; i < len; i++) {
-            currency = ref1[i];
-            if (angular.isDefined(scope.fieldcurrency.ngModel[currency])) {
-              continue;
+          attrs.$observe('disabled', function(value) {
+            return scope.disabled = value;
+          });
+          return scope.update = function(value) {
+            if (scope.disabled) {
+              return;
             }
-            results.push(scope.fieldcurrency.notComplete[currency] = true);
-          }
-          return results;
-        });
-        return scope.update = function(value) {
-          var key;
-          for (key in value) {
-            value[key] = parseFloat(value[key]);
-          }
-          ngModelController.$setViewValue(value);
-          ngModelController.$render();
-          return scope.fieldcurrency.save();
-        };
-      }
-    };
-  }
-
-  return ImagoFieldCurrency;
-
-})();
-
-ImagoFieldCurrencyController = (function() {
-  function ImagoFieldCurrencyController() {
-    var ref;
-    if (!((ref = this.currencies) != null ? ref.length : void 0)) {
-      return;
+            value = !value;
+            ngModelController.$setViewValue(value);
+            ngModelController.$render();
+            if (attrs.required) {
+              return ngModelController.$setValidity('required', value);
+            }
+          };
+        }
+      };
     }
-    this.currency = angular.copy(this.currencies[0]);
-  }
 
-  return ImagoFieldCurrencyController;
+    return ImagoFieldCheckbox;
 
-})();
+  })();
 
-imagoFilterCurrency = (function() {
-  function imagoFilterCurrency() {
-    return {
-      require: 'ngModel',
-      link: function(scope, elem, attrs, ctrl) {
-        ctrl.$formatters.unshift(function(value) {
-          if (angular.isDefined(value) && !_.isNull(value)) {
-            value = (value / 100).toFixed(2);
+  angular.module('imago').directive('imagoFieldCheckbox', [ImagoFieldCheckbox]);
+
+}).call(this);
+
+(function() {
+  var ImagoFieldCurrency, ImagoFieldCurrencyController, imagoFilterCurrency;
+
+  ImagoFieldCurrency = (function() {
+    function ImagoFieldCurrency() {
+      return {
+        replace: true,
+        require: 'ngModel',
+        scope: {
+          currencies: '=',
+          ngModel: '=',
+          save: '&ngChange'
+        },
+        transclude: true,
+        controller: 'imagoFieldCurrencyController as fieldcurrency',
+        bindToController: true,
+        templateUrl: '/imago/imago-field-currency.html',
+        link: function(scope, element, attrs, ngModelController) {
+          var ref;
+          if (!((ref = scope.fieldcurrency.currencies) != null ? ref.length : void 0)) {
+            return console.log('no currencies!!');
           }
-          if (isNaN(value)) {
-            value = void 0;
-          }
-          return value;
-        });
-        return ctrl.$parsers.unshift(function(viewValue) {
-          var plainNumber;
-          if (viewValue) {
-            plainNumber = viewValue.replace(/[^\d|\-+|\.+]/g, "");
-            plainNumber = parseFloat(plainNumber * 100);
-            plainNumber = plainNumber.toFixed(2);
-            return plainNumber;
-          } else {
-            return void 0;
-          }
-        });
-      }
-    };
-  }
-
-  return imagoFilterCurrency;
-
-})();
-
-angular.module('imago').directive('imagoFieldCurrency', [ImagoFieldCurrency]).controller('imagoFieldCurrencyController', [ImagoFieldCurrencyController]).directive('imagoFilterCurrency', [imagoFilterCurrency]);
-
-var ImagoFieldDate;
-
-ImagoFieldDate = (function() {
-  function ImagoFieldDate() {
-    return {
-      replace: true,
-      require: 'ngModel',
-      scope: {
-        min: '=',
-        max: '=',
-        ngModel: '='
-      },
-      transclude: true,
-      templateUrl: '/imago/imago-field-date.html',
-      link: function(scope, element, attrs, ngModelController) {
-        return scope.update = function(value) {
-          ngModelController.$setViewValue(value);
-          return ngModelController.$render();
-        };
-      }
-    };
-  }
-
-  return ImagoFieldDate;
-
-})();
-
-angular.module('imago').directive('imagoFieldDate', [ImagoFieldDate]);
-
-var ImagoFieldEmail;
-
-ImagoFieldEmail = (function() {
-  function ImagoFieldEmail() {
-    return {
-      replace: true,
-      require: 'ngModel',
-      scope: {
-        ngModel: '='
-      },
-      transclude: true,
-      templateUrl: '/imago/imago-field-email.html',
-      link: function(scope, element, attrs, ngModelController) {
-        if (attrs.required) {
-          scope.required = true;
+          scope.$watchCollection('fieldcurrency.ngModel', function(value) {
+            var currency, i, len, ref1, results;
+            if (!_.isPlainObject(scope.fieldcurrency.ngModel)) {
+              return;
+            }
+            scope.fieldcurrency.notComplete = {};
+            ref1 = scope.fieldcurrency.currencies;
+            results = [];
+            for (i = 0, len = ref1.length; i < len; i++) {
+              currency = ref1[i];
+              if (angular.isDefined(scope.fieldcurrency.ngModel[currency])) {
+                continue;
+              }
+              results.push(scope.fieldcurrency.notComplete[currency] = true);
+            }
+            return results;
+          });
+          return scope.update = function(value) {
+            var key;
+            for (key in value) {
+              value[key] = parseFloat(value[key]);
+            }
+            ngModelController.$setViewValue(value);
+            ngModelController.$render();
+            return scope.fieldcurrency.save();
+          };
         }
-        return scope.update = function(value) {
-          ngModelController.$setViewValue(value);
-          return ngModelController.$render();
-        };
+      };
+    }
+
+    return ImagoFieldCurrency;
+
+  })();
+
+  ImagoFieldCurrencyController = (function() {
+    function ImagoFieldCurrencyController() {
+      var ref;
+      if (!((ref = this.currencies) != null ? ref.length : void 0)) {
+        return;
       }
-    };
-  }
+      this.currency = angular.copy(this.currencies[0]);
+    }
 
-  return ImagoFieldEmail;
+    return ImagoFieldCurrencyController;
 
-})();
+  })();
 
-angular.module('imago').directive('imagoFieldEmail', [ImagoFieldEmail]);
-
-var ImagoFieldNumber;
-
-ImagoFieldNumber = (function() {
-  function ImagoFieldNumber() {
-    return {
-      replace: true,
-      require: 'ngModel',
-      scope: {
-        min: '=',
-        max: '=',
-        ngModel: '='
-      },
-      transclude: true,
-      templateUrl: '/imago/imago-field-number.html',
-      link: function(scope, element, attrs, ngModelController) {
-        var change, checkValidity;
-        if (attrs.disabled) {
-          scope.disabled = true;
+  imagoFilterCurrency = (function() {
+    function imagoFilterCurrency() {
+      return {
+        require: 'ngModel',
+        link: function(scope, elem, attrs, ctrl) {
+          ctrl.$formatters.unshift(function(value) {
+            if (angular.isDefined(value) && !_.isNull(value)) {
+              value = (value / 100).toFixed(2);
+            }
+            if (isNaN(value)) {
+              value = void 0;
+            }
+            return value;
+          });
+          return ctrl.$parsers.unshift(function(viewValue) {
+            var plainNumber;
+            if (viewValue) {
+              plainNumber = viewValue.replace(/[^\d|\-+|\.+]/g, "");
+              plainNumber = parseFloat(plainNumber * 100);
+              plainNumber = plainNumber.toFixed(2);
+              return plainNumber;
+            } else {
+              return void 0;
+            }
+          });
         }
-        attrs.$observe('disabled', function(value) {
-          return scope.disabled = value;
-        });
-        ngModelController.$render = function() {
-          return checkValidity();
-        };
-        ngModelController.$formatters.push(function(value) {
-          return parseFloat(value);
-        });
-        ngModelController.$parsers.push(function(value) {
-          return parseFloat(value);
-        });
-        checkValidity = function() {
-          var valid;
-          valid = !(scope.isLimitMin(true) || scope.isLimitMax(true));
-          return ngModelController.$setValidity('outOfBounds', valid);
-        };
-        change = function(offset) {
-          var value;
-          value = ngModelController.$viewValue + offset;
-          return scope.update(value);
-        };
-        scope.update = function(value) {
-          if (scope.disabled) {
-            return;
+      };
+    }
+
+    return imagoFilterCurrency;
+
+  })();
+
+  angular.module('imago').directive('imagoFieldCurrency', [ImagoFieldCurrency]).controller('imagoFieldCurrencyController', [ImagoFieldCurrencyController]).directive('imagoFilterCurrency', [imagoFilterCurrency]);
+
+}).call(this);
+
+(function() {
+  var ImagoFieldDate;
+
+  ImagoFieldDate = (function() {
+    function ImagoFieldDate() {
+      return {
+        replace: true,
+        require: 'ngModel',
+        scope: {
+          min: '=',
+          max: '=',
+          ngModel: '='
+        },
+        transclude: true,
+        templateUrl: '/imago/imago-field-date.html',
+        link: function(scope, element, attrs, ngModelController) {
+          return scope.update = function(value) {
+            ngModelController.$setViewValue(value);
+            return ngModelController.$render();
+          };
+        }
+      };
+    }
+
+    return ImagoFieldDate;
+
+  })();
+
+  angular.module('imago').directive('imagoFieldDate', [ImagoFieldDate]);
+
+}).call(this);
+
+(function() {
+  var ImagoFieldEmail;
+
+  ImagoFieldEmail = (function() {
+    function ImagoFieldEmail() {
+      return {
+        replace: true,
+        require: 'ngModel',
+        scope: {
+          ngModel: '='
+        },
+        transclude: true,
+        templateUrl: '/imago/imago-field-email.html',
+        link: function(scope, element, attrs, ngModelController) {
+          if (attrs.required) {
+            scope.required = true;
           }
-          if (_.isNaN(value)) {
-            value = 1;
+          return scope.update = function(value) {
+            ngModelController.$setViewValue(value);
+            return ngModelController.$render();
+          };
+        }
+      };
+    }
+
+    return ImagoFieldEmail;
+
+  })();
+
+  angular.module('imago').directive('imagoFieldEmail', [ImagoFieldEmail]);
+
+}).call(this);
+
+(function() {
+  var ImagoFieldNumber;
+
+  ImagoFieldNumber = (function() {
+    function ImagoFieldNumber() {
+      return {
+        replace: true,
+        require: 'ngModel',
+        scope: {
+          min: '=',
+          max: '=',
+          ngModel: '='
+        },
+        transclude: true,
+        templateUrl: '/imago/imago-field-number.html',
+        link: function(scope, element, attrs, ngModelController) {
+          var change, checkValidity;
+          if (attrs.disabled) {
+            scope.disabled = true;
           }
-          value = parseFloat(value);
-          ngModelController.$setViewValue(value);
-          return ngModelController.$render();
-        };
-        scope.isLimitMin = function() {
-          if (ngModelController.$viewValue < scope.min) {
-            return true;
-          }
-        };
-        scope.isLimitMax = function() {
-          if (ngModelController.$viewValue > scope.max) {
-            return true;
-          }
-        };
-        scope.isOverMin = function() {
-          if (ngModelController.$viewValue < scope.min + 1) {
-            return true;
-          }
-        };
-        scope.isOverMax = function() {
-          if (ngModelController.$viewValue > scope.max - 1) {
-            return true;
-          }
-        };
-        scope.decrement = function() {
-          return change(-1);
-        };
-        scope.increment = function() {
-          return change(+1);
-        };
-        checkValidity();
-        return scope.$watchGroup(['min', 'max'], function() {
-          return checkValidity();
-        });
-      }
-    };
-  }
+          attrs.$observe('disabled', function(value) {
+            return scope.disabled = value;
+          });
+          ngModelController.$render = function() {
+            return checkValidity();
+          };
+          ngModelController.$formatters.push(function(value) {
+            return parseFloat(value);
+          });
+          ngModelController.$parsers.push(function(value) {
+            return parseFloat(value);
+          });
+          checkValidity = function() {
+            var valid;
+            valid = !(scope.isLimitMin(true) || scope.isLimitMax(true));
+            return ngModelController.$setValidity('outOfBounds', valid);
+          };
+          change = function(offset) {
+            var value;
+            value = ngModelController.$viewValue + offset;
+            return scope.update(value);
+          };
+          scope.update = function(value) {
+            if (scope.disabled) {
+              return;
+            }
+            if (_.isNaN(value)) {
+              value = 1;
+            }
+            value = parseFloat(value);
+            ngModelController.$setViewValue(value);
+            return ngModelController.$render();
+          };
+          scope.isLimitMin = function() {
+            if (ngModelController.$viewValue < scope.min) {
+              return true;
+            }
+          };
+          scope.isLimitMax = function() {
+            if (ngModelController.$viewValue > scope.max) {
+              return true;
+            }
+          };
+          scope.isOverMin = function() {
+            if (ngModelController.$viewValue < scope.min + 1) {
+              return true;
+            }
+          };
+          scope.isOverMax = function() {
+            if (ngModelController.$viewValue > scope.max - 1) {
+              return true;
+            }
+          };
+          scope.decrement = function() {
+            return change(-1);
+          };
+          scope.increment = function() {
+            return change(+1);
+          };
+          checkValidity();
+          return scope.$watchGroup(['min', 'max'], function() {
+            return checkValidity();
+          });
+        }
+      };
+    }
 
-  return ImagoFieldNumber;
+    return ImagoFieldNumber;
 
-})();
+  })();
 
-angular.module('imago').directive('imagoFieldNumber', [ImagoFieldNumber]);
+  angular.module('imago').directive('imagoFieldNumber', [ImagoFieldNumber]);
 
-var ImagoFieldString;
+}).call(this);
 
-ImagoFieldString = (function() {
-  function ImagoFieldString() {
-    return {
-      replace: true,
-      require: 'ngModel',
-      scope: {
-        ngModel: '='
-      },
-      transclude: true,
-      templateUrl: '/imago/imago-field-string.html',
-      link: function(scope, element, attrs, ngModelController) {
-        return scope.update = function(value) {
-          ngModelController.$setViewValue(value);
-          return ngModelController.$render();
-        };
-      }
-    };
-  }
+(function() {
+  var ImagoFieldString;
 
-  return ImagoFieldString;
+  ImagoFieldString = (function() {
+    function ImagoFieldString() {
+      return {
+        replace: true,
+        require: 'ngModel',
+        scope: {
+          ngModel: '='
+        },
+        transclude: true,
+        templateUrl: '/imago/imago-field-string.html',
+        link: function(scope, element, attrs, ngModelController) {
+          return scope.update = function(value) {
+            ngModelController.$setViewValue(value);
+            return ngModelController.$render();
+          };
+        }
+      };
+    }
 
-})();
+    return ImagoFieldString;
 
-angular.module('imago').directive('imagoFieldString', [ImagoFieldString]);
+  })();
+
+  angular.module('imago').directive('imagoFieldString', [ImagoFieldString]);
+
+}).call(this);
 
 angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-field-checkbox.html","<div class=\"imago-checkbox\"><label ng-class=\"{active: ngModel, disabled: disabled}\" ng-click=\"update(ngModel)\" class=\"topcoat-checkbox\"><div class=\"topcoat-checkbox__checkmark\"></div><span ng-transclude=\"ng-transclude\"></span></label></div>");
 $templateCache.put("/imago/imago-field-currency.html","<div ng-class=\"{expanded: fieldcurrency.expanded}\" class=\"imago-field currency\"><button ng-click=\"fieldcurrency.expanded = !fieldcurrency.expanded\" class=\"ii ii-caret-left\"></button><div class=\"fields\"><div ng-if=\"!fieldcurrency.expanded\" ng-class=\"{focus:onfocus}\" class=\"wrapper compact\"><label><span ng-repeat=\"cur in fieldcurrency.currencies\" ng-click=\"fieldcurrency.currency = cur\" ng-class=\"{active: fieldcurrency.currency === cur, invalid: fieldcurrency.notComplete[cur]}\">{{cur}}</span></label><input type=\"text\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"fieldcurrency.ngModel[fieldcurrency.currency]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-change=\"update(fieldcurrency.ngModel); onfocus = false\" ng-disabled=\"!fieldcurrency.currency\" ng-focus=\"onfocus = true\"/></div><div ng-repeat=\"cur in fieldcurrency.currencies\" ng-if=\"fieldcurrency.expanded\" ng-class=\"{invalid: fieldcurrency.notComplete[cur]}\" class=\"wrapper expanded\"><div class=\"imago-field\"><label>{{cur}}</label><input type=\"text\" currency=\"{{cur}}\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"fieldcurrency.ngModel[cur]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-blur=\"update(fieldcurrency.ngModel)\"/></div></div></div></div>");
