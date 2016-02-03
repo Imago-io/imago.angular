@@ -63,7 +63,7 @@ compileFolder = (folder) ->
         format: 'camelCase'
       )
     .pipe plugins.if /[.]coffee$/, plugins.coffee(
-        bare: true
+        bare: false
       ).on('error', reportError)
     .pipe plugins.if /[.]coffee$/, plugins.coffeelint()
     .pipe(plugins.concat(folder + ".js"))
