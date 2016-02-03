@@ -18,7 +18,7 @@ class ImagoFieldCurrency extends Directive
       link: (scope, element, attrs, ngModelController) ->
         return console.log 'no currencies!!' unless scope.fieldcurrency.currencies?.length
 
-        scope.$watchCollection 'fieldcurrency.ngModel', (value) ->
+        scope.$watchCollection 'fieldcurrency.ngModel', ->
           return if !_.isPlainObject scope.fieldcurrency.ngModel
           scope.fieldcurrency.notComplete = {}
           for currency in scope.fieldcurrency.currencies

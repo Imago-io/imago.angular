@@ -84,7 +84,7 @@ class imagoModel extends Provider
         # console.log 'search...', query
         params = _.map query, @formatQuery
         # console.log 'params', params
-        return $q.when() unless params.length
+        return $q.resolve() unless params.length
         return $http.post("#{host}/api/search", angular.toJson(params))
 
       getLocalData: (query, options = {}) ->
@@ -233,7 +233,7 @@ class imagoModel extends Provider
         asset = @find({'_id': id})
         if asset
           asset.assets = @findChildren(asset)
-          return $q.when asset
+          return $q.resolve asset
         return @assets.get(id).then (response) ->
           return response.data
 
@@ -294,56 +294,35 @@ class imagoModel extends Provider
         @update parent, {stream: false}
 
       add: (assets, options = {}) ->
-        defer = $q.defer()
-        options.stream = true if _.isUndefined options.stream
-        options.push = true if _.isUndefined options.push
-
-        if options.save
-          @assets.create(assets).then (result) =>
-
-            if options.push
-              for asset in result.data.data
-                @data.push(asset)
-
-            defer.resolve result.data.data
-            $rootScope.$emit('assets:add', result.data.data) if options.stream
-
-        else
-          if options.push
-            for asset in assets
-              @data.push(asset)
-
-          defer.resolve()
-
-          $rootScope.$emit('assets:add', assets) if options.stream
-
-        defer.promise
-
-      update: (data, options = {}) ->
-        defer = $q.defer()
-        options.stream = true if _.isUndefined options.stream
-        attribute = (if options.attribute then options.attribute else '_id')
-
-        copy = angular.copy data
-
-        if _.isPlainObject(copy)
-          query = {}
-          query[attribute] = copy[attribute]
-          return unless copy[attribute]
-          delete copy.assets if copy.assets
-          idx = @findIdx(query)
-          if idx isnt -1
-            @data[idx] = _.assign(@data[idx], copy)
-          else
-            @data.push copy
+        return $q (resolve, reject) =>
+          options.stream = true if _.isUndefined options.stream
+          options.push = true if _.isUndefined options.push
 
           if options.save
-            delete copy.base64_url if copy.base64_url
-            defer.resolve @assets.update(copy)
-          else
-            defer.resolve(copy)
+            @assets.create(assets).then (result) =>
 
-        else if _.isArray(copy)
+              if options.push
+                @data.push(asset) for asset in result.data.data
+
+              $rootScope.$emit('assets:add', result.data.data) if options.stream
+              return resolve result.data.data
+
+          else
+            if options.push
+              @data.push(asset) for asset in assets
+
+            $rootScope.$emit('assets:add', assets) if options.stream
+            return resolve assets
+
+      update: (data, options = {}) ->
+        return $q (resolve, reject) =>
+          options.stream = true if _.isUndefined options.stream
+          attribute = (if options.attribute then options.attribute else '_id')
+
+          copy = angular.copy data
+
+          copy = [copy] unless _.isArray copy
+
           for asset in copy
             query = {}
             query[attribute] = asset[attribute]
@@ -360,69 +339,61 @@ class imagoModel extends Provider
               asset.base64_url = null
 
           if options.save
-            defer.resolve @assets.batch(copy)
+            resolve @assets.batch(copy)
           else
-            defer.resolve(copy)
+            resolve copy
 
-        $rootScope.$emit('assets:update', copy) if options.stream
-        defer.promise
+          $rootScope.$emit('assets:update', copy) if options.stream
 
       delete: (assets, options = {}) ->
-        return unless assets
-        defer = $q.defer()
-        options.stream = true if _.isUndefined options.stream
+        return $q (resolve, reject) =>
+          return reject(assets) unless assets?.length
 
-        promises = []
+          options.stream = true if _.isUndefined options.stream
 
-        for asset in assets
-          _.remove @data, {'_id': asset._id}
-          if options.save
-            promises.push @assets.delete(asset._id)
+          promises = []
 
-        if promises.length
-          defer.resolve $q.all(promises)
-        else
-          defer.resolve(assets)
+          for asset in assets
+            _.remove @data, {'_id': asset._id}
+            if options.save
+              promises.push @assets.delete(asset._id)
 
-        $rootScope.$emit('assets:delete', assets) if options.stream
-        defer.promise
+          if promises.length
+            resolve $q.all(promises)
+          else
+            resolve(assets)
+
+          $rootScope.$emit('assets:delete', assets) if options.stream
 
       trash: (assets) ->
         request = []
         for asset in assets
-          newAsset =
+          request.push
             '_id'   : asset._id
             'name'  : asset.name
-
-          request.push newAsset
 
         @assets.trash(request)
         @delete(assets)
 
       copy: (assets, sourceId, parentId) ->
-        defer = $q.defer()
-        @paste(assets).then (pasted) =>
+        return $q (resolve, reject) =>
+          @paste(assets).then (pasted) =>
 
-          request = []
+            request = []
 
-          for asset in pasted
-            newAsset =
-              '_id'   : asset._id
-              'order' : asset.order
-              'name'  : asset.name
+            for asset in pasted
+              request.push
+                '_id'   : asset._id
+                'order' : asset.order
+                'name'  : asset.name
 
-            request.push(newAsset)
-
-          @assets.copy(request, sourceId, parentId)
-            .then (result) =>
-              if @currentCollection.sortorder is '-order'
-                defer.resolve @update(result.data)
-              else
-                @update(result.data, {stream: false})
-                @reSort(@currentCollection).then ->
-                  defer.resolve()
-
-        defer.promise
+            @assets.copy(request, sourceId, parentId)
+              .then (result) =>
+                if @currentCollection.sortorder is '-order'
+                  return resolve @update(result.data)
+                else
+                  @update(result.data, {stream: false})
+                  return resolve @reSort(@currentCollection)
 
       move: (assets, sourceId, parentId) ->
         defer = $q.defer()
@@ -439,27 +410,22 @@ class imagoModel extends Provider
           request = []
 
           for asset in pasted
-            formatted =
-              '_id'    : asset._id
+            request.push
+              '_id'   : asset._id
               'order' : asset.order
               'name'  : asset.name
-
-            request.push formatted
 
           @assets.move(request, sourceId, parentId)
 
         defer.promise
 
       paste: (assets, options={}) ->
-        defer = $q.defer()
         options.checkdups = true if _.isUndefined options.checkdups
         assetsChildren = @findChildren(@currentCollection)
 
         checkAsset = (asset) =>
-          deferAsset = $q.defer()
-
           if not options.checkdups or _.filter(assetsChildren, {name: asset.name}).length is 0
-            deferAsset.resolve asset
+            return $q.resolve asset
 
           else
             i = 1
@@ -470,31 +436,21 @@ class imagoModel extends Provider
               i++
               exists = (if _.filter(assetsChildren, {name: asset.name}).length then true else false)
 
-            deferAsset.resolve asset
-
-          deferAsset.promise
+            return $q.resolve asset
 
         queue = []
+        queue.push checkAsset(asset) for asset in assets
 
-        for asset in assets
-          queue.push checkAsset(asset)
-
-        $q.all(queue).then (result) =>
-          defer.resolve(result)
-
-        defer.promise
+        return $q.all(queue)
 
       reSort: (collection) ->
-        defer = $q.defer()
-        return if not collection.assets or collection.sortorder is '-order'
+        return $q.reject(collection) if not collection.assets or collection.sortorder is '-order'
 
         orderedList = @reindexAll(collection.assets)
         @update orderedList, {stream: false, save: true}
 
         collection.sortorder = '-order'
-        @update(collection, {save : true}).then ->
-          defer.resolve()
-        defer.promise
+        return @update(collection, {save : true})
 
       reindexAll:  (list) =>
         newList = []
@@ -502,12 +458,9 @@ class imagoModel extends Provider
         count = list.length
 
         for asset, key in list
-          asset.order = (count-key) * indexRange
-          ordered =
+          newList.push
             '_id'   : asset._id
-            'order' : asset.order
-
-          newList.push ordered
+            'order' : (count-key) * indexRange
 
         return newList
 

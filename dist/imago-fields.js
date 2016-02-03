@@ -63,7 +63,7 @@
           if (!((ref = scope.fieldcurrency.currencies) != null ? ref.length : void 0)) {
             return console.log('no currencies!!');
           }
-          scope.$watchCollection('fieldcurrency.ngModel', function(value) {
+          scope.$watchCollection('fieldcurrency.ngModel', function() {
             var currency, i, len, ref1, results;
             if (!_.isPlainObject(scope.fieldcurrency.ngModel)) {
               return;

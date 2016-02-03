@@ -154,7 +154,7 @@
             var params;
             params = _.map(query, this.formatQuery);
             if (!params.length) {
-              return $q.when();
+              return $q.resolve();
             }
             return $http.post(host + "/api/search", angular.toJson(params));
           },
@@ -349,7 +349,7 @@
             });
             if (asset) {
               asset.assets = this.findChildren(asset);
-              return $q.when(asset);
+              return $q.resolve(asset);
             }
             return this.assets.get(id).then(function(response) {
               return response.data;
@@ -457,198 +457,175 @@
             });
           },
           add: function(assets, options) {
-            var asset, defer, j, len;
             if (options == null) {
               options = {};
             }
-            defer = $q.defer();
-            if (_.isUndefined(options.stream)) {
-              options.stream = true;
-            }
-            if (_.isUndefined(options.push)) {
-              options.push = true;
-            }
-            if (options.save) {
-              this.assets.create(assets).then((function(_this) {
-                return function(result) {
-                  var asset, j, len, ref;
+            return $q((function(_this) {
+              return function(resolve, reject) {
+                var asset, j, len;
+                if (_.isUndefined(options.stream)) {
+                  options.stream = true;
+                }
+                if (_.isUndefined(options.push)) {
+                  options.push = true;
+                }
+                if (options.save) {
+                  return _this.assets.create(assets).then(function(result) {
+                    var asset, j, len, ref;
+                    if (options.push) {
+                      ref = result.data.data;
+                      for (j = 0, len = ref.length; j < len; j++) {
+                        asset = ref[j];
+                        _this.data.push(asset);
+                      }
+                    }
+                    if (options.stream) {
+                      $rootScope.$emit('assets:add', result.data.data);
+                    }
+                    return resolve(result.data.data);
+                  });
+                } else {
                   if (options.push) {
-                    ref = result.data.data;
-                    for (j = 0, len = ref.length; j < len; j++) {
-                      asset = ref[j];
+                    for (j = 0, len = assets.length; j < len; j++) {
+                      asset = assets[j];
                       _this.data.push(asset);
                     }
                   }
-                  defer.resolve(result.data.data);
                   if (options.stream) {
-                    return $rootScope.$emit('assets:add', result.data.data);
+                    $rootScope.$emit('assets:add', assets);
                   }
-                };
-              })(this));
-            } else {
-              if (options.push) {
-                for (j = 0, len = assets.length; j < len; j++) {
-                  asset = assets[j];
-                  this.data.push(asset);
+                  return resolve(assets);
                 }
-              }
-              defer.resolve();
-              if (options.stream) {
-                $rootScope.$emit('assets:add', assets);
-              }
-            }
-            return defer.promise;
+              };
+            })(this));
           },
           update: function(data, options) {
-            var asset, attribute, copy, defer, find, idx, j, len, query;
             if (options == null) {
               options = {};
             }
-            defer = $q.defer();
-            if (_.isUndefined(options.stream)) {
-              options.stream = true;
-            }
-            attribute = (options.attribute ? options.attribute : '_id');
-            copy = angular.copy(data);
-            if (_.isPlainObject(copy)) {
-              query = {};
-              query[attribute] = copy[attribute];
-              if (!copy[attribute]) {
-                return;
-              }
-              if (copy.assets) {
-                delete copy.assets;
-              }
-              idx = this.findIdx(query);
-              if (idx !== -1) {
-                this.data[idx] = _.assign(this.data[idx], copy);
-              } else {
-                this.data.push(copy);
-              }
-              if (options.save) {
-                if (copy.base64_url) {
-                  delete copy.base64_url;
+            return $q((function(_this) {
+              return function(resolve, reject) {
+                var asset, attribute, copy, find, j, len, query;
+                if (_.isUndefined(options.stream)) {
+                  options.stream = true;
                 }
-                defer.resolve(this.assets.update(copy));
-              } else {
-                defer.resolve(copy);
-              }
-            } else if (_.isArray(copy)) {
-              for (j = 0, len = copy.length; j < len; j++) {
-                asset = copy[j];
-                query = {};
-                query[attribute] = asset[attribute];
-                if (asset.assets) {
-                  delete asset.assets;
+                attribute = (options.attribute ? options.attribute : '_id');
+                copy = angular.copy(data);
+                if (!_.isArray(copy)) {
+                  copy = [copy];
                 }
-                find = this.find(query);
-                if (find) {
-                  if (find.base64_url && asset.serving_url) {
+                for (j = 0, len = copy.length; j < len; j++) {
+                  asset = copy[j];
+                  query = {};
+                  query[attribute] = asset[attribute];
+                  if (asset.assets) {
+                    delete asset.assets;
+                  }
+                  find = _this.find(query);
+                  if (find) {
+                    if (find.base64_url && asset.serving_url) {
+                      asset.base64_url = null;
+                    }
+                    _.assign(find, asset);
+                  } else {
+                    _this.data.push(asset);
+                  }
+                  if (asset.base64_url) {
                     asset.base64_url = null;
                   }
-                  _.assign(find, asset);
+                }
+                if (options.save) {
+                  resolve(_this.assets.batch(copy));
                 } else {
-                  this.data.push(asset);
+                  resolve(copy);
                 }
-                if (asset.base64_url) {
-                  asset.base64_url = null;
+                if (options.stream) {
+                  return $rootScope.$emit('assets:update', copy);
                 }
-              }
-              if (options.save) {
-                defer.resolve(this.assets.batch(copy));
-              } else {
-                defer.resolve(copy);
-              }
-            }
-            if (options.stream) {
-              $rootScope.$emit('assets:update', copy);
-            }
-            return defer.promise;
+              };
+            })(this));
           },
           "delete": function(assets, options) {
-            var asset, defer, j, len, promises;
             if (options == null) {
               options = {};
             }
-            if (!assets) {
-              return;
-            }
-            defer = $q.defer();
-            if (_.isUndefined(options.stream)) {
-              options.stream = true;
-            }
-            promises = [];
-            for (j = 0, len = assets.length; j < len; j++) {
-              asset = assets[j];
-              _.remove(this.data, {
-                '_id': asset._id
-              });
-              if (options.save) {
-                promises.push(this.assets["delete"](asset._id));
-              }
-            }
-            if (promises.length) {
-              defer.resolve($q.all(promises));
-            } else {
-              defer.resolve(assets);
-            }
-            if (options.stream) {
-              $rootScope.$emit('assets:delete', assets);
-            }
-            return defer.promise;
+            return $q((function(_this) {
+              return function(resolve, reject) {
+                var asset, j, len, promises;
+                if (!(assets != null ? assets.length : void 0)) {
+                  return reject(assets);
+                }
+                if (_.isUndefined(options.stream)) {
+                  options.stream = true;
+                }
+                promises = [];
+                for (j = 0, len = assets.length; j < len; j++) {
+                  asset = assets[j];
+                  _.remove(_this.data, {
+                    '_id': asset._id
+                  });
+                  if (options.save) {
+                    promises.push(_this.assets["delete"](asset._id));
+                  }
+                }
+                if (promises.length) {
+                  resolve($q.all(promises));
+                } else {
+                  resolve(assets);
+                }
+                if (options.stream) {
+                  return $rootScope.$emit('assets:delete', assets);
+                }
+              };
+            })(this));
           },
           trash: function(assets) {
-            var asset, j, len, newAsset, request;
+            var asset, j, len, request;
             request = [];
             for (j = 0, len = assets.length; j < len; j++) {
               asset = assets[j];
-              newAsset = {
+              request.push({
                 '_id': asset._id,
                 'name': asset.name
-              };
-              request.push(newAsset);
+              });
             }
             this.assets.trash(request);
             return this["delete"](assets);
           },
           copy: function(assets, sourceId, parentId) {
-            var defer;
-            defer = $q.defer();
-            this.paste(assets).then((function(_this) {
-              return function(pasted) {
-                var asset, j, len, newAsset, request;
-                request = [];
-                for (j = 0, len = pasted.length; j < len; j++) {
-                  asset = pasted[j];
-                  newAsset = {
-                    '_id': asset._id,
-                    'order': asset.order,
-                    'name': asset.name
-                  };
-                  request.push(newAsset);
-                }
-                return _this.assets.copy(request, sourceId, parentId).then(function(result) {
-                  if (_this.currentCollection.sortorder === '-order') {
-                    return defer.resolve(_this.update(result.data));
-                  } else {
-                    _this.update(result.data, {
-                      stream: false
-                    });
-                    return _this.reSort(_this.currentCollection).then(function() {
-                      return defer.resolve();
+            return $q((function(_this) {
+              return function(resolve, reject) {
+                return _this.paste(assets).then(function(pasted) {
+                  var asset, j, len, request;
+                  request = [];
+                  for (j = 0, len = pasted.length; j < len; j++) {
+                    asset = pasted[j];
+                    request.push({
+                      '_id': asset._id,
+                      'order': asset.order,
+                      'name': asset.name
                     });
                   }
+                  return _this.assets.copy(request, sourceId, parentId).then(function(result) {
+                    if (_this.currentCollection.sortorder === '-order') {
+                      return resolve(_this.update(result.data));
+                    } else {
+                      _this.update(result.data, {
+                        stream: false
+                      });
+                      return resolve(_this.reSort(_this.currentCollection));
+                    }
+                  });
                 });
               };
             })(this));
-            return defer.promise;
           },
           move: function(assets, sourceId, parentId) {
             var defer;
             defer = $q.defer();
             this.paste(assets).then((function(_this) {
               return function(pasted) {
-                var asset, formatted, j, len, request;
+                var asset, j, len, request;
                 if (_this.currentCollection.sortorder === '-order') {
                   _this.update(pasted).then(function() {
                     return defer.resolve();
@@ -664,12 +641,11 @@
                 request = [];
                 for (j = 0, len = pasted.length; j < len; j++) {
                   asset = pasted[j];
-                  formatted = {
+                  request.push({
                     '_id': asset._id,
                     'order': asset.order,
                     'name': asset.name
-                  };
-                  request.push(formatted);
+                  });
                 }
                 return _this.assets.move(request, sourceId, parentId);
               };
@@ -677,23 +653,21 @@
             return defer.promise;
           },
           paste: function(assets, options) {
-            var asset, assetsChildren, checkAsset, defer, j, len, queue;
+            var asset, assetsChildren, checkAsset, j, len, queue;
             if (options == null) {
               options = {};
             }
-            defer = $q.defer();
             if (_.isUndefined(options.checkdups)) {
               options.checkdups = true;
             }
             assetsChildren = this.findChildren(this.currentCollection);
             checkAsset = (function(_this) {
               return function(asset) {
-                var deferAsset, exists, i, original_name;
-                deferAsset = $q.defer();
+                var exists, i, original_name;
                 if (!options.checkdups || _.filter(assetsChildren, {
                   name: asset.name
                 }).length === 0) {
-                  deferAsset.resolve(asset);
+                  return $q.resolve(asset);
                 } else {
                   i = 1;
                   exists = true;
@@ -705,9 +679,8 @@
                       name: asset.name
                     }).length ? true : false);
                   }
-                  deferAsset.resolve(asset);
+                  return $q.resolve(asset);
                 }
-                return deferAsset.promise;
               };
             })(this);
             queue = [];
@@ -715,18 +688,12 @@
               asset = assets[j];
               queue.push(checkAsset(asset));
             }
-            $q.all(queue).then((function(_this) {
-              return function(result) {
-                return defer.resolve(result);
-              };
-            })(this));
-            return defer.promise;
+            return $q.all(queue);
           },
           reSort: function(collection) {
-            var defer, orderedList;
-            defer = $q.defer();
+            var orderedList;
             if (!collection.assets || collection.sortorder === '-order') {
-              return;
+              return $q.reject(collection);
             }
             orderedList = this.reindexAll(collection.assets);
             this.update(orderedList, {
@@ -734,26 +701,21 @@
               save: true
             });
             collection.sortorder = '-order';
-            this.update(collection, {
+            return this.update(collection, {
               save: true
-            }).then(function() {
-              return defer.resolve();
             });
-            return defer.promise;
           },
           reindexAll: (function(_this) {
             return function(list) {
-              var asset, count, j, key, len, newList, ordered;
+              var asset, count, j, key, len, newList;
               newList = [];
               count = list.length;
               for (key = j = 0, len = list.length; j < len; key = ++j) {
                 asset = list[key];
-                asset.order = (count - key) * indexRange;
-                ordered = {
+                newList.push({
                   '_id': asset._id,
-                  'order': asset.order
-                };
-                newList.push(ordered);
+                  'order': (count - key) * indexRange
+                });
               }
               return newList;
             };
