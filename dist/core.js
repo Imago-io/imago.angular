@@ -1854,34 +1854,35 @@
     imagoWorker.prototype.work = function(data) {
       var defer, find;
       defer = this.$q.defer();
-      if (!(data && data.path)) {
+      if (!(data != null ? data.path : void 0)) {
         defer.reject('nodata or path');
-      }
-      find = _.find(this.store, {
-        'path': data.path
-      });
-      if (this.supported === false) {
-        this.create(data.path, data, defer);
-      } else if (find) {
-        this.create(find.blob, data, defer);
       } else {
-        this.$http.get(data.path, {
-          cache: true
-        }).then((function(_this) {
-          return function(response) {
-            var blob, blobURL, stringified;
-            stringified = response.data.toString();
-            blob = new Blob([stringified], {
-              type: 'application/javascript'
-            });
-            blobURL = _this.windowURL.createObjectURL(blob);
-            _this.store.push({
-              'path': data.path,
-              'blob': blobURL
-            });
-            return _this.create(blobURL, data, defer);
-          };
-        })(this));
+        find = _.find(this.store, {
+          'path': data.path
+        });
+        if (this.supported === false) {
+          this.create(data.path, data, defer);
+        } else if (find) {
+          this.create(find.blob, data, defer);
+        } else {
+          this.$http.get(data.path, {
+            cache: true
+          }).then((function(_this) {
+            return function(response) {
+              var blob, blobURL, stringified;
+              stringified = response.data.toString();
+              blob = new Blob([stringified], {
+                type: 'application/javascript'
+              });
+              blobURL = _this.windowURL.createObjectURL(blob);
+              _this.store.push({
+                'path': data.path,
+                'blob': blobURL
+              });
+              return _this.create(blobURL, data, defer);
+            };
+          })(this));
+        }
       }
       return defer.promise;
     };
