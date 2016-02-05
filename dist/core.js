@@ -500,16 +500,17 @@
             })(this));
           },
           update: function(data, options) {
+            var attribute;
             if (options == null) {
               options = {};
             }
+            if (_.isUndefined(options.stream)) {
+              options.stream = true;
+            }
+            attribute = (options.attribute ? options.attribute : '_id');
             return $q((function(_this) {
               return function(resolve, reject) {
-                var asset, attribute, copy, find, j, len, query;
-                if (_.isUndefined(options.stream)) {
-                  options.stream = true;
-                }
-                attribute = (options.attribute ? options.attribute : '_id');
+                var asset, copy, find, j, len, query;
                 copy = angular.copy(data);
                 if (!_.isArray(copy)) {
                   copy = [copy];

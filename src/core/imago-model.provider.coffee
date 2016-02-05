@@ -315,12 +315,10 @@ class imagoModel extends Provider
             return resolve assets
 
       update: (data, options = {}) ->
+        options.stream = true if _.isUndefined options.stream
+        attribute = (if options.attribute then options.attribute else '_id')
         return $q (resolve, reject) =>
-          options.stream = true if _.isUndefined options.stream
-          attribute = (if options.attribute then options.attribute else '_id')
-
           copy = angular.copy data
-
           copy = [copy] unless _.isArray copy
 
           for asset in copy
