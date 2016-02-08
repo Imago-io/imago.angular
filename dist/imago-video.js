@@ -317,13 +317,12 @@
             };
           })(this);
           loadFormats = function() {
-            var codec, format, formats, host, i, j, len, ref;
+            var codec, format, formats, i, j, len, ref;
             formats = [];
             codec = detectCodec();
             scope.source.fields.formats.sort(function(a, b) {
               return b.height - a.height;
             });
-            host = data === 'online' ? 'api.imago.io' : 'localhost:8000';
             ref = scope.source.fields.formats;
             for (i = j = 0, len = ref.length; j < len; i = ++j) {
               format = ref[i];
@@ -331,7 +330,7 @@
                 continue;
               }
               formats.push({
-                "src": "//" + host + "/api/play_redirect?uuid=" + scope.source.uuid + "&codec=" + format.codec + "&quality=hd&max_size=" + format.size,
+                "src": "//" + imagoModel.host + "/api/play_redirect?uuid=" + scope.source.uuid + "&codec=" + format.codec + "&quality=hd&max_size=" + format.size,
                 "size": format.size,
                 "codec": format.codec,
                 "type": "video/" + codec
