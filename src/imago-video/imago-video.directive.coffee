@@ -198,11 +198,10 @@ class imagoVideo extends Directive
           formats = []
           codec = detectCodec()
           scope.source.fields.formats.sort( (a, b) -> return b.height - a.height )
-          host = if data is 'online' then 'api.imago.io' else 'localhost:8000'
           for format, i in scope.source.fields.formats
             continue unless codec is format.codec
             formats.push(
-                "src" : "//#{host}/api/play_redirect?uuid=#{scope.source.uuid}&codec=#{format.codec}&quality=hd&max_size=#{format.size}"
+                "src" : "//#{imagoModel.host}/api/play_redirect?uuid=#{scope.source.uuid}&codec=#{format.codec}&quality=hd&max_size=#{format.size}"
                 "size": format.size
                 "codec": format.codec
                 "type": "video/#{codec}"
