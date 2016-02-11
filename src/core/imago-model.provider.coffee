@@ -111,7 +111,6 @@ class imagoModel extends Provider
               query = imagoUtils.renameKey('metakind', 'type', query)
 
             else if key is 'path'
-              console.log 'value', key, value
               path = value
 
           if path?.slice(-1) is '/'

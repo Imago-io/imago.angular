@@ -183,7 +183,6 @@
                   } else if (key === 'metakind') {
                     query = imagoUtils.renameKey('metakind', 'type', query);
                   } else if (key === 'path') {
-                    console.log('value', key, value);
                     path = value;
                   }
                 }
