@@ -26,9 +26,11 @@ class imagoShareController extends Controller
 
   init: ->
     if @asset?.path
-      @$scope.location = "#{@$location.protocol()}://#{@$location.host()}#{@asset.path}"
+      @location = "#{@$location.protocol()}://#{@$location.host()}#{@asset.path}"
     else
-      @$scope.location = @$location.absUrl()
+      @location = @$location.absUrl()
+
+    @location = encodeURIComponent(@location)
 
     return console.log 'You need to specify one service at least.' unless @$attrs.imagoShare
 

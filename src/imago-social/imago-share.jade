@@ -1,26 +1,26 @@
 .imago-share
 
   a.fa.fa-facebook(
-    ng-href="http://www.facebook.com/share.php?u={{location}}"
+    ng-href="http://www.facebook.com/share.php?u={{imagoshare.location}}"
     target="_blank"
     ng-if="facebook || all")
   a.fa.fa-twitter(
-    ng-href="http://twitter.com/home?status={{location}}"
+    ng-href="http://twitter.com/home?status={{imagoshare.location}}"
     target="_blank"
     ng-if="twitter || all")
   a.fa.fa-google(
-    ng-href="https://plus.google.com/share?url={{location}}"
+    ng-href="https://plus.google.com/share?url={{imagoshare.location}}"
     target="_blank"
     ng-if="google || all")
   a.fa.fa-linkedin(
-    ng-href="https://www.linkedin.com/shareArticle?mini=true&url={{location}}&title={{imagoshare.asset | meta:'title'}}&summary=&source={{imagoshare.asset.serving_url}}"
+    ng-href="https://www.linkedin.com/shareArticle?mini=true&url={{imagoshare.location}}&title={{imagoshare.asset | meta:'title'}}&summary=&source={{imagoshare.asset.serving_url}}"
     target="_blank"
     ng-if="linkedin || all")
   a.fa.fa-tumblr(
-    ng-href="http://www.tumblr.com/share/photo?source={{location}}&caption={{imagoshare.asset | meta:'title'}}"
+    ng-href="http://www.tumblr.com/share/photo?source={{imagoshare.location}}&caption={{imagoshare.asset | meta:'title'}}"
     target="_blank"
     ng-if="tumblr|| all")
   a.fa.fa-pinterest(
-    ng-href="http://www.pinterest.com/pin/create/abutton/?url={{location}}/&media={{imagoshare.asset.serving_url}}&description={{imagoshare.asset | meta:'title'}}"
+    ng-href="http://www.pinterest.com/pin/create/abutton/?url={{imagoshare.location}}/&media={{imagoshare.asset.serving_url}}&description={{imagoshare.asset | meta:'title'}}"
     target="_blank" title="Pin It"
     ng-if="pinterest || all")
