@@ -1016,9 +1016,9 @@
               }
             }, 500);
           });
-          return scope.$on('$locationChangeStart', function() {
+          return scope.$on('$locationChangeStart', function(evt, newUrl, old, newState, oldState) {
             return scope.scrollPos[0] = {
-              path: $location.path(),
+              path: old,
               scroll: $document.scrollTop()
             };
           });

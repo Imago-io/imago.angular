@@ -25,9 +25,9 @@ class ImagoScrollSave extends Directive
 
           , 500
 
-         scope.$on '$locationChangeStart', ->
+         scope.$on '$locationChangeStart', (evt, newUrl, old, newState, oldState) ->
           scope.scrollPos[0] =
-            path   : $location.path()
+            path   : old
             scroll : $document.scrollTop()
 
     }
