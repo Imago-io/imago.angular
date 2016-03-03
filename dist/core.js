@@ -995,6 +995,46 @@
 }).call(this);
 
 (function() {
+  var ImagoScrollSave;
+
+  ImagoScrollSave = (function() {
+    function ImagoScrollSave($window, $document, $timeout, $location) {
+      return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+          scope.scrollPos = [];
+          scope.$on('$viewContentLoaded', function() {
+            return $timeout(function() {
+              var history;
+              history = _.find(scope.scrollPos, {
+                path: $location.path()
+              });
+              $window.scrollTo(0, (history != null ? history.scroll : void 0) || 0);
+              scope.scrollPos.unshift({});
+              if (scope.scrollPos.length > 2) {
+                return scope.scrollPos = scope.scrollPos.slice(0, 2);
+              }
+            }, 500);
+          });
+          return scope.$on('$locationChangeStart', function() {
+            return scope.scrollPos[0] = {
+              path: $location.path(),
+              scroll: $document.scrollTop()
+            };
+          });
+        }
+      };
+    }
+
+    return ImagoScrollSave;
+
+  })();
+
+  angular.module('imago').directive('imagoScrollSave', ['$window', '$document', '$timeout', '$location', ImagoScrollSave]);
+
+}).call(this);
+
+(function() {
   var imagoUtils;
 
   imagoUtils = (function() {
