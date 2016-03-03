@@ -10,7 +10,7 @@ class ImagoScrollSave extends Directive
 
         scope.$on '$viewContentLoaded', ->
           $timeout ->
-            history = _.find scope.scrollPos, {path: $location.path()}
+            history = _.find scope.scrollPos, {path: $location.absUrl()}
 
             # console.log 'scope.scrollPos', JSON.stringify scope.scrollPos
             # console.log 'history', JSON.stringify history

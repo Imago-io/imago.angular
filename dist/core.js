@@ -1007,7 +1007,7 @@
             return $timeout(function() {
               var history;
               history = _.find(scope.scrollPos, {
-                path: $location.path()
+                path: $location.absUrl()
               });
               $window.scrollTo(0, (history != null ? history.scroll : void 0) || 0);
               scope.scrollPos.unshift({});
