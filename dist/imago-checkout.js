@@ -538,7 +538,7 @@
         item = ref[i];
         stock = !_.isUndefined((ref1 = item.fields.stock) != null ? (ref2 = ref1.value) != null ? ref2[this.fcenter._id] : void 0 : void 0) ? (ref3 = item.fields.stock) != null ? (ref4 = ref3.value) != null ? ref4[this.fcenter._id] : void 0 : void 0 : 100000;
         if (parseInt(stock) < item.qty && !((ref5 = item.fields) != null ? (ref6 = ref5.presale) != null ? ref6.value : void 0 : void 0)) {
-          item.qty = stock;
+          item.qty = _.max([stock, 0]);
           changed = true;
           if (stock !== 0) {
             this.cartError[item._id] = {

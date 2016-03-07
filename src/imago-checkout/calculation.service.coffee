@@ -308,7 +308,7 @@ class Calculation extends Service
       # stock = item.fields.stock?.value?[@fcenter._id] or 100000
       stock = if !_.isUndefined(item.fields.stock?.value?[@fcenter._id]) then item.fields.stock?.value?[@fcenter._id] else 100000
       if parseInt(stock) < item.qty and not item.fields?.presale?.value
-        item.qty = stock
+        item.qty = _.max([stock, 0])
         changed = true
 
         @cartError[item._id] = {'maxStock': true} if stock != 0
