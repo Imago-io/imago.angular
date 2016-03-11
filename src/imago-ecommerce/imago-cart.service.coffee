@@ -61,6 +61,8 @@ class imagoCart extends Service
     update = false
     for item in @cart.items
       item.stock = Number(item.fields?.stock?.value?[@fulfillmentsCenter.selected._id])
+      item.stock = _.max([item.stock, 0])
+      item.qty = _.max([item.qty, 0])
       item = @imagoCartUtils.updateChangedItem(item)
       if item.updates?.length
         @newmessages = true

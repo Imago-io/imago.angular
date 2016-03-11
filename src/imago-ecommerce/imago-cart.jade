@@ -26,7 +26,8 @@
 
     button.checkout(
       ng-show="cart.imagoCart.cart.items.length"
-      type="submit"
+      ng-disabled="!cart.imagoCart.itemsLength"
+      type="button"
       ng-click="cart.imagoCart.checkout()"
       analytics-on="click" analytics-event="Go to Checkout"
       ) checkout
