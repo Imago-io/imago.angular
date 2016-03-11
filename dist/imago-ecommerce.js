@@ -175,7 +175,7 @@
           }
           item.finalsale = (ref = item.fields) != null ? (ref1 = ref.finalSale) != null ? ref1.value : void 0 : void 0;
           item.presale = (ref2 = item.fields) != null ? (ref3 = ref2.presale) != null ? ref3.value : void 0 : void 0;
-          if (item.qty > item.stock) {
+          if (item.qty > item.stock && !item.presale) {
             item.qty = item.stock;
             item.updates.push('quantity');
           }
@@ -259,6 +259,8 @@
     imagoCart.prototype.itemsLength = 0;
 
     imagoCart.prototype.settings = [];
+
+    imagoCart.prototype.messages = [];
 
     function imagoCart($q, $rootScope, $location, $window, $http, imagoUtils, imagoModel, fulfillmentsCenter, geoIp, tenantSettings, imagoCartUtils) {
       this.$q = $q;
@@ -362,11 +364,21 @@
       for (i = 0, len = ref.length; i < len; i++) {
         item = ref[i];
         item.stock = Number((ref1 = item.fields) != null ? (ref2 = ref1.stock) != null ? (ref3 = ref2.value) != null ? ref3[this.fulfillmentsCenter.selected._id] : void 0 : void 0 : void 0);
-        item.stock = _.max([item.stock, 0]);
-        item.qty = _.max([item.qty, 0]);
         item = this.imagoCartUtils.updateChangedItem(item);
-        if ((ref4 = item.updates) != null ? ref4.length : void 0) {
+        if (item.stock <= 0 && !item.presale) {
           this.newmessages = true;
+          this.show = true;
+          update = true;
+          this.messages.push({
+            item: item,
+            type: 'nostock'
+          });
+          _.remove(this.cart.items, {
+            _id: item._id
+          });
+        } else if ((ref4 = item.updates) != null ? ref4.length : void 0) {
+          this.newmessages = true;
+          this.show = true;
           update = true;
         }
       }
@@ -919,5 +931,5 @@
 }).call(this);
 
 angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-cart-messages.html","<div class=\"imago-cart-messages\"><div ng-repeat=\"key in item.updates\" ng-swich=\"key\" class=\"message\"><p ng-swich-wen=\"price\">price has changed.</p><p ng-swich-wen=\"quantity\">quantity has been updated.</p></div></div>");
-$templateCache.put("/imago/imago-cart.html","<div class=\"imago-cart\"><div ng-class=\"{\'message\': cart.imagoCart.newmessages}\" ng-mouseenter=\"cart.imagoCart.show = true\" ng-click=\"cart.imagoCart.show = !cart.imagoCart.show\" analytics-on=\"click\" analytics-event=\"Show Cart {{cart.imagoCart.show}}\" class=\"icon\"><div ng-bind=\"cart.imagoCart.itemsLength\" class=\"counter\"></div></div><div ng-show=\"cart.imagoCart.show\" stop-scroll=\"stop-scroll\" class=\"box\"><div ng-transclude=\"ng-transclude\"></div><div ng-show=\"cart.imagoCart.itemsLength\" class=\"itemnumber\">{{cart.imagoCart.itemsLength}}<span ng-show=\"cart.imagoCart.itemsLength === 1\"> item</span><span ng-show=\"cart.imagoCart.itemsLength &gt; 1\"> items</span></div><div ng-show=\"cart.imagoCart.itemsLength === 0\" class=\"noitems\">cart empty</div><div ng-show=\"cart.imagoCart.itemsLength\" class=\"subtotal\">subtotal:<span ng-bind-html=\"cart.imagoCart.currency | currencySymbol\" class=\"currency\"></span><span class=\"amount\">{{cart.imagoCart.subtotal | price:0}}</span></div><button ng-show=\"cart.imagoCart.cart.items.length\" ng-disabled=\"!cart.imagoCart.itemsLength\" type=\"button\" ng-click=\"cart.imagoCart.checkout()\" analytics-on=\"click\" analytics-event=\"Go to Checkout\" class=\"checkout\">checkout</button></div></div>");
+$templateCache.put("/imago/imago-cart.html","<div class=\"imago-cart\"><div ng-class=\"{\'message\': cart.imagoCart.newmessages}\" ng-mouseenter=\"cart.imagoCart.show = true\" ng-click=\"cart.imagoCart.show = !cart.imagoCart.show\" analytics-on=\"click\" analytics-event=\"Show Cart {{cart.imagoCart.show}}\" class=\"icon\"><div ng-bind=\"cart.imagoCart.itemsLength\" class=\"counter\"></div></div><div ng-show=\"cart.imagoCart.show\" stop-scroll=\"stop-scroll\" class=\"box\"><div ng-transclude=\"ng-transclude\"></div><div class=\"imago-cart-messages\"><div ng-repeat=\"message in cart.imagoCart.messages\" ng-switch=\"message.type\" class=\"message\"><p ng-switch-when=\"nostock\">Item {{message.item.name}} is not in stock anymore</p></div></div><div ng-show=\"cart.imagoCart.itemsLength\" class=\"itemnumber\">{{cart.imagoCart.itemsLength}}<span ng-show=\"cart.imagoCart.itemsLength === 1\"> item</span><span ng-show=\"cart.imagoCart.itemsLength &gt; 1\"> items</span></div><div ng-show=\"cart.imagoCart.itemsLength === 0 &amp;&amp; !cart.imagoCart.messages.length\" class=\"noitems\">cart empty</div><div ng-show=\"cart.imagoCart.itemsLength\" class=\"subtotal\">subtotal:<span ng-bind-html=\"cart.imagoCart.currency | currencySymbol\" class=\"currency\"></span><span class=\"amount\">{{cart.imagoCart.subtotal | price:0}}</span></div><button ng-show=\"cart.imagoCart.cart.items.length\" type=\"button\" ng-click=\"cart.imagoCart.checkout()\" analytics-on=\"click\" analytics-event=\"Go to Checkout\" class=\"checkout\">checkout</button></div></div>");
 $templateCache.put("/imago/imago-find-price.html","<div class=\"imago-find-price\"><div ng-show=\"findprice.highest === findprice.lowest\" class=\"one-price\"><span ng-bind-html=\"findprice.imagoCart.currency | currencySymbol\" class=\"currency\"></span><span ng-bind=\"findprice.highest | price: 0\" class=\"amount\"></span></div><div ng-show=\"findprice.highest !== findprice.lowest\" ng-class=\"{\'discount\': findprice.discounts.length, \'range\': !findprice.discounts.length}\"><span ng-bind-html=\"findprice.imagoCart.currency\" class=\"currency low\"></span><span ng-bind=\"findprice.lowest | price: 0\" class=\"amount low\"></span><span class=\"dash\">-</span><span ng-bind-html=\"findprice.imagoCart.currency\" class=\"currency high\"></span><span ng-bind=\"findprice.highest | price: 0\" class=\"amount high\"></span></div></div>");}]);

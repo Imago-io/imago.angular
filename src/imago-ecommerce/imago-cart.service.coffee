@@ -3,6 +3,7 @@ class imagoCart extends Service
   show: false
   itemsLength: 0
   settings: []
+  messages: []
 
   constructor: (@$q, @$rootScope, @$location, @$window, @$http, @imagoUtils, @imagoModel, @fulfillmentsCenter, @geoIp, tenantSettings, @imagoCartUtils) ->
 
@@ -61,11 +62,18 @@ class imagoCart extends Service
     update = false
     for item in @cart.items
       item.stock = Number(item.fields?.stock?.value?[@fulfillmentsCenter.selected._id])
-      item.stock = _.max([item.stock, 0])
-      item.qty = _.max([item.qty, 0])
       item = @imagoCartUtils.updateChangedItem(item)
-      if item.updates?.length
+      if item.stock <= 0 and !item.presale
         @newmessages = true
+        @show = true
+        update = true
+        @messages.push
+          item : item
+          type : 'nostock'
+        _.remove(@cart.items, {_id: item._id})
+      else if item.updates?.length
+        @newmessages = true
+        @show = true
         update = true
 
     @currency = angular.copy(@cart.currency) unless @currency

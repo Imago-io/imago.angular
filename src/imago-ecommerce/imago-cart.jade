@@ -10,13 +10,17 @@
   .box(ng-show="cart.imagoCart.show" stop-scroll)
     div(ng-transclude)
 
+    .imago-cart-messages
+      .message(ng-repeat="message in cart.imagoCart.messages" ng-switch="message.type")
+        p(ng-switch-when="nostock") Item {{message.item.name}} is not in stock anymore
+
     .itemnumber(
       ng-show="cart.imagoCart.itemsLength"
       ) {{cart.imagoCart.itemsLength}}
       span(ng-show="cart.imagoCart.itemsLength === 1")  item
       span(ng-show="cart.imagoCart.itemsLength > 1")  items
     .noitems(
-      ng-show="cart.imagoCart.itemsLength === 0"
+      ng-show="cart.imagoCart.itemsLength === 0 && !cart.imagoCart.messages.length"
       ) cart empty
 
     .subtotal(ng-show="cart.imagoCart.itemsLength")
@@ -26,7 +30,6 @@
 
     button.checkout(
       ng-show="cart.imagoCart.cart.items.length"
-      ng-disabled="!cart.imagoCart.itemsLength"
       type="button"
       ng-click="cart.imagoCart.checkout()"
       analytics-on="click" analytics-event="Go to Checkout"

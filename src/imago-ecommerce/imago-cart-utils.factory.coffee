@@ -9,7 +9,7 @@ class ImagoCartUtils extends Factory
         return item unless item.changed.length
         item.finalsale = item.fields?.finalSale?.value
         item.presale = item.fields?.presale?.value
-        if item.qty > item.stock
+        if item.qty > item.stock and !item.presale
           item.qty = item.stock
           item.updates.push 'quantity'
         if 'price' in item.changed
