@@ -1730,7 +1730,7 @@
         },
         fireEvent: function(name) {
           var evt;
-          if (window.CustomEvent) {
+          if (_.isFunction(window.CustomEvent)) {
             evt = new CustomEvent(name);
           } else {
             evt = document.createEvent(name);

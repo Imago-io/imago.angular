@@ -946,7 +946,7 @@ class imagoUtils extends Factory
         return !!value.match(pattern)
 
       fireEvent: (name) ->
-        if window.CustomEvent
+        if _.isFunction window.CustomEvent
           evt = new CustomEvent(name)
         else
           evt = document.createEvent(name)
