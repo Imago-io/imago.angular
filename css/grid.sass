@@ -23,47 +23,12 @@
   &.nowrap
     flex-wrap: nowrap
 
-
 .imago-flex
   flex: 1 0 auto
 
-.imago-flex-25
-  flex: 1 1 25%
-
-.imago-flex-30
-  flex: 1 1 30%
-
-.imago-flex-33
-  flex: 1 1 33%
-
-.imago-flex-50
-  flex: 1 1 50%
-
-.imago-flex-66
-  flex: 1 1 66%
-
-.imago-flex-70
-  flex: 1 1 70%
-
-.imago-flex-75
-  flex: 1 1 75%
-
-.imago-flex-100
-  flex: 1 1 100%
-
-.card,
-.card-small
-  padding: 2em 0 1em
-  .imago-field
-    margin-bottom: 0
-  .btn-toggle
-    margin-bottom: 1em
-
-.card-small
-  padding: 1em 0 .5em
-
-.card-xsmall
-  padding: .5em 0 .25em
+@for $i from 1 to 100
+  .imago-flex-#{$i}
+     flex: 1 1 $i * 1%
 
 // debug
 // .imago-flex-column
