@@ -5,7 +5,7 @@ class ImagoSubscribe extends Directive
     return {
 
       require: 'form'
-      restrict: 'A'
+      restrict: 'E'
       transclude: true
       controller: 'imagoSubscribeController as imagosubscribe'
       templateUrl: (element, attrs) ->

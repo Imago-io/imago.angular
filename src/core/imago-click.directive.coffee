@@ -4,6 +4,7 @@ class ImagoClick extends Directive
 
     return {
 
+      restrict: 'A'
       link: (scope, element, attrs) ->
         clickHandler = if angular.isFunction(attrs.imagoClick) then clickExpr else $parse(attrs.imagoClick)
 

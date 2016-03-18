@@ -4,6 +4,7 @@
   imagoDownload = (function() {
     function imagoDownload($compile, $templateCache, $http) {
       return {
+        restrict: 'E',
         scope: {
           asset: "=",
           fieldname: "="

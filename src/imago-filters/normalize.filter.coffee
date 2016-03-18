@@ -1,6 +1,6 @@
 class Normalize extends Filter
 
-  constructor: ->
+  constructor: (imagoUtils) ->
     return (string) ->
       return false unless string
-      return _.kebabCase(string)
+      return imagoUtils.normalize(string)

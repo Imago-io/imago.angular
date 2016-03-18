@@ -4,6 +4,7 @@ class ImagoVirtualList extends Directive
 
     return {
 
+      restrict: 'E'
       scope: true
       templateUrl: '/imago/imago-virtual-list.html'
       transclude: true
@@ -36,10 +37,10 @@ class ImagoVirtualList extends Directive
         element.append masterDiv
 
         scope.init = ->
-          return if @initRunning
-          @initRunning = true
+          return if self.initRunning
+          self.initRunning = true
           scope.visibleProvider = []
-          $timeout =>
+          $timeout ->
             self.divWidth  = masterDiv.clientWidth
             self.divHeight = masterDiv.clientHeight
             self.itemsPerRow = Math.floor(element[0].clientWidth / self.divWidth)
@@ -51,7 +52,7 @@ class ImagoVirtualList extends Directive
             else
               self.canvasWidth = null
             self.updateData()
-            @initRunning = false
+            self.initRunning = false
           , 200
 
         self.updateData = ->
@@ -106,7 +107,7 @@ class ImagoVirtualList extends Directive
         scope.$watch 'imagovirtuallist.data', (value) ->
           self.updateData()
 
-        angular.element($window).on 'resize', =>
+        angular.element($window).on 'resize', ->
           if Math.floor(element[0].clientWidth / masterDiv.clientWidth) isnt self.itemsPerRow
             scope.init()
 

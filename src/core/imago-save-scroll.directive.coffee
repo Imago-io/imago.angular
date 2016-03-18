@@ -1,6 +1,6 @@
-class ImagoScrollSave extends Directive
+class ImagoSaveScroll extends Directive
 
-  constructor: ($window, $document, $timeout, $location) ->
+  constructor: ($window, $timeout, $location) ->
 
     return {
 
@@ -9,13 +9,13 @@ class ImagoScrollSave extends Directive
         scope.scrollPos = []
 
         scope.$on '$viewContentLoaded', ->
+          history = _.find scope.scrollPos, {path: $location.absUrl()}
+          if !history?.scroll
+            $window.scrollTo(0, 0)
+            return
+
           $timeout ->
-            history = _.find scope.scrollPos, {path: $location.absUrl()}
-
-            # console.log 'scope.scrollPos', JSON.stringify scope.scrollPos
-            # console.log 'history', JSON.stringify history
-
-            $window.scrollTo(0, history?.scroll or 0)
+            $window.scrollTo(0, history?.scroll)
 
             # add empty object for next history
             scope.scrollPos.unshift({})
@@ -28,6 +28,6 @@ class ImagoScrollSave extends Directive
          scope.$on '$locationChangeStart', (evt, newUrl, old, newState, oldState) ->
           scope.scrollPos[0] =
             path   : old
-            scroll : $document.scrollTop()
+            scroll : $window.scrollY
 
     }

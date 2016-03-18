@@ -4,6 +4,7 @@
   imagoLike = (function() {
     function imagoLike() {
       return {
+        restrict: 'E',
         scope: {},
         templateUrl: '/imago/imago-like.html'
       };
@@ -23,6 +24,7 @@
   imagoShare = (function() {
     function imagoShare() {
       return {
+        restrict: 'E',
         scope: {
           asset: "="
         },
@@ -88,5 +90,5 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-like.html","<div class=\"imago-like\"><a href=\"http://instagram.com/###\" target=\"_blank\" class=\"instagram\">Instagram</a><a href=\"https://www.facebook.com/###\" target=\"_blank\" class=\"facebook\">Facebook</a><a href=\"https://plus.google.com/###\" target=\"_blank\" class=\"googleplus\">Google +</a></div>");
-$templateCache.put("/imago/imago-share.html","<div class=\"imago-share\"><a ng-href=\"http://www.facebook.com/share.php?u={{imagoshare.location}}\" target=\"_blank\" ng-if=\"facebook || all\" class=\"fa fa-facebook\"></a><a ng-href=\"http://twitter.com/home?status={{imagoshare.location}}\" target=\"_blank\" ng-if=\"twitter || all\" class=\"fa fa-twitter\"></a><a ng-href=\"https://plus.google.com/share?url={{imagoshare.location}}\" target=\"_blank\" ng-if=\"google || all\" class=\"fa fa-google\"></a><a ng-href=\"https://www.linkedin.com/shareArticle?mini=true&amp;url={{imagoshare.location}}&amp;title={{imagoshare.asset | meta:\'title\'}}&amp;summary=&amp;source={{imagoshare.asset.serving_url}}\" target=\"_blank\" ng-if=\"linkedin || all\" class=\"fa fa-linkedin\"></a><a ng-href=\"http://www.tumblr.com/share/photo?source={{imagoshare.location}}&amp;caption={{imagoshare.asset | meta:\'title\'}}\" target=\"_blank\" ng-if=\"tumblr|| all\" class=\"fa fa-tumblr\"></a><a ng-href=\"http://www.pinterest.com/pin/create/abutton/?url={{imagoshare.location}}/&amp;media={{imagoshare.asset.serving_url}}&amp;description={{imagoshare.asset | meta:\'title\'}}\" target=\"_blank\" title=\"Pin It\" ng-if=\"pinterest || all\" class=\"fa fa-pinterest\"></a></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-like.html","<div class=\"imago-like-content\"><a href=\"http://instagram.com/###\" target=\"_blank\" class=\"instagram\">Instagram</a><a href=\"https://www.facebook.com/###\" target=\"_blank\" class=\"facebook\">Facebook</a><a href=\"https://plus.google.com/###\" target=\"_blank\" class=\"googleplus\">Google +</a></div>");
+$templateCache.put("/imago/imago-share.html","<div class=\"imago-share-content\"><a ng-href=\"http://www.facebook.com/share.php?u={{imagoshare.location}}\" target=\"_blank\" ng-if=\"facebook || all\" class=\"fa fa-facebook\"></a><a ng-href=\"http://twitter.com/home?status={{imagoshare.location}}\" target=\"_blank\" ng-if=\"twitter || all\" class=\"fa fa-twitter\"></a><a ng-href=\"https://plus.google.com/share?url={{imagoshare.location}}\" target=\"_blank\" ng-if=\"google || all\" class=\"fa fa-google\"></a><a ng-href=\"https://www.linkedin.com/shareArticle?mini=true&amp;url={{imagoshare.location}}&amp;title={{imagoshare.asset | meta:\'title\'}}&amp;summary=&amp;source={{imagoshare.asset.serving_url}}\" target=\"_blank\" ng-if=\"linkedin || all\" class=\"fa fa-linkedin\"></a><a ng-href=\"http://www.tumblr.com/share/photo?source={{imagoshare.location}}&amp;caption={{imagoshare.asset | meta:\'title\'}}\" target=\"_blank\" ng-if=\"tumblr|| all\" class=\"fa fa-tumblr\"></a><a ng-href=\"http://www.pinterest.com/pin/create/abutton/?url={{imagoshare.location}}/&amp;media={{imagoshare.asset.serving_url}}&amp;description={{imagoshare.asset | meta:\'title\'}}\" target=\"_blank\" title=\"Pin It\" ng-if=\"pinterest || all\" class=\"fa fa-pinterest\"></a></div>");}]);

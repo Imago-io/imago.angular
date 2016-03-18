@@ -4,6 +4,7 @@
   ImagoVirtualList = (function() {
     function ImagoVirtualList($window, $document, $rootScope, $timeout) {
       return {
+        restrict: 'E',
         scope: true,
         templateUrl: '/imago/imago-virtual-list.html',
         transclude: true,
@@ -35,29 +36,27 @@
           masterDiv.style.zIndex = -1;
           element.append(masterDiv);
           scope.init = function() {
-            if (this.initRunning) {
+            if (self.initRunning) {
               return;
             }
-            this.initRunning = true;
+            self.initRunning = true;
             scope.visibleProvider = [];
-            return $timeout((function(_this) {
-              return function() {
-                var cellsPerHeight;
-                self.divWidth = masterDiv.clientWidth;
-                self.divHeight = masterDiv.clientHeight;
-                self.itemsPerRow = Math.floor(element[0].clientWidth / self.divWidth);
-                cellsPerHeight = Math.round($window.innerHeight / self.divHeight);
-                self.cellsPerPage = cellsPerHeight * self.itemsPerRow;
-                self.numberOfCells = 3 * self.cellsPerPage;
-                if (self.itemsPerRow > 1) {
-                  self.canvasWidth = self.itemsPerRow * self.divWidth;
-                } else {
-                  self.canvasWidth = null;
-                }
-                self.updateData();
-                return _this.initRunning = false;
-              };
-            })(this), 200);
+            return $timeout(function() {
+              var cellsPerHeight;
+              self.divWidth = masterDiv.clientWidth;
+              self.divHeight = masterDiv.clientHeight;
+              self.itemsPerRow = Math.floor(element[0].clientWidth / self.divWidth);
+              cellsPerHeight = Math.round($window.innerHeight / self.divHeight);
+              self.cellsPerPage = cellsPerHeight * self.itemsPerRow;
+              self.numberOfCells = 3 * self.cellsPerPage;
+              if (self.itemsPerRow > 1) {
+                self.canvasWidth = self.itemsPerRow * self.divWidth;
+              } else {
+                self.canvasWidth = null;
+              }
+              self.updateData();
+              return self.initRunning = false;
+            }, 200);
           };
           self.updateData = function() {
             if (!scope.imagovirtuallist.data) {
@@ -128,13 +127,11 @@
           scope.$watch('imagovirtuallist.data', function(value) {
             return self.updateData();
           });
-          angular.element($window).on('resize', (function(_this) {
-            return function() {
-              if (Math.floor(element[0].clientWidth / masterDiv.clientWidth) !== self.itemsPerRow) {
-                return scope.init();
-              }
-            };
-          })(this));
+          angular.element($window).on('resize', function() {
+            if (Math.floor(element[0].clientWidth / masterDiv.clientWidth) !== self.itemsPerRow) {
+              return scope.init();
+            }
+          });
           angular.element($window).on('scroll', scope.onScroll);
           watchers = [];
           watchers.push($rootScope.$on('imagovirtuallist:init', function() {
@@ -162,4 +159,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-virtual-list.html","<div ng-style=\"canvasStyle\" class=\"canvas\"></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-virtual-list.html","<div ng-style=\"canvasStyle\" class=\"imago-virtual-list-content\"></div>");}]);

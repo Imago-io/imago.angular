@@ -2,8 +2,9 @@ class imagoForm extends Directive
 
   constructor: (imagoSubmit)->
     return {
+
+      restrict: 'E'
       scope: {}
-      replace: true
       transclude: true
       templateUrl: '/imago/imago-form.html'
       link: (scope, element, attr, cntrl, transclude) ->

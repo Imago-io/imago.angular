@@ -4,10 +4,10 @@ class StopPropagation extends Directive
 
     return {
       link: (scope, element, attr) ->
-        element.bind 'click', (e) ->
-          e.stopPropagation()
+        element.bind 'click', (evt) ->
+          evt.stopPropagation()
 
-        element.bind 'dblclick', (e) ->
-          e.stopPropagation()
+        element.bind 'dblclick', (evt) ->
+          evt.stopPropagation()
 
     }

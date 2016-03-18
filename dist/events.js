@@ -93,11 +93,11 @@
     function StopPropagation() {
       return {
         link: function(scope, element, attr) {
-          element.bind('click', function(e) {
-            return e.stopPropagation();
+          element.bind('click', function(evt) {
+            return evt.stopPropagation();
           });
-          return element.bind('dblclick', function(e) {
-            return e.stopPropagation();
+          return element.bind('dblclick', function(evt) {
+            return evt.stopPropagation();
           });
         }
       };

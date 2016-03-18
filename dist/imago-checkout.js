@@ -1,4 +1,100 @@
 (function() {
+  var AutocompleteGoogle;
+
+  AutocompleteGoogle = (function() {
+    function AutocompleteGoogle($parse, imagoUtils) {
+      return {
+        require: 'ngModel',
+        link: function(scope, element, attrs, modelCtrl) {
+          var autocomplete, place, viewValue;
+          if (!(typeof google !== "undefined" && google !== null ? google.maps : void 0)) {
+            return console.log('the google library is not loaded');
+          }
+          if (!attrs.autocompleteGoogle) {
+            return console.log('you need a form to fill. Use the options attribute');
+          }
+          autocomplete = new google.maps.places.Autocomplete(element[0], {
+            types: ["geocode"]
+          });
+          google.maps.event.addDomListener(element[0], 'keydown', function(e) {
+            if (e.keyCode === 13) {
+              return e.preventDefault();
+            }
+          });
+          viewValue = void 0;
+          place = void 0;
+          google.maps.event.addListener(autocomplete, 'place_changed', function() {
+            var componentConf, data, elem, form, i, label, len, ref, type, value;
+            place = autocomplete.getPlace();
+            if (!place.address_components) {
+              return;
+            }
+            form = $parse(attrs.autocompleteGoogle)(scope);
+            viewValue = place.name || modelCtrl.$viewValue;
+            componentConf = {
+              locality: {
+                label: 'city',
+                value: 'long_name'
+              },
+              administrative_area_level_1: {
+                label: 'state',
+                value: 'short_name'
+              },
+              country: {
+                label: 'country',
+                value: 'long_name'
+              },
+              postal_code: {
+                label: 'zip',
+                value: 'short_name'
+              }
+            };
+            data = {};
+            ref = place.address_components;
+            for (i = 0, len = ref.length; i < len; i++) {
+              elem = ref[i];
+              type = elem.types[0];
+              if (!componentConf[type]) {
+                continue;
+              }
+              data[componentConf[type].label] = elem[componentConf[type].value] || '';
+            }
+            for (label in data) {
+              value = data[label];
+              if (label === 'country' && imagoUtils.inUsa(value)) {
+                form[label] = 'United States';
+              } else {
+                form[label] = value;
+              }
+            }
+            if (attrs.autocompleteOnsuccess) {
+              $parse(attrs.autocompleteOnsuccess)(scope);
+            }
+            return scope.$apply(function() {
+              modelCtrl.$setViewValue(viewValue);
+              return modelCtrl.$render();
+            });
+          });
+          return element.on('focusout', function(evt) {
+            viewValue = modelCtrl.$viewValue ? modelCtrl.$viewValue : place && place.formatted_address ? viewValue : void 0;
+            return scope.$apply(function() {
+              modelCtrl.$setViewValue(viewValue);
+              return modelCtrl.$render();
+            });
+          });
+        }
+      };
+    }
+
+    return AutocompleteGoogle;
+
+  })();
+
+  angular.module('imago').directive('autocompleteGoogle', ['$parse', 'imagoUtils', AutocompleteGoogle]);
+
+}).call(this);
+
+(function() {
   var Calculation,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
@@ -119,7 +215,7 @@
     };
 
     Calculation.prototype.applyCoupon = function(coupon, costs) {
-      var code, codes, meta, percentvalue, ref, ref1, ref2, ref3, value;
+      var ids, meta, percentvalue, ref, value;
       if (!coupon) {
         costs.discount = null;
         return;
@@ -134,21 +230,10 @@
         return costs.discount = percentvalue;
       } else if (meta.type === 'free shipping') {
         costs.discount = null;
-        if ((ref = meta.value) != null ? ref.length : void 0) {
-          codes = (function() {
-            var i, len, ref1, results;
-            ref1 = meta.value;
-            results = [];
-            for (i = 0, len = ref1.length; i < len; i++) {
-              code = ref1[i];
-              results.push(code.toUpperCase());
-            }
-            return results;
-          })();
-        }
-        if (((ref1 = meta.value) != null ? ref1.length : void 0) && (ref2 = this.shipping_options.code.toUpperCase(), indexOf.call(codes, ref2) >= 0)) {
+        ids = meta.shippingMethods || [];
+        if (meta.limitByShippings && (ref = this.shipping_options._id.toString(), indexOf.call(ids, ref) >= 0)) {
           return costs.shipping = 0;
-        } else if (!((ref3 = meta.value) != null ? ref3.length : void 0)) {
+        } else if (!meta.limitByShippings) {
           return costs.shipping = 0;
         } else {
           return this.couponState = 'invalid';
@@ -266,50 +351,52 @@
     };
 
     Calculation.prototype.calculateShipping = function() {
-      var deferred;
-      deferred = this.$q.defer();
-      if (this.calculateShippingRunning) {
-        return;
-      }
-      this.calculateShippingRunning = true;
-      this.costs.shipping = 0;
-      this.getShippingRate().then((function(_this) {
-        return function(rates) {
-          var i, len, rate, results;
-          _this.calculateShippingRunning = false;
-          if (!(rates != null ? rates.length : void 0)) {
-            _this.shipping_options = void 0;
-            _this.shippingRates = [];
-            if (_this.country) {
-              _this.error.noshippingrule = true;
-            }
-            return deferred.resolve();
+      return this.$q((function(_this) {
+        return function(resolve, reject) {
+          if (_this.calculateShippingRunning) {
+            return reject();
           }
-          _this.error.noshippingrule = false;
-          results = [];
-          for (i = 0, len = rates.length; i < len; i++) {
-            rate = rates[i];
-            results.push(_this.calcShipping(rate).then(function(response) {
-              var rateFix, shipping;
-              if (_this.shipping_options && _this.shipping_options._id === response.rate._id) {
-                _this.costs.shipping = response.shipping;
-                deferred.resolve();
-              } else if (!_this.shipping_options || _.difference(_this.shippingRates, rates).length) {
-                _this.setShippingRates(rates);
-                _this.costs.shipping = response.shipping;
-                deferred.resolve();
+          _this.calculateShippingRunning = true;
+          _this.costs.shipping = 0;
+          return _this.getShippingRate().then(function(rates) {
+            var i, len, rate, results;
+            _this.calculateShippingRunning = false;
+            if (!(rates != null ? rates.length : void 0)) {
+              _this.shipping_options = void 0;
+              _this.shippingRates = [];
+              if (_this.country) {
+                _this.error.noshippingrule = true;
               }
-              rateFix = (response.shipping / 100).toFixed(2);
-              shipping = _.find(_this.shippingRates, {
-                '_id': response.rate._id
-              });
-              return shipping.nameprice = shipping.name + " (" + _this.currency + " " + rateFix + ")";
-            }));
-          }
-          return results;
+              return resolve();
+            }
+            _this.error.noshippingrule = false;
+            results = [];
+            for (i = 0, len = rates.length; i < len; i++) {
+              rate = rates[i];
+              results.push(_this.calcShipping(rate).then(function(response) {
+                var rateFix, ref, shipping;
+                if (_this.shipping_options && _this.shipping_options._id === response.rate._id) {
+                  _this.costs.shipping = response.shipping;
+                  resolve();
+                } else if (!_this.shipping_options || _.difference(_this.shippingRates, rates).length) {
+                  _this.setShippingRates(rates);
+                  _this.costs.shipping = response.shipping;
+                  resolve();
+                }
+                if (!((ref = _this.shippingRates) != null ? ref.length : void 0)) {
+                  return;
+                }
+                rateFix = (response.shipping / 100).toFixed(2);
+                shipping = _.find(_this.shippingRates, {
+                  '_id': response.rate._id
+                });
+                return shipping.nameprice = shipping.name + " (" + _this.currency + " " + rateFix + ")";
+              }));
+            }
+            return results;
+          });
         };
       })(this));
-      return deferred.promise;
     };
 
     Calculation.prototype.calcShipping = function(rate) {

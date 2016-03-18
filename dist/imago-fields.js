@@ -1,53 +1,9 @@
 (function() {
-  var ImagoFieldCheckbox;
-
-  ImagoFieldCheckbox = (function() {
-    function ImagoFieldCheckbox() {
-      return {
-        replace: true,
-        require: 'ngModel',
-        scope: {
-          ngModel: '='
-        },
-        transclude: true,
-        templateUrl: '/imago/imago-field-checkbox.html',
-        link: function(scope, element, attrs, ngModelController) {
-          if (attrs.disabled) {
-            scope.disabled = true;
-          }
-          attrs.$observe('disabled', function(value) {
-            return scope.disabled = value;
-          });
-          return scope.update = function(value) {
-            if (scope.disabled) {
-              return;
-            }
-            value = !value;
-            ngModelController.$setViewValue(value);
-            ngModelController.$render();
-            if (attrs.required) {
-              return ngModelController.$setValidity('required', value);
-            }
-          };
-        }
-      };
-    }
-
-    return ImagoFieldCheckbox;
-
-  })();
-
-  angular.module('imago').directive('imagoFieldCheckbox', [ImagoFieldCheckbox]);
-
-}).call(this);
-
-(function() {
-  var ImagoFieldCurrency, imagoFilterCurrency;
+  var ImagoFieldCurrency, ImagoFieldCurrencyController, imagoFilterCurrency;
 
   ImagoFieldCurrency = (function() {
     function ImagoFieldCurrency() {
       return {
-        replace: true,
         require: 'ngModel',
         scope: {
           currencies: '=',
@@ -55,26 +11,30 @@
           save: '&ngChange'
         },
         transclude: true,
+        controller: 'imagoFieldCurrencyController as fieldcurrency',
+        bindToController: true,
         templateUrl: '/imago/imago-field-currency.html',
         link: function(scope, element, attrs, ngModelController) {
           var ref;
-          if (!((ref = scope.currencies) != null ? ref.length : void 0)) {
+          if (!((ref = scope.fieldcurrency.currencies) != null ? ref.length : void 0)) {
             return console.log('no currencies!!');
           }
-          scope.currency = scope.currencies[0];
-          scope.$watchCollection('ngModel', function(value) {
-            var currency, i, len, ref1;
-            if (!_.isPlainObject(scope.ngModel)) {
-              return scope.notComplete = true;
+          scope.$watchCollection('fieldcurrency.ngModel', function() {
+            var currency, i, len, ref1, results;
+            if (!_.isPlainObject(scope.fieldcurrency.ngModel)) {
+              return;
             }
-            ref1 = scope.currencies;
+            scope.fieldcurrency.notComplete = {};
+            ref1 = scope.fieldcurrency.currencies;
+            results = [];
             for (i = 0, len = ref1.length; i < len; i++) {
               currency = ref1[i];
-              if (!angular.isDefined(scope.ngModel[currency])) {
-                return scope.notComplete = true;
+              if (angular.isDefined(scope.fieldcurrency.ngModel[currency])) {
+                continue;
               }
+              results.push(scope.fieldcurrency.notComplete[currency] = true);
             }
-            return scope.notComplete = false;
+            return results;
           });
           return scope.update = function(value) {
             var key;
@@ -83,7 +43,7 @@
             }
             ngModelController.$setViewValue(value);
             ngModelController.$render();
-            return scope.save();
+            return scope.fieldcurrency.save();
           };
         }
       };
@@ -93,12 +53,29 @@
 
   })();
 
+  ImagoFieldCurrencyController = (function() {
+    function ImagoFieldCurrencyController() {
+      var ref;
+      if (!((ref = this.currencies) != null ? ref.length : void 0)) {
+        return;
+      }
+      this.currency = angular.copy(this.currencies[0]);
+    }
+
+    return ImagoFieldCurrencyController;
+
+  })();
+
   imagoFilterCurrency = (function() {
     function imagoFilterCurrency() {
       return {
         require: 'ngModel',
-        link: function(scope, elem, attrs, ctrl) {
-          ctrl.$formatters.unshift(function(value) {
+        link: function(scope, element, attrs, ctrl) {
+          var formatView;
+          element.on('blur', function() {
+            return ctrl.$render();
+          });
+          formatView = function(value) {
             if (angular.isDefined(value) && !_.isNull(value)) {
               value = (value / 100).toFixed(2);
             }
@@ -106,13 +83,16 @@
               value = void 0;
             }
             return value;
+          };
+          ctrl.$formatters.push(function(value) {
+            return formatView(value);
           });
-          return ctrl.$parsers.unshift(function(viewValue) {
+          return ctrl.$parsers.push(function(value) {
             var plainNumber;
-            if (viewValue) {
-              plainNumber = viewValue.replace(/[^\d|\-+|\.+]/g, "");
-              plainNumber = parseFloat(plainNumber * 100);
-              plainNumber = plainNumber.toFixed(2);
+            if (value) {
+              plainNumber = value.replace(/[^\d|\-+|\.+]/g, "");
+              plainNumber = parseFloat(plainNumber).toFixed(2) * 100;
+              ctrl.$setViewValue(formatView(plainNumber));
               return plainNumber;
             } else {
               return void 0;
@@ -126,7 +106,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoFieldCurrency', [ImagoFieldCurrency]).directive('imagoFilterCurrency', [imagoFilterCurrency]);
+  angular.module('imago').directive('imagoFieldCurrency', [ImagoFieldCurrency]).controller('imagoFieldCurrencyController', [ImagoFieldCurrencyController]).directive('imagoFilterCurrency', [imagoFilterCurrency]);
 
 }).call(this);
 
@@ -136,7 +116,7 @@
   ImagoFieldDate = (function() {
     function ImagoFieldDate() {
       return {
-        replace: true,
+        restrict: 'E',
         require: 'ngModel',
         scope: {
           min: '=',
@@ -163,45 +143,12 @@
 }).call(this);
 
 (function() {
-  var ImagoFieldEmail;
-
-  ImagoFieldEmail = (function() {
-    function ImagoFieldEmail() {
-      return {
-        replace: true,
-        require: 'ngModel',
-        scope: {
-          ngModel: '='
-        },
-        transclude: true,
-        templateUrl: '/imago/imago-field-email.html',
-        link: function(scope, element, attrs, ngModelController) {
-          if (attrs.required) {
-            scope.required = true;
-          }
-          return scope.update = function(value) {
-            ngModelController.$setViewValue(value);
-            return ngModelController.$render();
-          };
-        }
-      };
-    }
-
-    return ImagoFieldEmail;
-
-  })();
-
-  angular.module('imago').directive('imagoFieldEmail', [ImagoFieldEmail]);
-
-}).call(this);
-
-(function() {
   var ImagoFieldNumber;
 
   ImagoFieldNumber = (function() {
     function ImagoFieldNumber() {
       return {
-        replace: true,
+        restrict: 'E',
         require: 'ngModel',
         scope: {
           min: '=',
@@ -290,39 +237,6 @@
 
 }).call(this);
 
-(function() {
-  var ImagoFieldString;
-
-  ImagoFieldString = (function() {
-    function ImagoFieldString() {
-      return {
-        replace: true,
-        require: 'ngModel',
-        scope: {
-          ngModel: '='
-        },
-        transclude: true,
-        templateUrl: '/imago/imago-field-string.html',
-        link: function(scope, element, attrs, ngModelController) {
-          return scope.update = function(value) {
-            ngModelController.$setViewValue(value);
-            return ngModelController.$render();
-          };
-        }
-      };
-    }
-
-    return ImagoFieldString;
-
-  })();
-
-  angular.module('imago').directive('imagoFieldString', [ImagoFieldString]);
-
-}).call(this);
-
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-field-checkbox.html","<div class=\"imago-checkbox\"><label ng-class=\"{active: ngModel, disabled: disabled}\" ng-click=\"update(ngModel)\" class=\"topcoat-checkbox\"><div class=\"topcoat-checkbox__checkmark\"></div><span ng-transclude=\"ng-transclude\"></span></label></div>");
-$templateCache.put("/imago/imago-field-currency.html","<div class=\"imago-field currency\"><div ng-class=\"{focus:onfocus}\" class=\"wrapper\"><div ng-transclude=\"ng-transclude\"></div><select ng-model=\"currency\" ng-options=\"currency for currency in currencies\"></select><input type=\"text\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"ngModel[currency]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-change=\"update(ngModel); onfocus = false\" ng-disabled=\"!currency\" ng-focus=\"onfocus = true\"/></div><div ng-show=\"notComplete\" class=\"error\">somes currencies do not have any value</div></div>");
-$templateCache.put("/imago/imago-field-date.html","<div class=\"imago-field date\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" date-time=\"date-time\" dismiss=\"true\" ng-model=\"ngModel\" ng-blur=\"update(ngModel)\" view=\"date\" min-view=\"date\" partial=\"true\"/></div>");
-$templateCache.put("/imago/imago-field-email.html","<div class=\"imago-field email\"><div ng-transclude=\"ng-transclude\"></div><input type=\"email\" ng-model=\"ngModel\" ng-blur=\"update(ngModel)\" ng-required=\"required\"/></div>");
-$templateCache.put("/imago/imago-field-number.html","<div class=\"imago-field number\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" ng-model=\"ngModel\" ng-model-options=\"{\'updateOn\': \'blur\'}\" ng-change=\"update(ngModel)\"/><button type=\"button\" ng-disabled=\"isOverMin() || disabled\" ng-click=\"decrement()\" class=\"decrement\"></button><button type=\"button\" ng-disabled=\"isOverMax() || disabled\" ng-click=\"increment()\" class=\"increment\"></button></div>");
-$templateCache.put("/imago/imago-field-string.html","<div class=\"imago-field string\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" ng-model=\"ngModel\" ng-change=\"update(ngModel)\"/></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-field-currency.html","<div class=\"imago-field-content-currency imago-field currency\"><div ng-class=\"{expanded: fieldcurrency.expanded}\"><button ng-click=\"fieldcurrency.expanded = !fieldcurrency.expanded\" class=\"ii ii-caret-left\"></button><div ng-class=\"{expanded: fieldcurrency.expanded}\" class=\"fields\"><div ng-if=\"!fieldcurrency.expanded\" ng-class=\"{focus:onfocus}\" class=\"wrapper compact\"><label><span ng-repeat=\"cur in fieldcurrency.currencies\" ng-click=\"fieldcurrency.currency = cur\" ng-class=\"{active: fieldcurrency.currency === cur, invalid: fieldcurrency.notComplete[cur]}\">{{cur}}</span></label><input type=\"text\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"fieldcurrency.ngModel[fieldcurrency.currency]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-change=\"update(fieldcurrency.ngModel); onfocus = false\" ng-disabled=\"!fieldcurrency.currency\" ng-focus=\"onfocus = true\"/></div><div ng-repeat=\"cur in fieldcurrency.currencies\" ng-if=\"fieldcurrency.expanded\" ng-class=\"{invalid: fieldcurrency.notComplete[cur]}\" class=\"wrapper expanded\"><div class=\"imago-field\"><label>{{cur}}</label><input type=\"text\" currency=\"{{cur}}\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"fieldcurrency.ngModel[cur]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-blur=\"update(fieldcurrency.ngModel)\"/></div></div></div></div></div>");
+$templateCache.put("/imago/imago-field-date.html","<div class=\"imago-field-date-content imago-field date\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" date-time=\"date-time\" dismiss=\"true\" ng-model=\"ngModel\" ng-blur=\"update(ngModel)\" view=\"date\" min-view=\"date\" partial=\"true\"/></div>");
+$templateCache.put("/imago/imago-field-number.html","<div class=\"imago-field-number-content imago-field number\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" ng-model=\"ngModel\" ng-model-options=\"{\'updateOn\': \'blur\'}\" ng-change=\"update(ngModel)\" ng-disabled=\"disabled\"/><button type=\"button\" ng-disabled=\"isOverMin() || disabled\" ng-click=\"decrement()\" class=\"decrement\"></button><button type=\"button\" ng-disabled=\"isOverMax() || disabled\" ng-click=\"increment()\" class=\"increment\"></button></div>");}]);

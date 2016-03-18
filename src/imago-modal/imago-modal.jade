@@ -1,7 +1,5 @@
-.imago-modal(
-  ng-show="modal.active"
-  ng-click="modal.disable()"
-  )
-  .wrapper
-    .close.icon-thin-close.icon
-    .transclude
+.imago-modal-content(
+  ng-if="modal.active"
+  ng-class="[{'fullwindow': fullwindow, 'not-fullwindow': !fullwindow}, modal.position]"
+  stop-propagation)
+  .wrapper(ng-transclude)

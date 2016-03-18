@@ -4,6 +4,7 @@ class ImagoCartMessages extends Directive
 
     return {
 
+      restrict: 'E'
       scope:
         item: '=imagoCartMessages'
       templateUrl: '/imago/imago-cart-messages.html'

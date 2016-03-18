@@ -2,22 +2,46 @@
   var ImagoModal, imagoModalController;
 
   ImagoModal = (function() {
-    function ImagoModal() {
+    function ImagoModal($document, keyCodes) {
       return {
-        scope: {
-          item: '=',
-          active: '='
-        },
+        restrict: 'E',
+        scope: true,
         transclude: true,
         templateUrl: '/imago/imago-modal.html',
         controller: 'imagoModalController as modal',
-        bindToController: true,
+        bindToController: {
+          active: '=?',
+          position: '<?'
+        },
         link: function(scope, element, attrs, ctrl, transclude) {
-          return transclude(scope, function(clone) {
-            var el;
-            el = angular.element(document.querySelector('.imago-modal .transclude'));
-            return el.append(clone);
-          });
+          var disableOnEsc;
+          scope.fullwindow = attrs.fullwindow === 'false' ? false : true;
+          if (scope.fullwindow) {
+            scope.$watch('modal.active', function(value) {
+              if (value) {
+                return document.body.style.overflow = 'hidden';
+              }
+              return document.body.style.overflow = 'auto';
+            });
+            disableOnEsc = function(evt) {
+              if (!scope.modal.active) {
+                return;
+              }
+              if (evt.keyCode === keyCodes.escape) {
+                scope.modal.disable();
+              }
+              return scope.$digest();
+            };
+            $document.on('keydown', disableOnEsc);
+            return scope.$on('$destroy', function() {
+              document.body.style.overflow = 'auto';
+              return $document.off('keydown', disableOnEsc);
+            });
+          } else {
+            return element.css({
+              position: 'relative'
+            });
+          }
         }
       };
     }
@@ -30,27 +54,13 @@
     function imagoModalController($rootScope, $scope) {
       this.$rootScope = $rootScope;
       this.$scope = $scope;
-      this.active = false;
-      this.$scope.$watch('modal.active', function(value) {
-        if (value) {
-          return document.body.style.overflow = 'hidden';
-        }
-        return document.body.style.overflow = 'auto';
-      });
-      this.$rootScope.$on('modal:item', (function(_this) {
-        return function(evt, item) {
-          _this.item = item;
-          return _this.activate();
-        };
-      })(this));
     }
 
-    imagoModalController.prototype.activate = function(item) {
+    imagoModalController.prototype.activate = function() {
       return this.active = true;
     };
 
     imagoModalController.prototype.disable = function() {
-      this.item = null;
       return this.active = false;
     };
 
@@ -58,8 +68,8 @@
 
   })();
 
-  angular.module('imago').directive('imagoModal', [ImagoModal]).controller('imagoModalController', ['$rootScope', '$scope', imagoModalController]);
+  angular.module('imago').directive('imagoModal', ['$document', 'keyCodes', ImagoModal]).controller('imagoModalController', ['$rootScope', '$scope', imagoModalController]);
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-modal.html","<div ng-show=\"modal.active\" ng-click=\"modal.disable()\" class=\"imago-modal\"><div class=\"wrapper\"><div class=\"close icon-thin-close icon\"></div><div class=\"transclude\"></div></div></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-modal.html","<div ng-if=\"modal.active\" ng-class=\"[{\'fullwindow\': fullwindow, \'not-fullwindow\': !fullwindow}, modal.position]\" stop-propagation=\"stop-propagation\" class=\"imago-modal-content\"><div ng-transclude=\"ng-transclude\" class=\"wrapper\"></div></div>");}]);

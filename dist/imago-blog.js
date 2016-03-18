@@ -15,6 +15,7 @@
           currentPage: '=',
           shuffle: '='
         },
+        restrict: 'E',
         controller: 'imagoPagerController as imagopager',
         bindToController: true,
         templateUrl: function(element, attrs) {
@@ -135,4 +136,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-pager.html","<div class=\"pager\"><button ng-disabled=\"imagopager.currentPage &lt;= 1\" ng-click=\"imagopager.onPrev()\" class=\"prev\">Previous</button><button ng-disabled=\"(imagopager.currentPage &gt;= imagopager.totalPages &amp;&amp; !imagopager.next) || (imagopager.posts.length &lt; imagopager.pageSize &amp;&amp; !imagopager.next) || !imagopager.next\" ng-click=\"imagopager.onNext()\" class=\"next\">Next</button></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-pager.html","<div class=\"imago-pager-content\"><button ng-disabled=\"imagopager.currentPage &lt;= 1\" ng-click=\"imagopager.onPrev()\" class=\"prev\">Previous</button><button ng-disabled=\"(imagopager.currentPage &gt;= imagopager.totalPages &amp;&amp; !imagopager.next) || (imagopager.posts.length &lt; imagopager.pageSize &amp;&amp; !imagopager.next) || !imagopager.next\" ng-click=\"imagopager.onNext()\" class=\"next\">Next</button></div>");}]);

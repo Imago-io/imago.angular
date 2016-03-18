@@ -1,5 +1,6 @@
 // effects
-.imagoslider.slide
+.imago-slider-content.slide
+  display: block
 
   .slide
     transition: transform 250ms
@@ -9,34 +10,34 @@
 
       &.ng-enter,
       &.ng-hide-remove
-        transform: translate3d(-100%, 0, 0)
+        transform: translate(-100%, 0)
       &.ng-enter-active,
       &.ng-hide-remove.ng-hide-remove-active
-        transform: translate3d(0, 0, 0)
+        transform: translate(0, 0)
       &.ng-leave,
       &.ng-hide-add
-        transform: translate3d(0, 0, 0)
+        transform: translate(0, 0)
       &.ng-leave-active,
       &.ng-hide-add.ng-hide-add-active
-        transform: translate3d(100%, 0, 0)
+        transform: translate(100%, 0)
 
   &.next
     .slide
 
       &.ng-enter,
       &.ng-hide-remove
-        transform: translate3d(100%, 0, 0)
+        transform: translate(100%, 0)
       &.ng-enter-active,
       &.ng-hide-remove.ng-hide-remove-active
-        transform: translate3d(0, 0, 0)
+        transform: translate(0, 0)
       &.ng-leave,
       &.ng-hide-add
-        transform: translate3d(0, 0, 0)
+        transform: translate(0, 0)
       &.ng-leave-active,
       &.ng-hide-add.ng-hide-add-active
-        transform: translate3d(-100%, 0, 0)
+        transform: translate(-100%, 0)
 
-.imagoslider.carousel
+.imago-slider-content.carousel
 
   .slide
     transition: all 350ms
@@ -66,7 +67,7 @@
         transform: scale(0) translateX(-200%) rotateY(180deg)
 
 
-.imagoslider.slidescale
+.imago-slider-content.slidescale
 
   .slide
     transition: all 250ms
@@ -100,7 +101,7 @@
         transform: scale(0) translateX(-100%)
 
 
-.imagoslider.fade
+.imago-slider-content.fade
   .slide
     transition: opacity 250ms
 
@@ -114,7 +115,7 @@
     &.ng-leave-active
       opacity: 0
 
-.imagoslider.crossfade
+.imago-slider-content.crossfade
   .slide
     transition: opacity 250ms
 
@@ -128,7 +129,7 @@
       opacity: 0
 
 
-.imagoslider.fadeslide
+.imago-slider-content.fadeslide
   .slide
     transition: all 250ms
 
@@ -137,34 +138,34 @@
 
       &.ng-enter
         opacity: 0
-        transform: translate3d(-5%, 0, 0)
+        transform: translate(-5%, 0)
       &.ng-enter-active
         opacity: 1
-        transform: translate3d(0, 0, 0)
+        transform: translate(0, 0)
       &.ng-leave
         opacity: 1
-        transform: translate3d(0, 0, 0)
+        transform: translate(0, 0)
       &.ng-leave-active
         opacity: 0
-        transform: translate3d(5%, 0, 0)
+        transform: translate(5%, 0)
 
   &.next
     .slide
 
       &.ng-enter
         opacity: 0
-        transform: translate3d(5%, 0, 0)
+        transform: translate(5%, 0)
       &.ng-enter-active
         opacity: 1
-        transform: translate3d(0, 0, 0)
+        transform: translate(0, 0)
       &.ng-leave
         opacity: 1
-        transform: translate3d(0, 0, 0)
+        transform: translate(0, 0)
       &.ng-leave-active
         opacity: 0
-        transform: translate3d(-5%, 0, 0)
+        transform: translate(-5%, 0)
 
-.imagoslider.pulsefade
+.imago-slider-content.pulsefade
   .slide
     transition: all 250ms
 
@@ -200,7 +201,7 @@
         opacity: 0
         transform: translateX(-15%) scale(2)
 
-.imagoslider.scale
+.imago-slider-content.scale
   .slide
     transition: all 250ms
 
@@ -221,7 +222,7 @@
       z-index: 0
       transform: scale(0)
 
-.imagoslider.scalerotate
+.imago-slider-content.scalerotate
 
   .slide
     transition: all 250ms

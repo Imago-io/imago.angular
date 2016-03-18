@@ -1,18 +1,39 @@
-.imago-field.currency
-  .wrapper(ng-class="{focus:onfocus}")
-    div(ng-transclude)
-    select(
-      ng-model="currency"
-      ng-options="currency for currency in currencies"
-    )
+.imago-field-content-currency.imago-field.currency
+  div(ng-class="{expanded: fieldcurrency.expanded}")
+    button.ii.ii-caret-left(ng-click="fieldcurrency.expanded = !fieldcurrency.expanded")
+    .fields(ng-class="{expanded: fieldcurrency.expanded}")
+      .wrapper.compact(
+        ng-if="!fieldcurrency.expanded"
+        ng-class="{focus:onfocus}")
 
-    input(
-      type="text"
-      imago-filter-currency
-      ng-model="ngModel[currency]"
-      ng-model-options="{updateOn: 'blur'}"
-      ng-change="update(ngModel); onfocus = false"
-      ng-disabled="!currency"
-      ng-focus="onfocus = true"
-    )
-  .error(ng-show="notComplete") somes currencies do not have any value
+        label
+          //- span currencies
+          span(
+            ng-repeat="cur in fieldcurrency.currencies"
+            ng-click="fieldcurrency.currency = cur"
+            ng-class="{active: fieldcurrency.currency === cur, invalid: fieldcurrency.notComplete[cur]}") {{cur}}
+
+        input(
+          type="text"
+          imago-filter-currency
+          ng-model="fieldcurrency.ngModel[fieldcurrency.currency]"
+          ng-model-options="{updateOn: 'blur'}"
+          ng-change="update(fieldcurrency.ngModel); onfocus = false"
+          ng-disabled="!fieldcurrency.currency"
+          ng-focus="onfocus = true"
+        )
+
+      .wrapper.expanded(
+        ng-repeat="cur in fieldcurrency.currencies"
+        ng-if="fieldcurrency.expanded"
+        ng-class="{invalid: fieldcurrency.notComplete[cur]}")
+
+        .imago-field
+          label {{cur}}
+          input(type="text"
+            currency="{{cur}}"
+            imago-filter-currency
+            ng-model="fieldcurrency.ngModel[cur]"
+            ng-model-options="{updateOn: 'blur'}"
+            ng-blur="update(fieldcurrency.ngModel)"
+            )

@@ -4,13 +4,14 @@ class imagoCart extends Directive
 
     return {
 
-      replace: true
+      restrict: 'E'
       scope:
         min: '='
         max: '='
         ngModel: '='
       transclude: true
-      templateUrl: '/imago/imago-cart.html'
+      templateUrl: (element, attrs) ->
+        return attrs.templateUrl or '/imago/imago-cart.html'
       controller: 'imagoCartController as cart'
 
     }

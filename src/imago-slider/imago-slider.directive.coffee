@@ -4,12 +4,13 @@ class imagoSlider extends Directive
 
     return {
 
+      restrict: 'E'
       transclude: true
       scope: true
       templateUrl: '/imago/imago-slider.html'
       controller: 'imagoSliderController as imagoslider'
       bindToController:
-        assets: '=?imagoSlider'
+        assets: '=?data'
 
       link: (scope, element, attrs, ctrl, transclude) ->
 

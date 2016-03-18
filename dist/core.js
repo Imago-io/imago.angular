@@ -27,6 +27,7 @@
   ImagoClick = (function() {
     function ImagoClick($parse) {
       return {
+        restrict: 'A',
         link: function(scope, element, attrs) {
           var clickHandler;
           clickHandler = angular.isFunction(attrs.imagoClick) ? clickExpr : $parse(attrs.imagoClick);
@@ -183,13 +184,11 @@
                   } else if (key === 'metakind') {
                     query = imagoUtils.renameKey('metakind', 'type', query);
                   } else if (key === 'path') {
-                    console.log('value', key, value);
                     path = value;
                   }
                 }
-                if ((path != null ? path.slice(-1) : void 0) === '/') {
+                if ((path != null ? path.slice(-1) : void 0) === '/' && path.length > 1) {
                   path = path.substring(0, path.length - 1);
-                  query.path = path;
                 }
                 if (!path) {
                   return reject(query);
@@ -241,9 +240,6 @@
                 fetch = function() {
                   fetches.push(_this.search(rejected).then(function(response) {
                     var j, len, ref, res, results;
-                    if (rejected != null ? rejected.length : void 0) {
-                      console.log('not in the model. fetching...', rejected);
-                    }
                     if (!(response != null ? response.data : void 0)) {
                       return;
                     }
@@ -995,21 +991,25 @@
 }).call(this);
 
 (function() {
-  var ImagoScrollSave;
+  var ImagoSaveScroll;
 
-  ImagoScrollSave = (function() {
-    function ImagoScrollSave($window, $document, $timeout, $location) {
+  ImagoSaveScroll = (function() {
+    function ImagoSaveScroll($window, $timeout, $location) {
       return {
         restrict: 'A',
         link: function(scope, element, attrs) {
           scope.scrollPos = [];
           scope.$on('$viewContentLoaded', function() {
+            var history;
+            history = _.find(scope.scrollPos, {
+              path: $location.absUrl()
+            });
+            if (!(history != null ? history.scroll : void 0)) {
+              $window.scrollTo(0, 0);
+              return;
+            }
             return $timeout(function() {
-              var history;
-              history = _.find(scope.scrollPos, {
-                path: $location.absUrl()
-              });
-              $window.scrollTo(0, (history != null ? history.scroll : void 0) || 0);
+              $window.scrollTo(0, history != null ? history.scroll : void 0);
               scope.scrollPos.unshift({});
               if (scope.scrollPos.length > 2) {
                 return scope.scrollPos = scope.scrollPos.slice(0, 2);
@@ -1019,18 +1019,18 @@
           return scope.$on('$locationChangeStart', function(evt, newUrl, old, newState, oldState) {
             return scope.scrollPos[0] = {
               path: old,
-              scroll: $document.scrollTop()
+              scroll: $window.scrollY
             };
           });
         }
       };
     }
 
-    return ImagoScrollSave;
+    return ImagoSaveScroll;
 
   })();
 
-  angular.module('imago').directive('imagoScrollSave', ['$window', '$document', '$timeout', '$location', ImagoScrollSave]);
+  angular.module('imago').directive('imagoSaveScroll', ['$window', '$timeout', '$location', ImagoSaveScroll]);
 
 }).call(this);
 
@@ -1511,7 +1511,7 @@
           'Zimbabwe': 'ZW',
           'Serbia and Montenegro': 'CS'
         },
-        COUNTRIES: ["United States", "Afghanistan", "Aland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antarctica", "Antigua and Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bonaire", "Bosnia and Herzegovina", "Botswana", "Bouvet", "Brazil", "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos Islands", "Colombia", "Comoros", "Cook Islands", "Costa Rica", "Croatia", "Cuba", "Curacao", "Cyprus", "Czech Republic", "Damascus", "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "East Timor", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Great Britain", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Heard Island and McDonald Islands", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Ivory Coast", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macao", "Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestinian Territory", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland", "Portugal", "Puerto Rico", "Qatar", "Republic of the Congo", "Reunion", "Romania", "Russia", "Rwanda", "Saint Barthelemy", "Saint Helena", "Saint Kitts and Nevis", "Saint Lucia", "Saint Martin", "Saint Pierre and Miquelon", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Serbia and Montenegro", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia and the South Sandwich Islands", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard", "Swaziland", "Sweden", "Switzerland", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Togo", "Tokelau", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks and Caicos Islands", "Tuvalu", "U.S. Virgin Islands", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States Minor Outlying Islands", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican", "Venezuela", "Vietnam", "Wallis and Futuna", "Western Sahara", "Yemen", "Zambia", "Zimbabwe"],
+        COUNTRIES: ["United States", "Afghanistan", "Aland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antarctica", "Antigua and Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bonaire", "Bosnia and Herzegovina", "Botswana", "Bouvet", "Brazil", "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos Islands", "Colombia", "Comoros", "Cook Islands", "Costa Rica", "Croatia", "Cuba", "Curacao", "Cyprus", "Czech Republic", "Damascus", "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "East Timor", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Great Britain", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Heard Island and McDonald Islands", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Ivory Coast", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macao", "Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestinian Territory", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland", "Portugal", "Puerto Rico", "Qatar", "Republic of the Congo", "Reunion", "Romania", "Russia", "Rwanda", "Saint Barthelemy", "Saint Helena", "Saint Kitts and Nevis", "Saint Lucia", "Saint Martin", "Saint Pierre and Miquelon", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Scotland", "Senegal", "Serbia", "Serbia and Montenegro", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia and the South Sandwich Islands", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard", "Swaziland", "Sweden", "Switzerland", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Togo", "Tokelau", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks and Caicos Islands", "Tuvalu", "U.S. Virgin Islands", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States Minor Outlying Islands", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican", "Venezuela", "Vietnam", "Wallis and Futuna", "Western Sahara", "Yemen", "Zambia", "Zimbabwe"],
         STATES: {
           AUSTRALIA: ['ACT', 'NSW', 'NT', 'SA', 'TAS', 'QLD', 'VIC', 'WA'],
           CANADA: ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'ON', 'PE', 'QC', 'SK'],
@@ -1674,6 +1674,9 @@
         },
         isMobile: function() {
           return !!navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i);
+        },
+        isAndroid: function() {
+          return !!navigator.userAgent.match(/Android/i);
         },
         isEven: function(n) {
           return this.isNumber(n) && (n % 2 === 0);
@@ -1893,36 +1896,35 @@
 
     imagoWorker.prototype.work = function(data) {
       var defer, find;
-      defer = this.$q.defer();
       if (!(data != null ? data.path : void 0)) {
-        defer.reject('nodata or path');
+        return this.$q.reject('invalid path');
+      }
+      defer = this.$q.defer();
+      find = _.find(this.store, {
+        'path': data.path
+      });
+      if (this.supported === false) {
+        this.create(data.path, data, defer);
+      } else if (find) {
+        this.create(find.blob, data, defer);
       } else {
-        find = _.find(this.store, {
-          'path': data.path
-        });
-        if (this.supported === false) {
-          this.create(data.path, data, defer);
-        } else if (find) {
-          this.create(find.blob, data, defer);
-        } else {
-          this.$http.get(data.path, {
-            cache: true
-          }).then((function(_this) {
-            return function(response) {
-              var blob, blobURL, stringified;
-              stringified = response.data.toString();
-              blob = new Blob([stringified], {
-                type: 'application/javascript'
-              });
-              blobURL = _this.windowURL.createObjectURL(blob);
-              _this.store.push({
-                'path': data.path,
-                'blob': blobURL
-              });
-              return _this.create(blobURL, data, defer);
-            };
-          })(this));
-        }
+        this.$http.get(data.path, {
+          cache: true
+        }).then((function(_this) {
+          return function(response) {
+            var blob, blobURL, stringified;
+            stringified = response.data.toString();
+            blob = new Blob([stringified], {
+              type: 'application/javascript'
+            });
+            blobURL = _this.windowURL.createObjectURL(blob);
+            _this.store.push({
+              'path': data.path,
+              'blob': blobURL
+            });
+            return _this.create(blobURL, data, defer);
+          };
+        })(this));
       }
       return defer.promise;
     };
@@ -2100,6 +2102,10 @@
     TenantSettings.prototype.get = function() {
       return this.$http.get(this.imagoModel.host + "/api/settings").then((function(_this) {
         return function(response) {
+          var ref;
+          _this.tenant = (ref = _.find(response.data, {
+            name: 'tenant'
+          })) != null ? ref.value : void 0;
           return _this.reorder(response.data);
         };
       })(this));
@@ -2202,4 +2208,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/not-supported.html","<div ng-if=\"supported.invalid\" ng-class=\"::{\'mobile\': mobile}\" class=\"imago-not-supported\"><div ng-if=\"mobile\" class=\"inner\"><h1>Browser not supported!</h1></div><div ng-if=\"!mobile\" class=\"inner\"><h1>Time for change!</h1><p>Please download a new version of your favorite browser.</p><ul><li><a href=\"http://support.apple.com/downloads/#safari\" target=\"_blank\"><div class=\"icon icon-safari\"></div><h2>Safari</h2><span>Download</span></a></li><li><a href=\"http://www.google.com/chrome\" target=\"_blank\"><div class=\"icon icon-chrome\"></div><h2>Chrome</h2><span>Download</span></a></li><li><a href=\"http://www.opera.com/download\" target=\"_blank\"><div class=\"icon icon-opera\"></div><h2>Opera</h2><span>Download</span></a></li><li><a href=\"http://www.mozilla.org/firefox\" target=\"_blank\"><div class=\"icon icon-firefox\"></div><h2>Firefox</h2><span>Download</span></a></li><li><a href=\"http://windows.microsoft.com/en-us/internet-explorer/download-ie\" target=\"_blank\"><div class=\"icon icon-ie\"></div><h2>IE</h2><span>Download</span></a></li></ul></div></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/not-supported.html","<div ng-if=\"supported.invalid\" ng-class=\"::{\'mobile\': mobile}\" class=\"imago-not-supported-content\"><div ng-if=\"mobile\" class=\"inner\"><h1>Browser not supported!</h1></div><div ng-if=\"!mobile\" class=\"inner\"><h1>Time for change!</h1><p>Please download a new version of your favorite browser.</p><ul><li><a href=\"http://support.apple.com/downloads/#safari\" target=\"_blank\"><div class=\"icon icon-safari\"></div><h2>Safari</h2><span>Download</span></a></li><li><a href=\"http://www.google.com/chrome\" target=\"_blank\"><div class=\"icon icon-chrome\"></div><h2>Chrome</h2><span>Download</span></a></li><li><a href=\"http://www.opera.com/download\" target=\"_blank\"><div class=\"icon icon-opera\"></div><h2>Opera</h2><span>Download</span></a></li><li><a href=\"http://www.mozilla.org/firefox\" target=\"_blank\"><div class=\"icon icon-firefox\"></div><h2>Firefox</h2><span>Download</span></a></li><li><a href=\"http://windows.microsoft.com/en-us/internet-explorer/download-ie\" target=\"_blank\"><div class=\"icon icon-ie\"></div><h2>IE</h2><span>Download</span></a></li></ul></div></div>");}]);

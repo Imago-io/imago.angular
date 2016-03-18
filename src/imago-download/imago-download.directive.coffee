@@ -3,6 +3,7 @@ class imagoDownload extends Directive
 
     return {
 
+      restrict: 'E'
       scope:
         asset: "="
         fieldname: "="

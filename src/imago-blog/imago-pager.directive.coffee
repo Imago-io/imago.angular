@@ -14,6 +14,7 @@ class imagoPager extends Directive
         tags: '='
         currentPage: '='
         shuffle: '='
+      restrict: 'E'
       controller: 'imagoPagerController as imagopager'
       bindToController: true
       templateUrl: (element, attrs) ->

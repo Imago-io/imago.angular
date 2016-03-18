@@ -1,13 +1,32 @@
-.imago-modal
-  +pos(fixed)
-  min-height: 100vh
-  width: 100%
+imago-modal
+  display: block
+.imago-modal-content
   z-index: 10000
-  background: rgba(white, .9)
-  display: flex
-  flex-direction: column
-  align-items: center
-  justify-content: center
+  &.not-fullwindow
+    position: absolute
+    background: white
+    box-shadow: 0 2px 15px rgba(black, 0.3)
+    padding: 1em
+    .close
+      display: none
+    &.top
+      top: 0
+    &.right
+      right: 0
+    &.bottom
+      bottom: 0
+    &.left
+      left: 0
+
+  &.fullwindow
+    +pos(fixed)
+    min-height: 100vh
+    width: 100%
+    background: rgba(white, .9)
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
 
   .wrapper
     position: relative
@@ -35,8 +54,6 @@
         border: none
         min-width: 480px
         min-height: 360px
-
-      // border: 1px solid red
 
     // div[ng-switch],
     // div[ng-switch-when],

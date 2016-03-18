@@ -29,22 +29,22 @@ class imagoWorker extends Service
     worker.postMessage data
 
   work: (data) =>
+    if !data?.path
+      return @$q.reject('invalid path')
+
     defer = @$q.defer()
 
-    if !data?.path
-      defer.reject('nodata or path')
+    find = _.find @store, {'path': data.path}
+    if @supported is false
+      @create data.path, data, defer
+    else if find
+      @create find.blob, data, defer
     else
-      find = _.find @store, {'path': data.path}
-      if @supported is false
-        @create data.path, data, defer
-      else if find
-        @create find.blob, data, defer
-      else
-        @$http.get(data.path, {cache: true}).then (response) =>
-          stringified = response.data.toString()
-          blob = new Blob([stringified], {type: 'application/javascript'})
-          blobURL = @windowURL.createObjectURL(blob)
-          @store.push {'path': data.path, 'blob': blobURL}
-          @create blobURL, data, defer
+      @$http.get(data.path, {cache: true}).then (response) =>
+        stringified = response.data.toString()
+        blob = new Blob([stringified], {type: 'application/javascript'})
+        blobURL = @windowURL.createObjectURL(blob)
+        @store.push {'path': data.path, 'blob': blobURL}
+        @create blobURL, data, defer
 
     defer.promise

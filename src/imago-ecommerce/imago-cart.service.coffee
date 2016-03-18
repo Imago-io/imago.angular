@@ -5,12 +5,12 @@ class imagoCart extends Service
   settings: []
   messages: []
 
-  constructor: (@$q, @$rootScope, @$location, @$window, @$http, @imagoUtils, @imagoModel, @fulfillmentsCenter, @geoIp, tenantSettings, @imagoCartUtils) ->
+  constructor: (@$q, @$rootScope, @$location, @$window, @$http, @imagoUtils, @imagoModel, @fulfillmentsCenter, @geoIp, @tenantSettings, @imagoCartUtils) ->
 
     @cart =
       items: []
 
-    return @onSettings() if tenantSettings.loaded
+    return @onSettings() if @tenantSettings.loaded
 
     @$rootScope.$on 'settings:loaded', (evt, message) =>
       @onSettings()
@@ -176,9 +176,7 @@ class imagoCart extends Service
       @subtotal += item.qty * item.price[@currency]
 
   checkout: ->
-    return unless tenant
-
-    url = "https://#{tenant}.imago.io/account/checkout/#{@cart._id}"
+    url = "https://#{@tenantSettings.tenant}.imago.io/account/checkout/#{@cart._id}"
 
     decorated = ''
     ga? (tracker) =>

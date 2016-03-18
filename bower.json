@@ -1,6 +1,6 @@
 {
-  "name": "imago",
-  "version": "1.0.62",
+  "name": "imago.angular",
+  "version": "2.0.1",
   "homepage": "https://github.com/Nex9/imago",
   "authors": [
     "Nex9"
@@ -12,7 +12,16 @@
     "angular-inview": "https://github.com/Nex9/angular-inview.git",
     "lodash": "~3",
     "bowser": "*",
-    "polyfill-Number.toLocaleString-with-Locales": "https://github.com/willsp/polyfill-Number.toLocaleString-with-Locales.git"
+    "polyfill-Number.toLocaleString-with-Locales": "https://github.com/willsp/polyfill-Number.toLocaleString-with-Locales.git",
+    "videogular": "~1",
+    "videogular-themes-default": "~1",
+    "videogular-controls": "~1",
+    "videogular-buffering": "~1",
+    "videogular-overlay-play": "~1",
+    "videogular-poster": "~1",
+    "videogular-ima-ads": "~1",
+    "videogular-angulartics": "~1",
+    "angular-sanitize": "~1.5"
   },
   "ignore": [
     "**/.*",

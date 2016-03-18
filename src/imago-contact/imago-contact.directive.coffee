@@ -4,6 +4,7 @@ class imagoContact extends Directive
 
     return {
 
+      restrict: 'E'
       scope: {}
       controller: 'imagoContactController as contact'
       templateUrl: (element, attrs) ->

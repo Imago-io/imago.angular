@@ -18,5 +18,4 @@ class ImagoClickOut extends Directive
         scope.$on '$destroy', ->
           $document.off 'click', clickFunction
 
-
     }

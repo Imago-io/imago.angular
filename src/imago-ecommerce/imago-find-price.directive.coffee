@@ -4,6 +4,7 @@ class imagoFindPrice extends Directive
 
     return {
 
+      restrict: 'E'
       scope: true
       controller: 'imagoFindPriceController as findprice'
       bindToController:

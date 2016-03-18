@@ -1,9 +1,10 @@
 class imagoShare extends Directive
 
-  constructor: () ->
+  constructor: ->
 
     return {
 
+      restrict: 'E'
       scope:
         asset: "="
       controller: 'imagoShareController as imagoshare'

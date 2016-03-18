@@ -1,41 +1,48 @@
 class ImagoModal extends Directive
 
-  constructor: ->
+  constructor: ($document, keyCodes) ->
 
     return {
 
-      scope:
-        item: '='
-        active: '='
+      restrict: 'E'
+      scope: true
       transclude: true
       templateUrl: '/imago/imago-modal.html'
       controller: 'imagoModalController as modal'
-      bindToController: true
+      bindToController:
+        active: '=?'
+        position: '<?'
       link: (scope, element, attrs, ctrl, transclude) ->
 
-        transclude scope, (clone) ->
-          el = angular.element document.querySelector('.imago-modal .transclude')
-          el.append(clone)
+        scope.fullwindow = if attrs.fullwindow is 'false' then false else true
+
+        if scope.fullwindow
+          scope.$watch 'modal.active', (value) ->
+            if value
+              return document.body.style.overflow = 'hidden'
+            return document.body.style.overflow = 'auto'
+
+          disableOnEsc = (evt) ->
+            return unless scope.modal.active
+            scope.modal.disable() if evt.keyCode is keyCodes.escape
+            scope.$digest()
+
+          $document.on 'keydown', disableOnEsc
+
+          scope.$on '$destroy', ->
+            document.body.style.overflow = 'auto'
+            $document.off 'keydown', disableOnEsc
+        else
+          element.css({position: 'relative'})
 
     }
 
 class imagoModalController extends Controller
 
   constructor: (@$rootScope, @$scope) ->
-    @active = false
 
-    @$scope.$watch 'modal.active', (value) ->
-      if value
-        return document.body.style.overflow = 'hidden'
-      return document.body.style.overflow = 'auto'
-
-    @$rootScope.$on 'modal:item', (evt, item) =>
-      @item = item
-      @activate()
-
-  activate: (item) ->
+  activate: ->
     @active = true
 
   disable: ->
-    @item = null
     @active = false

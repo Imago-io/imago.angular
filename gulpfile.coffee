@@ -1,8 +1,5 @@
 plugins         = require('gulp-load-plugins')()
-
 gulp            = require 'gulp'
-
-# karma           = require('karma').server
 
 fs              = require 'fs'
 merge           = require 'merge-stream'
@@ -31,7 +28,7 @@ compileFolder = (folder) ->
       errorHandler: reportError
     )
     .pipe plugins.order([
-        "index.coffee"
+        'index.coffee'
       ])
     .pipe plugins.if /[.]jade$/, plugins.jade({locals: {}}).on('error', reportError)
     .pipe plugins.if /[.]html$/, plugins.angularTemplatecache(
@@ -40,9 +37,6 @@ compileFolder = (folder) ->
     )
     .pipe plugins.if /[.]coffee$/, plugins.ngClassify(
       appName: moduleName
-      animation:
-        format: 'camelCase'
-        prefix: ''
       constant:
         format: 'camelCase'
         prefix: ''
@@ -80,14 +74,14 @@ gulp.task 'sketch', ->
       trimmed: false)
     .pipe gulp.dest "#{dest}/i"
 
-gulp.task "join", ->
+gulp.task 'join', ->
   folders = getFolders(src)
   tasks = folders.map (folder) ->
     compileFolder(folder)
 
   return merge(tasks)
 
-gulp.task "karma", ->
+gulp.task 'karma', ->
   gulp.src paths.coffee
     .pipe plugins.plumber(
       errorHandler: reportError
@@ -127,8 +121,8 @@ gulp.task "karma", ->
     .pipe plugins.jade({locals: {}}).on('error', reportError)
     .pipe plugins.angularTemplatecache(
       standalone: true
-      root: "/imagoWidgets/"
-      module: "ImagoWidgetsTemplates"
+      root: '/imagoWidgets/'
+      module: 'ImagoWidgetsTemplates'
     )
     .pipe plugins.concat targets.jade
     .pipe gulp.dest test
@@ -137,11 +131,11 @@ gulp.task "karma", ->
     singleRun: true
     )
 
-gulp.task "clean", ->
+gulp.task 'clean', ->
   gulp.src("#{dest}/**/*.*", { read: false })
     .pipe(vinylPaths(del))
 
-gulp.task "build", ["clean"], ->
+gulp.task 'build', ['clean'], ->
   gulp.start 'join'
 
 

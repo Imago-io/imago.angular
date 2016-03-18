@@ -84,10 +84,11 @@ class Calculation extends Service
       # costs.subtotal = costs.subtotal - percentvalue
     else if meta.type is 'free shipping'
       costs.discount = null
-      codes = (code.toUpperCase() for code in meta.value) if meta.value?.length
-      if meta.value?.length and (@shipping_options.code.toUpperCase() in codes)
+      # codes = (code.toUpperCase() for code in meta.value) if meta.value?.length
+      ids = meta.shippingMethods or []
+      if meta.limitByShippings and (@shipping_options._id.toString() in ids)
         costs.shipping = 0
-      else if not meta.value?.length
+      else if !meta.limitByShippings
         costs.shipping = 0
       else
         @couponState = 'invalid'
@@ -151,36 +152,34 @@ class Calculation extends Service
       @calculate()
 
   calculateShipping: =>
-    deferred = @$q.defer()
+    return @$q (resolve, reject) =>
+      return reject() if @calculateShippingRunning
+      @calculateShippingRunning = true
 
-    return if @calculateShippingRunning
-    @calculateShippingRunning = true
+      @costs.shipping = 0
 
-    @costs.shipping = 0
+      @getShippingRate().then (rates) =>
+        @calculateShippingRunning = false
+        unless rates?.length
+          @shipping_options = undefined
+          @shippingRates = []
+          @error.noshippingrule = true if @country
+          return resolve()
+        @error.noshippingrule = false
+        for rate in rates
+          @calcShipping(rate).then (response) =>
+            if @shipping_options and @shipping_options._id is response.rate._id
+              @costs.shipping = response.shipping
+              resolve()
+            else if not @shipping_options or _.difference(@shippingRates, rates).length
+              @setShippingRates(rates)
+              @costs.shipping = response.shipping
+              resolve()
 
-    @getShippingRate().then (rates) =>
-      @calculateShippingRunning = false
-      unless rates?.length
-        @shipping_options = undefined
-        @shippingRates = []
-        @error.noshippingrule = true if @country
-        return deferred.resolve()
-      @error.noshippingrule = false
-      for rate in rates
-        @calcShipping(rate).then (response) =>
-          if @shipping_options and @shipping_options._id is response.rate._id
-            @costs.shipping = response.shipping
-            deferred.resolve()
-          else if not @shipping_options or _.difference(@shippingRates, rates).length
-            @setShippingRates(rates)
-            @costs.shipping = response.shipping
-            deferred.resolve()
-
-          rateFix = (response.shipping/100).toFixed(2)
-          shipping = _.find @shippingRates, {'_id': response.rate._id}
-          shipping.nameprice = "#{shipping.name} (#{@currency} #{rateFix})"
-
-    return deferred.promise
+            return unless @shippingRates?.length
+            rateFix = (response.shipping/100).toFixed(2)
+            shipping = _.find @shippingRates, {'_id': response.rate._id}
+            shipping.nameprice = "#{shipping.name} (#{@currency} #{rateFix})"
 
   calcShipping: (rate) =>
     return @$q (resolve, reject) =>
@@ -253,8 +252,8 @@ class Calculation extends Service
     if @country in ['United States of America', 'USA']
       @country = 'United States'
 
-    rates_by_country = _.filter(@taxes, (item) => item.active and \
-                                @country?.toUpperCase() in (c.toUpperCase() for c in item.countries))
+    rates_by_country = _.filter(@taxes, (item) =>
+      item.active and @country?.toUpperCase() in (c.toUpperCase() for c in item.countries))
 
     if !rates_by_country.length
       rates_by_country = _.filter(@taxes, (item) => item.active and !item.countries.length)

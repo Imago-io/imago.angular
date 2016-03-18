@@ -5,7 +5,7 @@
     function ImagoSubscribe() {
       return {
         require: 'form',
-        restrict: 'A',
+        restrict: 'E',
         transclude: true,
         controller: 'imagoSubscribeController as imagosubscribe',
         templateUrl: function(element, attrs) {
@@ -47,4 +47,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-subscribe.html","<div class=\"imago-subscribe\"><div ng-transclude=\"ng-transclude\" ng-hide=\"imagosubscribe.submitted &amp;&amp; !imagosubscribe.error\"></div><div ng-show=\"imagosubscribe.submitted &amp;&amp; imagosubscribe.error\" class=\"error\">please try again later</div><div ng-show=\"imagosubscribe.submitted &amp;&amp; !imagosubscribe.error\" class=\"submitted\">subscription created</div></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-subscribe.html","<div class=\"imago-subscribe-content\"><div ng-transclude=\"ng-transclude\" ng-hide=\"imagosubscribe.submitted &amp;&amp; !imagosubscribe.error\"></div><div ng-show=\"imagosubscribe.submitted &amp;&amp; imagosubscribe.error\" class=\"error\">please try again later</div><div ng-show=\"imagosubscribe.submitted &amp;&amp; !imagosubscribe.error\" class=\"submitted\">subscription created</div></div>");}]);

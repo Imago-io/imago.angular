@@ -4,8 +4,8 @@
   imagoForm = (function() {
     function imagoForm(imagoSubmit) {
       return {
+        restrict: 'E',
         scope: {},
-        replace: true,
         transclude: true,
         templateUrl: '/imago/imago-form.html',
         link: function(scope, element, attr, cntrl, transclude) {
@@ -39,4 +39,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-form.html","<div class=\"imago-form\"></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-form.html","<div class=\"imago-form-content\"></div>");}]);

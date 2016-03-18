@@ -1,15 +1,14 @@
 {
-  "name": "imago",
-  "version": "0.0.2",
-  "description": "Angular theme for NEX9 LLC",
+  "name": "imago.angular",
+  "version": "2.0.1",
+  "description": "Imago Package for Angular.js",
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Nex9 LLC",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "coffee-script": "*",
     "del": "^1.1.1",
     "gulp": "*",
     "gulp-angular-templatecache": "*",

@@ -23,12 +23,12 @@
   var Normalize;
 
   Normalize = (function() {
-    function Normalize() {
+    function Normalize(imagoUtils) {
       return function(string) {
         if (!string) {
           return false;
         }
-        return _.kebabCase(string);
+        return imagoUtils.normalize(string);
       };
     }
 
@@ -36,7 +36,7 @@
 
   })();
 
-  angular.module('imago').filter('normalize', [Normalize]);
+  angular.module('imago').filter('normalize', ['imagoUtils', Normalize]);
 
 }).call(this);
 

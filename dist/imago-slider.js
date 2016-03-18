@@ -4,12 +4,13 @@
   imagoSlider = (function() {
     function imagoSlider($rootScope, $document, $interval, $location) {
       return {
+        restrict: 'E',
         transclude: true,
         scope: true,
         templateUrl: '/imago/imago-slider.html',
         controller: 'imagoSliderController as imagoslider',
         bindToController: {
-          assets: '=?imagoSlider'
+          assets: '=?data'
         },
         link: function(scope, element, attrs, ctrl, transclude) {
           var key, keyboardBinding, ref, value, watchers;
@@ -243,4 +244,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-slider.html","<div ng-class=\"[imagoslider.conf.animation, action]\" ng-swipe-left=\"imagoslider.goNext($event)\" ng-swipe-right=\"imagoslider.goPrev($event)\" class=\"imagoslider\"><div ng-show=\"imagoslider.conf.enablearrows &amp;&amp; imagoslider.length &gt; 1\" ng-click=\"imagoslider.goPrev($event)\" analytics-on=\"click\" analytics-event=\"Previous Slide\" class=\"prev\"></div><div ng-show=\"imagoslider.conf.enablearrows &amp;&amp; imagoslider.length &gt; 1\" ng-click=\"imagoslider.goNext($event)\" analytics-on=\"click\" analytics-event=\"Next Slide\" class=\"next\"></div></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-slider.html","<div ng-class=\"[imagoslider.conf.animation, action]\" ng-swipe-left=\"imagoslider.goNext($event)\" ng-swipe-right=\"imagoslider.goPrev($event)\" class=\"imago-slider-content\"><div ng-show=\"imagoslider.conf.enablearrows &amp;&amp; imagoslider.length &gt; 1\" ng-click=\"imagoslider.goPrev($event)\" analytics-on=\"click\" analytics-event=\"Previous Slide\" class=\"prev\"></div><div ng-show=\"imagoslider.conf.enablearrows &amp;&amp; imagoslider.length &gt; 1\" ng-click=\"imagoslider.goNext($event)\" analytics-on=\"click\" analytics-event=\"Next Slide\" class=\"next\"></div></div>");}]);

@@ -1,399 +1,439 @@
-.imagoimage
+// V2 !!!
+
+
+imago-main,
+imago-image,
+imago-video,
+imago-slider
+  display: block
+
+.imago-image-content
   position: relative
-  width: 100%
   overflow: hidden
-  flex-direction: row
-  display: inline-flex
-  vertical-align: top
-  line-height: 0
-  &.center
-    justify-content: center
-    align-items: center
-  &.top
-    align-items: flex-start
-  &.bottom
-    align-items: flex-end
-  &.left
-    justify-content: flex-start
-  &.right
-    justify-content: flex-end
-  // box-sizing: content-box
+  box-sizing: border-box
 
-  .imagox23
-    opacity: 0.5
-    transition: opacity 0.1s ease-in-out
-    background-repeat: no-repeat
+  pre
+    position: absolute
+    top:  50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    background: white
+    padding: 0
+    font-size: .75em
+    line-height: 1.6em
 
-  img.imagox23
-    max-width: 100%
-    max-height: 100%
+  .prevent-drag
+    +pos()
 
-  div.imagox23
-    width:  100%
+  // initially set images
+  img
+    position: absolute
+    padding: 0
+    margin: 0
+    line-height: 0
+    &.small
+      opacity: 1
+    &.large
+      opacity: 0
+      transition: opacity .75s
+
+  // hide small 3px image disabled. we still need it for sizing though
+  &.noplaceholder
+    img.small
+      visibility: hidden
+
+
+  // fit
+
+  &.fit.height img
     height: 100%
+  &.fit.width img
+    width: 100%
 
-  // &.resizing
-  //   img.imagox23
-  //     max-width: initial
-  //     max-height: initial
-  //     border: 5px solid red
+  // autoheight
+  &.fit.autoheight
+    line-height: 0
+    .spacer
+      display: none
+    img
+      position: relative
+      left: initial
+      right: initial
+      bottom: initial
+      top: initial
+      transform: none
+      height: 100%
+      // min-width: 0px
+      // opacity: 1
+      width: auto
+
+  // autoheight
+  &.fit.autowidth
+    img
+      position: absolute
+      // transform: none
+      width: 100%
+
+  &.crop.height img
+    height: 100%
+    max-width: initial
+  &.crop.width img
+    width: 100%
+    max-height: initial
 
   &.loaded
-    .imagox23
+    img
+      border: 0
+    img.large
       opacity: 1
-    .spin,
-    .spin2
+    img.small
       opacity: 0
+      position: absolute
 
-.imagovideo
+  &.center img
+    left: 50%
+    right: initial
+    top:  50%
+    bottom: initial
+    transform: translateX(-50%) translateY(-50%)
+
+  &.left.center img
+    top:  50%
+    right: initial
+    left: 0
+    bottom: initial
+    transform: translateX(0%) translateY(-50%)
+  &.right.center img
+    top:  50%
+    right: 0
+    left: initial
+    bottom: initial
+    transform: translateX(0%) translateY(-50%)
+
+
+  &.left.top img
+    top: 0
+    right: initial
+    bottom: initial
+    left: 0
+    transform: translateX(0%) translateY(0%)
+  &.center.top img
+    top: 0
+    right: initial
+    bottom: initial
+    left: 50%
+    transform: translateX(-50%) translateY(0%)
+  &.right.top img
+    top: 0
+    right: 0
+    bottom: initial
+    left: initial
+    transform: translateX(0%) translateY(0%)
+
+  &.left.bottom img
+    top: initial
+    right: initial
+    bottom: 0
+    left: 0
+    transform: translateX(0%) translateY(0%)
+  &.center.bottom img
+    top: initial
+    right: initial
+    bottom: 0
+    left: 50%
+    transform: translateX(-50%) translateY(0%)
+  &.right.bottom img
+    top: initial
+    right: 0
+    bottom: 0
+    left: initial
+    transform: translateX(0%) translateY(0%)
+
+
+
+// video
+
+.imago-video-content
+  display: block
   position: relative
   overflow: hidden
-  box-sizing: content-box
-  line-height: 0
-  .imagowrapper
-    background-repeat: no-repeat
-    position: relative
+  .spacer
+    // width: 1px
+    // background: red
 
-  &:hover
-    .controls
-      opacity: 1
+  videogular, [videogular]
+    background: black
 
-  .spin,
-  .spin2
-    opacity: 0
+  &.fit:not(.autoheight):not(.autowidth)
+    .imago-video-wrapper
+      videogular, [videogular]
+        position: absolute
+        top:    initial
+        right:  initial
+        bottom: initial
+        left:   initial
+        width:  auto
+        height: auto
+        vg-overlay-play
+          left: 0
 
-  &.loading
-    .spin,
-    .spin2
-      opacity: 1
+        vg-media,
+        vg-poster
+          img,video
+            max-width:  initial
+            max-height: initial
 
-  &.fit
-    display: flex
-    flex-direction: column
-    .imagowrapper
-      width: 100%
-      height: 100%
 
-    &.center
-      justify-content: center
-      align-items: center
+    &.height .imago-video-wrapper
+      width:  auto
+      videogular, [videogular]
+        height: 100%
+        width:  auto
+        vg-media,
+        vg-poster
+          img,video
+            width:  auto
+            height: 100%
+            min-width:  initial
+            min-height: initial
+            max-width:  initial
+            max-height: initial
 
-    &.left
-      align-items: flex-start
-    &.right
-      align-items: flex-end
-    &.top
-      justify-content: flex-start
-    &.bottom
-      justify-content: flex-end
+    &.width .imago-video-wrapper
+      videogular, [videogular]
+        width: 100%
+        vg-media,
+        vg-poster
+          img,video
+            width: 100%
 
-  video
-    display: block
-  .imagowrapper video
-    transition: opacity 0.5s ease
-    opacity: 1
-  .imagowrapper.end video
-    opacity: 0
-
-  // video will always extend to 100% width and height
-  &.crop
-    // width:  100%
-    // height: 100%
-
-    .imagowrapper
-      width:  100%
-      height: 100%
-      position: relative
-
-    &.top
-      video
+    &.top .imago-video-wrapper
+      videogular, [videogular]
         top: 0
-        position: absolute
-    &.right
-      video
+
+    &.right .imago-video-wrapper
+      videogular, [videogular]
         right: 0
-        position: absolute
-    &.bottom
-      video
+
+    &.right .imago-video-wrapper
+      videogular, [videogular]
+        right: 0
+
+    &.bottom .imago-video-wrapper
+      videogular, [videogular]
         bottom: 0
-        position: absolute
-    &.left
-      video
-        left: 0
-        position: absolute
-    &.center
-      video
-        position: absolute
-
-  .playbig
-    user-select: none
-    +pos()
-    display: flex
-    flex-direction: column
-    align-items: center
-    justify-content: center
-    z-index: 1
-    border-radius: 0
-    padding: 0
-    font-size: 100px
-    line-height: 140px
-    vertical-align: baseline
-    color: white
-    text-align: center
-    cursor: pointer
-    text-shadow: 0 5px 10px black
-    transition: opacity 0.25s ease-in-out
-    opacity: 1
-  .playbig.playing
-    opacity: 0
-    &:hover
-      color: darken(white, 20%)
-    &:active
-      color: white
 
 
+    &.center .imago-video-wrapper
+      videogular, [videogular]
+        top: 50%
+        left: 50%
+        transform: translateX(-50%) translateY(-50%)
 
-  .controls
-    position: absolute
-    left: 0
-    bottom: 0
-    width: 100%
-    height: 30px
-    +vbg-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8))
-    border-top: 1px solid rgba(0,0,0,1)
-    margin: 0
-    padding: 0
-    transition: opacity 0.5s ease-in-out
-    opacity: 0
+    &.top.center .imago-video-wrapper
+      videogular, [videogular]
+        top: 0
+        left: 50%
+        transform: translateX(-50%)
 
-    > span,
-    > a
-      display: block
-      height: 30px
-      line-height: 28px
-      padding: 0
-      margin: 0
-      border: none
-      color: white
-      position: absolute
-      bottom: 0
-      cursor: pointer
-
-      // background: -webkit-linear-gradient(white, darken(white,10%))
-      // -webkit-background-clip: text
-      // -webkit-text-fill-color: transparent
-      text-shadow: 1px 0 0 black
-
-    a
-      cursor: pointer
-      color: darken(white, 30%)
-    a:hover
-      color: white
-    a:active
-      color: white
-
-    .video-play,
-    .video-pause
-      left: 5px
-      padding: 0 10px
-
-    .video-time
-      left: 38px
-      font-family: Arial
-      font-size: 13px
-      line-height: 30px
-
-    .size
-      right: 177px
-      font-size: 13px
-      font-weight: 800
-      text-transform: uppercase
-      width: 25px
-      text-align: center
-      font-family: Arial
-      line-height: 30px
-
-
-    .volume
-      right: 44px
-      width: 120px
-
-      .icon-volume-up
-        position: absolute
+    &.right.center .imago-video-wrapper
+      videogular, [videogular]
         right: 0
-        top: 7px
-        min-width: 14px
-      .icon-volume-down
+        top: 50%
+        left: initial
+        transform: translateY(-50%)
+
+    &.bottom.center .imago-video-wrapper
+      videogular, [videogular]
+        bottom: 0
+        top: initial
+        left: 50%
+        transform: translateX(-50%)
+
+    &.left.center .imago-video-wrapper
+      videogular, [videogular]
+        left: 0
+        top: 50%
+        transform: translateY(-50%)
+
+
+  &.crop:not(.autoheight):not(.autowidth)
+    .imago-video-wrapper
+      videogular, [videogular]
         position: absolute
         left: 0
-        top: 7px
-        min-width: 14px
+        top: 0
+        width:  100%
+        height: 100%
+        vg-overlay-play
+          left: 0
+        vg-media,
+        vg-poster
+          img,video
+            width:  auto
+            height: auto
+            min-width:  initial
+            min-height: initial
+            max-width:  initial
+            max-height: initial
+            position: absolute
+            left: initial
+            top:  initial
+            right: initial
+            bottom: initial
 
-      input
-        top: 7px
-        position: absolute
-        height: 8px
-        border-radius: 8px
-        background: lighten(black, 13%)
-        border-color: black
-        border-style: solid
-        border-width: 1px
-        appearance: none
-        width: 80px
-        right: 20px
+    &.width .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            width: 100%
 
-      input::-webkit-slider-thumb
-        appearance: none
-        width: 8px
-        height: 8px
-        +vbg-gradient(darken(white, 20%), darken(white, 40%))
-        border-radius: 2px
-        transform: rotate(45deg)
-        box-shadow: 0px 0px 3px black
+    &.height .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            height: 100%
 
-    .video-fullscreen,
-    .video-screen
-      right: 15px
+    &.center .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            left: 50%
+            top:  50%
+            transform: translateX(-50%) translateY(-50%)
 
-    .video-screen
-      display: none
+    &.left .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            left: 0
 
+    &.top .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            top:  0
 
-    .video-seekbar
-      position: absolute
-      left:  97px
-      right: 220px
-      text-align: left
+    &.right .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            right:  0
 
-      > span
-        display: block
-
-      .bar,
-      .loaded,
-      .seek
-        top: 9px
-        position: absolute
-        height: 8px
-        border-radius: 8px
-      .bar
-        background: lighten(black, 13%)
-        width: 100%
-        border-color: black
-        border-style: solid
-        border-width: 1px
-      .loaded
-        +vbg-gradient(lighten(black, 40%), lighten(black, 20%))
-        // border-right: 1px solid rgba(255,255,255,0.3)
-        box-shadow: 1px 0 0 black
-        width: 14%
-        margin: 1px
-
-      .seek
-        background: lighten(black, 13%)
-        width: 100%
-        border-color: black
-        border-style: solid
-        border-width: 1px
-        appearance: none
-        top: 7px
-
-        &::-webkit-slider-thumb,
-        &::-moz-slider-thumb
-          appearance: none
-          width: 8px
-          height: 8px
-          +vbg-gradient(darken(white, 20%), darken(white, 40%))
-          border-radius: 2px
-          transform: rotate(45deg)
-          box-shadow: 0px 0px 3px black
+    &.bottom .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            bottom: 0
 
 
-      .handle
-        position: absolute
-        +vbg-gradient(darken(white, 20%), darken(white, 40%))
-        width: 8px
-        height: 8px
-        border-radius: 2px
-        transform: rotate(45deg)
-        box-shadow: 0px 1px 3px black
-        top: 10px
+    &.center.left .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            top:    50%
+            right:  initial
+            bottom: initial
+            left:   0
+            transform: translateY(-50%)
+
+    &.center.top .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            top:    0
+            right:  initial
+            bottom: initial
+            left:   50%
+            transform: translateX(-50%)
+
+    &.center.right .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            top:    50%
+            right:  0
+            bottom: initial
+            left:   initial
+            transform: translateY(-50%)
+
+    &.center.bottom .imago-video-wrapper
+      videogular, [videogular]
+        vg-media,
+        vg-poster
+          img,video
+            top:    initial
+            right:  initial
+            bottom: 0
+            left:   50%
+            transform: translateX(-50%)
+
+  &.autoheight
+    .imago-video-wrapper
+      height: 100%
+      // border: 1px solid red
+
+      .spacer
+        display: none
+      videogular, [videogular]
+        // border: 1px solid red
+        position: relative
         left: 0
-        margin-left: -4px
-        cursor: pointer
-        &:hover
-          +bg-gradient(darken(white, 0%), darken(white, 20%))
+        top: 0
+        width:  auto
+        height: 100%
+        vg-overlay-play
+          +pos()
+          // border: 1px solid red
 
-.imagowrapper.playing
-  background: none !important
-  .playbig
-    opacity: 0
-  .controls
-    .play
-      display: none
-    .pause
-      display: block
+        vg-media
+          +pos()
+        vg-poster
+          position: static
+          width:  auto
+          height: 100%
+          // border: 1px solid red
+          min-width:  initial
+          max-width:  initial
+          img
+            position: relative
+            width:  initial
+            height: 100%
+            min-width:  initial
+            min-height: 100%
+            max-width:  initial
+            max-height: 100%
+            // transition: opacity .5s
+            &.play,
+            &.pause
+              display: block
+            &.play,
+            &.pause
+              opacity: 0
 
-.imagovideo.fullscreen
-  .controls
-    .fullscreen
-      display: none
-    .screen
-      display: block
-
-.imagovideo.hd
-  .controls
-    .size
-      color: white
-
-.imagovideo.sd
-  .controls
-    .size
-      color: darken(white,40%)
-
-
-// spinner
-
-.imagoimage
-  .spin,
-  .spin2
-    position: absolute
-    left: 50%
-    top:  50%
-    z-index: 1
-    margin: -20px 0 0 -20px
-
-    width:  30px
-    height: 30px
-
-    border:     6px solid transparent
-    border-top: 6px solid rgba(255,255,255,0.2)
-
-    border-radius: 50%
-    animation: rotate 1.5s infinite linear
-
-    transition: opacity 1s ease
-
-    box-sizing: content-box
-
-  .spin2
-    margin: -17px 0 0 -17px
-    width:  30px
-    height: 30px
-    border-width: 2px
-    border:     3px solid transparent
-    border-top: 3px solid rgba(255,255,255,0.8)
-    animation: rotate 1.5s infinite ease
-
-@keyframes rotate
-  0%
-    transform: rotate(0deg)
-  100%
-    transform: rotate(360deg)
-
+  &.autowidth
+    .imago-video-wrapper
+      videogular, [videogular]
+        +pos()
+        vg-overlay-play
+          +pos()
+        vg-poster
+          img
+            width: 100%
 
 .inline-block
   display: inline-block
-  vertical-align: top
+
 // pixel values
 @for $i from 0 to 200
   .w#{$i}0px
@@ -407,7 +447,6 @@
 @for $i from 0 to 101
   .w#{$i}
     width: $i * 1%
-    @extend .inline-block
 
 
 .browserwarning,

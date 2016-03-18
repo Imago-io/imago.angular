@@ -4,6 +4,7 @@ class imagoLike extends Directive
 
     return {
 
+      restrict: 'E'
       scope: {}
       templateUrl: '/imago/imago-like.html'
 

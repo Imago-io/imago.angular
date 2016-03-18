@@ -111,12 +111,11 @@ class imagoModel extends Provider
               query = imagoUtils.renameKey('metakind', 'type', query)
 
             else if key is 'path'
-              console.log 'value', key, value
+              # console.log 'value', key, value
               path = value
 
-          if path?.slice(-1) is '/'
+          if path?.slice(-1) is '/' and path.length > 1
             path = path.substring(0, path.length - 1)
-            query.path = path
 
           return reject query unless path
 
@@ -161,7 +160,7 @@ class imagoModel extends Provider
 
           fetch = =>
             fetches.push @search(rejected).then (response) =>
-              console.log('not in the model. fetching...', rejected) if rejected?.length
+              # console.log('not in the model. fetching...', rejected) if rejected?.length
               return unless response?.data
               for res in response.data
                 data.push @create res

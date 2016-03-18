@@ -1,13 +1,32 @@
-.imagovideo(class="{{wrapperStyle.backgroundPosition}} {{wrapperStyle.size}} {{wrapperStyle.sizemode}}" ng-class="{loading: loading}" in-view="visible = $inview"
-visible="visible" responsive-events)
-  .imagowrapper(ng-style="wrapperStyle" ng-class="imagovideo.state")
-    a.playbig.fa.fa-play(
-      ng-hide="loading"
-      ng-click="imagovideo.togglePlay()"
-      ng-class="{playing: imagovideo.isPlaying}"
-      stop-propagation
-      analytics-on="click" analytics-event="Video Play Big"
+.imago-video-content(
+    ng-class="[imagovideo.opts.align, imagovideo.opts.sizemode, imagovideo.mainSide]"
+  )
+  //- pre {{imagovideo.opts.align}} {{imagovideo.opts.sizemode}} {{imagovideo.mainSide}}
+  .imago-video-wrapper
+    .spacer(ng-style="imagovideo.spacerStyle")
+    videogular(
+        vg-auto-play="::imagovideo.opts.autoplay"
+        vg-theme="::imagovideo.opts.theme"
+        ng-if="imagovideo.ready"
       )
-    video(ng-style="videoStyle")
-      source(ng-repeat="format in videoFormats" src="{{format.src}}" data-size="{{format.size}}" data-codec="{{format.codec}}" type="{{format.type}}")
-    div(imago-controls ng-style="controlStyle" ng-show="controls && hasPlayed")
+      vg-media(
+        vg-src="::imagovideo.sources"
+        vg-loop="::imagovideo.opts.loop"
+        vg-preload="::imagovideo.opts.preload"
+      )
+      vg-controls(
+          ng-show="::imagovideo.opts.controls"
+          vg-autohide="::imagovideo.opts.controlsAutohide"
+          )
+        vg-play-pause-button
+        vg-time-display {{ currentTime | date:'mm:ss' }}
+        vg-scrub-bar
+          vg-scrub-bar-current-time
+        vg-time-display {{ timeLeft | date:'mm:ss' }}
+        vg-volume
+          vg-mute-button
+          vg-volume-bar
+        vg-fullscreen-button
+      vg-overlay-play
+      vg-poster(vg-url="::imagovideo.poster")
+
