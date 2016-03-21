@@ -1730,11 +1730,11 @@
         },
         fireEvent: function(name) {
           var evt;
-          if (_.isFunction(window.CustomEvent)) {
-            evt = new CustomEvent(name);
-          } else {
+          if (bowser.msie && Number(bowser.version) <= 11) {
             evt = document.createEvent(name);
             evt.initCustomEvent(name, true, true);
+          } else {
+            evt = new CustomEvent(name);
           }
           return window.dispatchEvent(evt);
         },

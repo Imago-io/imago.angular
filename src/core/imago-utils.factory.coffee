@@ -946,11 +946,11 @@ class imagoUtils extends Factory
         return !!value.match(pattern)
 
       fireEvent: (name) ->
-        if _.isFunction window.CustomEvent
-          evt = new CustomEvent(name)
-        else
+        if bowser.msie and Number(bowser.version) <= 11
           evt = document.createEvent(name)
           evt.initCustomEvent(name, true, true)
+        else
+          evt = new CustomEvent(name)
         window.dispatchEvent(evt)
 
       getKeyName: (e) ->
