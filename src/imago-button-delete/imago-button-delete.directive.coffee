@@ -34,7 +34,6 @@ class ImagoButtonDelete extends Directive
             scope.action()
             scope.allowDelete = false
 
-
         scope.mouseDown = ->
           scope.allowDelete = false
           scope.animateClass = ['animate', 'progress']
@@ -44,11 +43,14 @@ class ImagoButtonDelete extends Directive
             scope.mouseUp()
           , scope.opts.duration
 
+        scope.mouseLeave = ->
+          scope.animateClass = []
+          scope.allowDelete = false
+          $timeout.cancel(promise)
+          scope.$digest()
+
         element.on 'mousedown', scope.mouseDown
         element.on 'mouseup',   scope.mouseUp
-
-        scope.$on '$destroy', ->
-          element.off 'mousedown', scope.mouseDown
-          element.off 'mouseup',   scope.mouseUp
+        element.on 'mouseleave',scope.mouseLeave
 
     }

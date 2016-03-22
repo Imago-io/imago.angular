@@ -48,12 +48,15 @@
               return scope.mouseUp();
             }, scope.opts.duration);
           };
+          scope.mouseLeave = function() {
+            scope.animateClass = [];
+            scope.allowDelete = false;
+            $timeout.cancel(promise);
+            return scope.$digest();
+          };
           element.on('mousedown', scope.mouseDown);
           element.on('mouseup', scope.mouseUp);
-          return scope.$on('$destroy', function() {
-            element.off('mousedown', scope.mouseDown);
-            return element.off('mouseup', scope.mouseUp);
-          });
+          return element.on('mouseleave', scope.mouseLeave);
         }
       };
     }
@@ -66,4 +69,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/button-delete.html","<button class=\"btn btn-delete\"><span ng-style=\"style\" ng-class=\"animateClass\"></span><ng-transclude></ng-transclude></button>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-button-delete.html","<button class=\"btn btn-delete\"><span ng-style=\"style\" ng-class=\"animateClass\"></span><div ng-transclude=\"ng-transclude\" class=\"imago-button-delete-content\"></div></button>");}]);
