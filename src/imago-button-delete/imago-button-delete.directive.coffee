@@ -3,7 +3,7 @@ class ImagoButtonDelete extends Directive
   constructor: ($timeout) ->
 
     return {
-      templateUrl: '/imago/button-delete.html'
+      templateUrl: '/imago/imago-button-delete.html'
       transclude: true
       scope:
         action: '&'

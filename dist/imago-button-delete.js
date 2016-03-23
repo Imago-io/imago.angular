@@ -4,7 +4,7 @@
   ImagoButtonDelete = (function() {
     function ImagoButtonDelete($timeout) {
       return {
-        templateUrl: '/imago/button-delete.html',
+        templateUrl: '/imago/imago-button-delete.html',
         transclude: true,
         scope: {
           action: '&'
