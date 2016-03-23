@@ -1688,7 +1688,7 @@
           var evt;
           if (bowser.msie && Number(bowser.version) <= 11) {
             evt = document.createEvent(name);
-            evt.initCustomEvent(name, true, true);
+            evt.initCustomEvent(name, false, false);
           } else {
             evt = new CustomEvent(name);
           }
