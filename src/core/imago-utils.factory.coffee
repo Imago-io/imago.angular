@@ -948,7 +948,7 @@ class imagoUtils extends Factory
       fireEvent: (name) ->
         if bowser.msie and Number(bowser.version) <= 11
           evt = document.createEvent(name)
-          evt.initCustomEvent(name, true, true)
+          evt.initCustomEvent(name, false, false)
         else
           evt = new CustomEvent(name)
         window.dispatchEvent(evt)
