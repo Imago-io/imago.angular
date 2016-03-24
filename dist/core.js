@@ -74,7 +74,7 @@
       this.getHost = function() {
         return host;
       };
-      this.$get = function($rootScope, $http, $location, $document, $q, imagoUtils, imagoWorker) {
+      this.$get = function($rootScope, $http, $location, $document, $window, $q, imagoUtils, imagoWorker) {
         return {
           host: host,
           sortWorker: sortWorker,
@@ -144,6 +144,10 @@
               return $http.post(host + "/api/assets/transform", data);
             },
             repair: function(id) {
+              var ref;
+              if ((ref = $window.trackJs) != null) {
+                ref.track("Repair assets order - id: " + id);
+              }
               return $http.put(host + "/api/assets/repairorder", {
                 _id: id
               });

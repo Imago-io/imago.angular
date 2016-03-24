@@ -18,7 +18,7 @@ class imagoModel extends Provider
     @getHost = ->
       return host
 
-    @$get = ($rootScope, $http, $location, $document, $q, imagoUtils, imagoWorker) ->
+    @$get = ($rootScope, $http, $location, $document, $window, $q, imagoUtils, imagoWorker) ->
       host       : host
       sortWorker : sortWorker
       indexRange : indexRange
@@ -74,6 +74,7 @@ class imagoModel extends Provider
           $http.post "#{host}/api/assets/transform", data
 
         repair: (id) ->
+          $window.trackJs?.track("Repair assets order - id: #{id}")
           $http.put "#{host}/api/assets/repairorder", {_id: id}
 
       data: []
