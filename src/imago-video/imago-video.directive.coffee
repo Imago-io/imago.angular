@@ -130,15 +130,14 @@ class imagoVideoController extends Controller
       mp4s  = _.sortBy(_.filter(@asset.fields.formats, codec: 'mp4' ), 'height').reverse()
 
       @sources.push
-        src: @$sce.trustAsResourceUrl("//#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{mp4s[0].codec}&size=#{mp4s[0].size}")
-        type: "video/#{mp4s[0].codec}"
+        src: @$sce.trustAsResourceUrl("//#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{_.first(mp4s).codec}&size=#{_.first(mp4s).size}")
+        type: "video/#{_.first(mp4s).codec}"
 
       @sources.push
-        src: @$sce.trustAsResourceUrl("//#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{webms[0].codec}&size=#{webms[0].size}")
-        type: "video/#{webms[0].codec}"
+        src: @$sce.trustAsResourceUrl("//#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{_.first(webms).codec}&size=#{_.first(webms).size}")
+        type: "video/#{_.first(webms).codec}"
 
       @poster = "#{@asset.serving_url}=s2000-h720" if @asset.serving_url
-
 
 
   getSize: ->

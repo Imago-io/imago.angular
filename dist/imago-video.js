@@ -189,12 +189,12 @@
             codec: 'mp4'
           }), 'height').reverse();
           _this.sources.push({
-            src: _this.$sce.trustAsResourceUrl("//" + _this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + mp4s[0].codec + "&size=" + mp4s[0].size),
-            type: "video/" + mp4s[0].codec
+            src: _this.$sce.trustAsResourceUrl("//" + _this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.first(mp4s).codec) + "&size=" + (_.first(mp4s).size)),
+            type: "video/" + (_.first(mp4s).codec)
           });
           _this.sources.push({
-            src: _this.$sce.trustAsResourceUrl("//" + _this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + webms[0].codec + "&size=" + webms[0].size),
-            type: "video/" + webms[0].codec
+            src: _this.$sce.trustAsResourceUrl("//" + _this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.first(webms).codec) + "&size=" + (_.first(webms).size)),
+            type: "video/" + (_.first(webms).codec)
           });
           if (_this.asset.serving_url) {
             return _this.poster = _this.asset.serving_url + "=s2000-h720";
