@@ -84,7 +84,18 @@
               return $http.get(host + "/api/assets/" + id);
             },
             create: function(assets) {
-              return $http.post(host + "/api/assets", assets);
+              var j, len, list, promises, request;
+              promises = [];
+              list = _.chunk(assets, 25);
+              for (j = 0, len = list.length; j < len; j++) {
+                request = list[j];
+                promises.push($http.post(host + "/api/assets", request).then(function(response) {
+                  return response.data.data;
+                }));
+              }
+              return $q.all(promises).then(function(response) {
+                return _.flatten(response);
+              });
             },
             update: function(item) {
               return $http.put(host + "/api/assets/" + item._id, item);
@@ -257,12 +268,14 @@
                   }));
                   return $q.all(fetches).then(function() {
                     var ref, ref1;
-                    if (options.title) {
-                      $document.prop('title', options.title);
-                    } else if (data.length === 1 && ((ref = data[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {
-                      $document.prop('title', data[0].fields.title.value);
-                    } else if (data.length === 1 && data[0].name) {
-                      $document.prop('title', data[0].name);
+                    if (!options.skipTitle) {
+                      if (options.title) {
+                        $document.prop('title', options.title);
+                      } else if (data.length === 1 && ((ref = data[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {
+                        $document.prop('title', data[0].fields.title.value);
+                      } else if (data.length === 1 && data[0].name) {
+                        $document.prop('title', data[0].name);
+                      }
                     }
                     return resolve(data);
                   });
@@ -470,17 +483,16 @@
                     delete asset.base64_url;
                   }
                   return _this.assets.create(copy).then(function(result) {
-                    var k, len1, ref, ref1;
-                    ref = result.data.data;
-                    for (k = 0, len1 = ref.length; k < len1; k++) {
-                      asset = ref[k];
-                      asset.base64_url = (ref1 = _.find(assets, {
+                    var k, len1, ref;
+                    for (k = 0, len1 = result.length; k < len1; k++) {
+                      asset = result[k];
+                      asset.base64_url = (ref = _.find(assets, {
                         uuid: asset.uuid
-                      })) != null ? ref1.base64_url : void 0;
+                      })) != null ? ref.base64_url : void 0;
                       _this.data.push(asset);
                     }
-                    $rootScope.$emit('assets:add', result.data.data);
-                    return resolve(result.data.data);
+                    $rootScope.$emit('assets:add', result);
+                    return resolve(result);
                   });
                 } else {
                   for (k = 0, len1 = assets.length; k < len1; k++) {
@@ -494,14 +506,11 @@
             })(this));
           },
           update: function(data, options) {
-            var attribute;
             if (options == null) {
               options = {};
             }
-            if (_.isUndefined(options.stream)) {
-              options.stream = true;
-            }
-            attribute = (options.attribute ? options.attribute : '_id');
+            options.stream || (options.stream = true);
+            options.attribute || (options.attribute = '_id');
             return $q((function(_this) {
               return function(resolve, reject) {
                 var asset, copy, find, j, len, query;
@@ -512,10 +521,8 @@
                 for (j = 0, len = copy.length; j < len; j++) {
                   asset = copy[j];
                   query = {};
-                  query[attribute] = asset[attribute];
-                  if (asset.assets) {
-                    delete asset.assets;
-                  }
+                  query[options.attribute] = asset[options.attribute];
+                  asset = _.omit(asset, 'assets');
                   find = _this.find(query);
                   if (find) {
                     if (find.base64_url && asset.serving_url) {
@@ -550,9 +557,7 @@
                 if (!(assets != null ? assets.length : void 0)) {
                   return reject(assets);
                 }
-                if (_.isUndefined(options.stream)) {
-                  options.stream = true;
-                }
+                options.stream || (options.stream = true);
                 promises = [];
                 for (j = 0, len = assets.length; j < len; j++) {
                   asset = assets[j];

@@ -27,12 +27,13 @@ class imagoModel extends Provider
           $http.get "#{host}/api/assets/#{id}"
 
         create: (assets) ->
-          # promises = []
-          # list = _.chunk(list, 25)
-          # for request in list
-          #   $http.post "#{host}/api/assets", request
-          # return $q.all(promises)
-          $http.post "#{host}/api/assets", assets
+          promises = []
+          list = _.chunk(assets, 25)
+          for request in list
+            promises.push $http.post("#{host}/api/assets", request).then (response) ->
+              return response.data.data
+          return $q.all(promises).then (response) ->
+            return _.flatten(response)
 
         update: (item) ->
           $http.put "#{host}/api/assets/#{item._id}", item
@@ -173,12 +174,13 @@ class imagoModel extends Provider
 
             $q.all(fetches).then =>
 
-              if options.title
-                $document.prop 'title', options.title
-              else if data.length is 1 and data[0].fields?.title?.value
-                $document.prop 'title', data[0].fields.title.value
-              else if data.length is 1 and data[0].name
-                $document.prop 'title', data[0].name
+              if !options.skipTitle
+                if options.title
+                  $document.prop 'title', options.title
+                else if data.length is 1 and data[0].fields?.title?.value
+                  $document.prop 'title', data[0].fields.title.value
+                else if data.length is 1 and data[0].name
+                  $document.prop 'title', data[0].name
 
               return resolve data
 
@@ -305,13 +307,12 @@ class imagoModel extends Provider
             for asset in copy
               delete asset.base64_url
             @assets.create(copy).then (result) =>
-
-              for asset in result.data.data
+              for asset in result
                 asset.base64_url = _.find(assets, {uuid: asset.uuid})?.base64_url
                 @data.push(asset)
 
-              $rootScope.$emit('assets:add', result.data.data)
-              return resolve result.data.data
+              $rootScope.$emit('assets:add', result)
+              return resolve result
           else
             @data.push(asset) for asset in assets
 
@@ -319,16 +320,16 @@ class imagoModel extends Provider
             return resolve assets
 
       update: (data, options = {}) ->
-        options.stream = true if _.isUndefined options.stream
-        attribute = (if options.attribute then options.attribute else '_id')
+        options.stream or= true
+        options.attribute or= '_id'
         return $q (resolve, reject) =>
           copy = angular.copy data
-          copy = [copy] unless _.isArray copy
+          copy = [copy] if !_.isArray copy
 
           for asset in copy
             query = {}
-            query[attribute] = asset[attribute]
-            delete asset.assets if asset.assets
+            query[options.attribute] = asset[options.attribute]
+            asset = _.omit(asset, 'assets')
             find = @find(query)
             if find
               if find.base64_url and asset.serving_url
@@ -349,9 +350,9 @@ class imagoModel extends Provider
 
       delete: (assets, options = {}) ->
         return $q (resolve, reject) =>
-          return reject(assets) unless assets?.length
+          return reject(assets) if !assets?.length
 
-          options.stream = true if _.isUndefined options.stream
+          options.stream or= true
 
           promises = []
 
