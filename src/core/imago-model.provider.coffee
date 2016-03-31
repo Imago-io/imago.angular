@@ -27,6 +27,11 @@ class imagoModel extends Provider
           $http.get "#{host}/api/assets/#{id}"
 
         create: (assets) ->
+          # promises = []
+          # list = _.chunk(list, 25)
+          # for request in list
+          #   $http.post "#{host}/api/assets", request
+          # return $q.all(promises)
           $http.post "#{host}/api/assets", assets
 
         update: (item) ->
@@ -241,7 +246,7 @@ class imagoModel extends Provider
         collection = data
         @populateData data.assets
 
-        unless @find('_id' : collection._id)
+        if !@find('_id' : collection._id)
           collection = _.omit collection, 'assets' if collection.type is 'collection'
           @data.push collection
 
@@ -295,23 +300,22 @@ class imagoModel extends Provider
 
       add: (assets, options = {}) ->
         return $q (resolve, reject) =>
-          options.stream = true if _.isUndefined options.stream
-          options.push = true if _.isUndefined options.push
-
           if options.save
-            @assets.create(assets).then (result) =>
+            copy = angular.copy assets
+            for asset in copy
+              delete asset.base64_url
+            @assets.create(copy).then (result) =>
 
-              if options.push
-                @data.push(asset) for asset in result.data.data
+              for asset in result.data.data
+                asset.base64_url = _.find(assets, {uuid: asset.uuid})?.base64_url
+                @data.push(asset)
 
-              $rootScope.$emit('assets:add', result.data.data) if options.stream
+              $rootScope.$emit('assets:add', result.data.data)
               return resolve result.data.data
-
           else
-            if options.push
-              @data.push(asset) for asset in assets
+            @data.push(asset) for asset in assets
 
-            $rootScope.$emit('assets:add', assets) if options.stream
+            $rootScope.$emit('assets:add', assets)
             return resolve assets
 
       update: (data, options = {}) ->

@@ -462,38 +462,32 @@
             }
             return $q((function(_this) {
               return function(resolve, reject) {
-                var asset, j, len;
-                if (_.isUndefined(options.stream)) {
-                  options.stream = true;
-                }
-                if (_.isUndefined(options.push)) {
-                  options.push = true;
-                }
+                var asset, copy, j, k, len, len1;
                 if (options.save) {
-                  return _this.assets.create(assets).then(function(result) {
-                    var asset, j, len, ref;
-                    if (options.push) {
-                      ref = result.data.data;
-                      for (j = 0, len = ref.length; j < len; j++) {
-                        asset = ref[j];
-                        _this.data.push(asset);
-                      }
+                  copy = angular.copy(assets);
+                  for (j = 0, len = copy.length; j < len; j++) {
+                    asset = copy[j];
+                    delete asset.base64_url;
+                  }
+                  return _this.assets.create(copy).then(function(result) {
+                    var k, len1, ref, ref1;
+                    ref = result.data.data;
+                    for (k = 0, len1 = ref.length; k < len1; k++) {
+                      asset = ref[k];
+                      asset.base64_url = (ref1 = _.find(assets, {
+                        uuid: asset.uuid
+                      })) != null ? ref1.base64_url : void 0;
+                      _this.data.push(asset);
                     }
-                    if (options.stream) {
-                      $rootScope.$emit('assets:add', result.data.data);
-                    }
+                    $rootScope.$emit('assets:add', result.data.data);
                     return resolve(result.data.data);
                   });
                 } else {
-                  if (options.push) {
-                    for (j = 0, len = assets.length; j < len; j++) {
-                      asset = assets[j];
-                      _this.data.push(asset);
-                    }
+                  for (k = 0, len1 = assets.length; k < len1; k++) {
+                    asset = assets[k];
+                    _this.data.push(asset);
                   }
-                  if (options.stream) {
-                    $rootScope.$emit('assets:add', assets);
-                  }
+                  $rootScope.$emit('assets:add', assets);
                   return resolve(assets);
                 }
               };
