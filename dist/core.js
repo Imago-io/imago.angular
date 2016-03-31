@@ -256,12 +256,14 @@
                   }));
                   return $q.all(fetches).then(function() {
                     var ref, ref1;
-                    if (options.title) {
-                      $document.prop('title', options.title);
-                    } else if (data.length === 1 && ((ref = data[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {
-                      $document.prop('title', data[0].fields.title.value);
-                    } else if (data.length === 1 && data[0].name) {
-                      $document.prop('title', data[0].name);
+                    if (!options.skipTitle) {
+                      if (options.title) {
+                        $document.prop('title', options.title);
+                      } else if (data.length === 1 && ((ref = data[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {
+                        $document.prop('title', data[0].fields.title.value);
+                      } else if (data.length === 1 && data[0].name) {
+                        $document.prop('title', data[0].name);
+                      }
                     }
                     return resolve(data);
                   });

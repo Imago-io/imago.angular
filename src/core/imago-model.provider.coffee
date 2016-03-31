@@ -167,12 +167,13 @@ class imagoModel extends Provider
 
             $q.all(fetches).then =>
 
-              if options.title
-                $document.prop 'title', options.title
-              else if data.length is 1 and data[0].fields?.title?.value
-                $document.prop 'title', data[0].fields.title.value
-              else if data.length is 1 and data[0].name
-                $document.prop 'title', data[0].name
+              if !options.skipTitle
+                if options.title
+                  $document.prop 'title', options.title
+                else if data.length is 1 and data[0].fields?.title?.value
+                  $document.prop 'title', data[0].fields.title.value
+                else if data.length is 1 and data[0].name
+                  $document.prop 'title', data[0].name
 
               return resolve data
 
