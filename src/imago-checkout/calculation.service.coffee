@@ -24,30 +24,30 @@ class Calculation extends Service
     @updateCart()
 
   changeAddress: (section, type) =>
-    if @process.form['shipping_address']?.country and @differentshipping and type is 'country'
-      @setCurrency(null, @process.form['shipping_address'].country)
+    if @form['shipping_address']?.country and @differentshipping and type is 'country'
+      @setCurrency(null, @form['shipping_address'].country)
     else if type is 'country'
-      @setCurrency(null, @process.form[section].country)
+      @setCurrency(null, @form[section].country)
     @[section] or= {}
-    if @process.form[section].country in ['United States of America', 'United States', 'USA', 'Canada', 'Australia']
+    if @form[section].country in ['United States of America', 'United States', 'USA', 'Canada', 'Australia']
       @[section].disablestates = false
-      if @process.form[section].country in ['United States of America', 'United States', 'USA']
+      if @form[section].country in ['United States of America', 'United States', 'USA']
         @[section].states = @imagoUtils.STATES['USA']
       else
-        @[section].states = @imagoUtils.STATES[@process.form[section].country.toUpperCase()]
+        @[section].states = @imagoUtils.STATES[@form[section].country.toUpperCase()]
     else
       @[section].disablestates = true
       @[section].states = []
-    @process.form[section].country_code = @imagoUtils.CODES[@process.form[section].country]
+    @form[section].country_code = @imagoUtils.CODES[@form[section].country]
 
-    if @process.form['shipping_address']?.country and @differentshipping
-      @country = @process.form['shipping_address'].country
-      @state   = @process.form['shipping_address'].state
-      @zip     = @process.form['shipping_address'].zip
+    if @form['shipping_address']?.country and @differentshipping
+      @country = @form['shipping_address'].country
+      @state   = @form['shipping_address'].state
+      @zip     = @form['shipping_address'].zip
     else
-      @country = @process.form[section].country
-      @state   = @process.form[section].state
-      @zip     = @process.form[section].zip
+      @country = @form[section].country
+      @state   = @form[section].state
+      @zip     = @form[section].zip
 
     @calculate()
 
@@ -342,29 +342,29 @@ class Calculation extends Service
     form.costs.shipping_options = angular.copy @shipping_options
     form.costs.coupon = (if @coupon then angular.copy(@coupon) else null)
     form.shipping_address or= {}
-    form.billing_address['phone']  = angular.copy @process.form.phone
-    form.shipping_address['phone'] = angular.copy @process.form.phone
+    form.billing_address['phone']  = angular.copy @form.phone
+    form.shipping_address['phone'] = angular.copy @form.phone
     form.fulfillmentcenter = angular.copy @fcenter?._id
     form.userData = {'browser': window.navigator?.userAgent}
 
     if not @differentshipping
-      form.shipping_address = angular.copy @process.form['billing_address']
+      form.shipping_address = angular.copy @form['billing_address']
 
     return form
 
   submit: =>
-    @process.form.items    = angular.copy @cart.items
-    @process.form.currency = angular.copy @currency
-    @process.form.cartId = angular.copy @cart._id
-    @process.form.billing_address.name = angular.copy @process.form.user?.name
-    @process.form = @formatForm(@process.form)
+    @form.items    = angular.copy @cart.items
+    @form.currency = angular.copy @currency
+    @form.cartId = angular.copy @cart._id
+    @form.billing_address.name = angular.copy @form.user?.name
+    @form = @formatForm(@form)
 
-    return @$http.post(@imagoModel.host + '/api/checkout', @process.form)
+    return @$http.post(@imagoModel.host + '/api/checkout', @form)
 
   saveCart: (async) ->
     form = angular.copy @cart
     form.currency = @currency
-    form.data = angular.copy @process.form
+    form.data = angular.copy @form
     form.data.paymentType = angular.copy @paymentType
     form.data.differentshipping = @differentshipping
     form.data = @formatForm(form.data)
