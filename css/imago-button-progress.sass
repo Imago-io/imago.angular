@@ -1,0 +1,20 @@
+.btn-progress
+  position: relative
+  .progress-bar
+    display: block
+    position: absolute
+    left: 0
+    bottom: 0
+    background: red
+    width: 0
+    height: 2px
+    &.progress
+      width: 100%
+    &.animate
+      transition: all 1s ease-out
+      &.type-progress
+        transition: all 10s ease-out
+
+  .imago-button-progress-content
+    span
+      display: block

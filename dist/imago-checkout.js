@@ -163,32 +163,32 @@
 
     Calculation.prototype.changeAddress = function(section, type) {
       var ref, ref1, ref2, ref3;
-      if (((ref = this.process.form['shipping_address']) != null ? ref.country : void 0) && this.differentshipping && type === 'country') {
-        this.setCurrency(null, this.process.form['shipping_address'].country);
+      if (((ref = this.form['shipping_address']) != null ? ref.country : void 0) && this.differentshipping && type === 'country') {
+        this.setCurrency(null, this.form['shipping_address'].country);
       } else if (type === 'country') {
-        this.setCurrency(null, this.process.form[section].country);
+        this.setCurrency(null, this.form[section].country);
       }
       this[section] || (this[section] = {});
-      if ((ref1 = this.process.form[section].country) === 'United States of America' || ref1 === 'United States' || ref1 === 'USA' || ref1 === 'Canada' || ref1 === 'Australia') {
+      if ((ref1 = this.form[section].country) === 'United States of America' || ref1 === 'United States' || ref1 === 'USA' || ref1 === 'Canada' || ref1 === 'Australia') {
         this[section].disablestates = false;
-        if ((ref2 = this.process.form[section].country) === 'United States of America' || ref2 === 'United States' || ref2 === 'USA') {
+        if ((ref2 = this.form[section].country) === 'United States of America' || ref2 === 'United States' || ref2 === 'USA') {
           this[section].states = this.imagoUtils.STATES['USA'];
         } else {
-          this[section].states = this.imagoUtils.STATES[this.process.form[section].country.toUpperCase()];
+          this[section].states = this.imagoUtils.STATES[this.form[section].country.toUpperCase()];
         }
       } else {
         this[section].disablestates = true;
         this[section].states = [];
       }
-      this.process.form[section].country_code = this.imagoUtils.CODES[this.process.form[section].country];
-      if (((ref3 = this.process.form['shipping_address']) != null ? ref3.country : void 0) && this.differentshipping) {
-        this.country = this.process.form['shipping_address'].country;
-        this.state = this.process.form['shipping_address'].state;
-        this.zip = this.process.form['shipping_address'].zip;
+      this.form[section].country_code = this.imagoUtils.CODES[this.form[section].country];
+      if (((ref3 = this.form['shipping_address']) != null ? ref3.country : void 0) && this.differentshipping) {
+        this.country = this.form['shipping_address'].country;
+        this.state = this.form['shipping_address'].state;
+        this.zip = this.form['shipping_address'].zip;
       } else {
-        this.country = this.process.form[section].country;
-        this.state = this.process.form[section].state;
-        this.zip = this.process.form[section].zip;
+        this.country = this.form[section].country;
+        this.state = this.form[section].state;
+        this.zip = this.form[section].zip;
       }
       return this.calculate();
     };
@@ -680,33 +680,33 @@
       form.costs.shipping_options = angular.copy(this.shipping_options);
       form.costs.coupon = (this.coupon ? angular.copy(this.coupon) : null);
       form.shipping_address || (form.shipping_address = {});
-      form.billing_address['phone'] = angular.copy(this.process.form.phone);
-      form.shipping_address['phone'] = angular.copy(this.process.form.phone);
+      form.billing_address['phone'] = angular.copy(this.form.phone);
+      form.shipping_address['phone'] = angular.copy(this.form.phone);
       form.fulfillmentcenter = angular.copy((ref = this.fcenter) != null ? ref._id : void 0);
       form.userData = {
         'browser': (ref1 = window.navigator) != null ? ref1.userAgent : void 0
       };
       if (!this.differentshipping) {
-        form.shipping_address = angular.copy(this.process.form['billing_address']);
+        form.shipping_address = angular.copy(this.form['billing_address']);
       }
       return form;
     };
 
     Calculation.prototype.submit = function() {
       var ref;
-      this.process.form.items = angular.copy(this.cart.items);
-      this.process.form.currency = angular.copy(this.currency);
-      this.process.form.cartId = angular.copy(this.cart._id);
-      this.process.form.billing_address.name = angular.copy((ref = this.process.form.user) != null ? ref.name : void 0);
-      this.process.form = this.formatForm(this.process.form);
-      return this.$http.post(this.imagoModel.host + '/api/checkout', this.process.form);
+      this.form.items = angular.copy(this.cart.items);
+      this.form.currency = angular.copy(this.currency);
+      this.form.cartId = angular.copy(this.cart._id);
+      this.form.billing_address.name = angular.copy((ref = this.form.user) != null ? ref.name : void 0);
+      this.form = this.formatForm(this.form);
+      return this.$http.post(this.imagoModel.host + '/api/checkout', this.form);
     };
 
     Calculation.prototype.saveCart = function(async) {
       var form, xhttp;
       form = angular.copy(this.cart);
       form.currency = this.currency;
-      form.data = angular.copy(this.process.form);
+      form.data = angular.copy(this.form);
       form.data.paymentType = angular.copy(this.paymentType);
       form.data.differentshipping = this.differentshipping;
       form.data = this.formatForm(form.data);
