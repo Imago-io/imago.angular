@@ -4,7 +4,7 @@ class ImagoFetchMenu extends Directive
 
     return {
 
-      restrict: 'E'
+      restrict: 'AE'
       templateUrl: '/imago/imago-fetch-menu.html'
       link: (scope, element, attrs) ->
         return unless attrs.path
