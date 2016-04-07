@@ -4,7 +4,7 @@
   ImagoFetchMenu = (function() {
     function ImagoFetchMenu(imagoModel, imagoUtils) {
       return {
-        restrict: 'E',
+        restrict: 'AE',
         templateUrl: '/imago/imago-fetch-menu.html',
         link: function(scope, element, attrs) {
           if (!attrs.path) {
