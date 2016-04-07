@@ -516,8 +516,12 @@
             if (options == null) {
               options = {};
             }
-            options.stream || (options.stream = true);
-            options.attribute || (options.attribute = '_id');
+            if (_.isUndefined(options.stream)) {
+              options.stream = true;
+            }
+            if (_.isUndefined(options.attribute)) {
+              options.attribute = '_id';
+            }
             return $q((function(_this) {
               return function(resolve, reject) {
                 var asset, copy, find, j, len, query;
@@ -564,7 +568,9 @@
                 if (!(assets != null ? assets.length : void 0)) {
                   return reject(assets);
                 }
-                options.stream || (options.stream = true);
+                if (_.isUndefined(options.stream)) {
+                  options.stream = true;
+                }
                 promises = [];
                 for (j = 0, len = assets.length; j < len; j++) {
                   asset = assets[j];

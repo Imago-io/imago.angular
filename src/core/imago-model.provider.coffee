@@ -320,8 +320,8 @@ class imagoModel extends Provider
             return resolve assets
 
       update: (data, options = {}) ->
-        options.stream or= true
-        options.attribute or= '_id'
+        options.stream = true if _.isUndefined options.stream
+        options.attribute = '_id' if _.isUndefined options.attribute
         return $q (resolve, reject) =>
           copy = angular.copy data
           copy = [copy] if !_.isArray copy
@@ -352,7 +352,7 @@ class imagoModel extends Provider
         return $q (resolve, reject) =>
           return reject(assets) if !assets?.length
 
-          options.stream or= true
+          options.stream = true if _.isUndefined options.stream
 
           promises = []
 
