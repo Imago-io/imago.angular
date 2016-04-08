@@ -2,7 +2,6 @@
   form(name="imagoContact" ng-submit="contact.submitForm(imagoContact.$valid)" novalidate ng-if="!contact.status")
 
     .imago-field
-      label(for="name") Name
       input(
         type="text"
         name="name"
@@ -11,9 +10,9 @@
         placeholder="Name"
         required
         )
+      label(for="name") Name
 
     .imago-field
-      label(for="email") Email
       input(
         type="email"
         name="email"
@@ -22,9 +21,9 @@
         placeholder="Email"
         required
         )
+      label(for="email") Email
 
     .imago-field
-      label(for="message") Message
       textarea(
         name="message"
         id="message"
@@ -32,6 +31,7 @@
         placeholder="Your message."
         required
         )
+      label(for="message") Message
 
     .imago-checkbox
       input(
