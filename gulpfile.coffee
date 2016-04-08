@@ -7,7 +7,6 @@ del             = require 'del'
 vinylPaths      = require 'vinyl-paths'
 path            = require 'path'
 notification    = require 'node-notifier'
-exec            = require('child_process').exec
 
 # Defaults
 

@@ -4,18 +4,25 @@ class ImagoFetch extends Directive
 
     return {
 
-      restrict: 'AE'
+      restrict: 'E'
+      scope: true
       templateUrl: '/imago/imago-fetch.html'
       transclude: true
-      link: (scope, element, attrs, transclude) ->
-        return unless attrs.path
-
-        imagoModel.getData(attrs.query).then (response) ->
-          for data in response
-            for item in data.assets
-              item.path = '/' if item.path is '/home'
-              item.normname = imagoUtils.normalize(item.name)
-            scope.items = data.assets
-            break
+      controller: 'imagoFetchController as imagofetch'
+      bindToController:
+        query: '@'
+      link: (scope, element, attrs, ctrl, transclude) ->
+        transclude scope, (clone) ->
+          element.children().append(clone)
 
     }
+
+class ImagoFetchController extends Controller
+
+  constructor: (imagoModel) ->
+    throw 'No query set in imagofetch' if !@query
+
+    imagoModel.getData(@query).then (response) =>
+      for item in response
+        @result = item
+        break
