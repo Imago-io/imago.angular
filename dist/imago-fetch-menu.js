@@ -42,4 +42,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-fetch-menu.html","<a ng-href=\"{{item.path}}\" ng-class=\"item.normname\" ng-repeat=\"item in ::items track by item._id\">{{::item.fields.title.value || item.name}}</a>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-fetch-menu.html","<a ng-href=\"{{item.path}}\" ng-class=\"item.normname\" ng-repeat=\"item in ::items track by item._id\" ui-sref-active=\"active\">{{::item.fields.title.value || item.name}}</a>");}]);

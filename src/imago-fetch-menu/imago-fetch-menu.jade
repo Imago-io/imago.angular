@@ -1,4 +1,5 @@
 a(
   ng-href="{{item.path}}"
   ng-class="item.normname"
-  ng-repeat="item in ::items track by item._id") {{::item.fields.title.value || item.name}}
+  ng-repeat="item in ::items track by item._id"
+  ui-sref-active="active") {{::item.fields.title.value || item.name}}
