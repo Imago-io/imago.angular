@@ -23,6 +23,8 @@ class ImagoFetchController extends Controller
     throw 'No query set in imagofetch' if !@query
 
     imagoModel.getData(@query).then (response) =>
-      for item in response
-        @result = item
+      for data in response
+        for item in data.assets
+          item.path = '/' if item.path is '/home'
+        @result = data
         break

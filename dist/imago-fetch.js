@@ -31,11 +31,18 @@
       }
       imagoModel.getData(this.query).then((function(_this) {
         return function(response) {
-          var i, item, len, results;
+          var data, i, item, j, len, len1, ref, results;
           results = [];
           for (i = 0, len = response.length; i < len; i++) {
-            item = response[i];
-            _this.result = item;
+            data = response[i];
+            ref = data.assets;
+            for (j = 0, len1 = ref.length; j < len1; j++) {
+              item = ref[j];
+              if (item.path === '/home') {
+                item.path = '/';
+              }
+            }
+            _this.result = data;
             break;
           }
           return results;
