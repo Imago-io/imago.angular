@@ -1,7 +1,7 @@
 .imago-form-container
   form(name="imagoContact" ng-submit="contact.submitForm(imagoContact.$valid)" novalidate ng-if="!contact.status")
 
-    div.imago-field
+    .imago-field
       label(for="name") Name
       input(
         type="text"
@@ -12,7 +12,7 @@
         required
         )
 
-    div.imago-field
+    .imago-field
       label(for="email") Email
       input(
         type="email"
@@ -23,7 +23,7 @@
         required
         )
 
-    div.imago-field
+    .imago-field
       label(for="message") Message
       textarea(
         name="message"
@@ -33,7 +33,7 @@
         required
         )
 
-    div.imago-checkbox
+    .imago-checkbox
       input(
         type="checkbox"
         name="subscribe"
@@ -43,12 +43,12 @@
         )
       label(for="subscribe") Subscribe
 
-    div.formcontrols
+    .imago-actions
       button.send(type="submit" ng-disabled="imagoContact.$invalid") Send
 
-  div.messages(ng-switch="contact.status")
-    div.sucess(ng-switch-when="true")
+  .messages(ng-switch="contact.status")
+    .sucess(ng-switch-when="true")
       span Thank You!
 
-    div.error(ng-switch-when="false")
+    .error(ng-switch-when="false")
       span Error: {{contact.error}}
