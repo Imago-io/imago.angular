@@ -2061,6 +2061,10 @@
     TenantSettings.prototype.get = function() {
       return this.$http.get(this.imagoModel.host + "/api/settings").then((function(_this) {
         return function(response) {
+          var ref;
+          _this.tenant = (ref = _.find(response.data, {
+            name: 'tenant'
+          })) != null ? ref.value : void 0;
           return _this.reorder(response.data);
         };
       })(this));

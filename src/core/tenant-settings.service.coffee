@@ -8,6 +8,7 @@ class TenantSettings extends Service
 
   get: ->
     @$http.get("#{@imagoModel.host}/api/settings").then (response) =>
+      @tenant = _.find(response.data, {name: 'tenant'})?.value
       @reorder response.data
 
   reorder: (data) ->

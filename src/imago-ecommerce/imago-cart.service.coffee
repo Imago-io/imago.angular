@@ -3,13 +3,14 @@ class imagoCart extends Service
   show: false
   itemsLength: 0
   settings: []
+  messages: []
 
-  constructor: (@$q, @$rootScope, @$location, @$window, @$http, @imagoUtils, @imagoModel, @fulfillmentsCenter, @geoIp, tenantSettings, @imagoCartUtils) ->
+  constructor: (@$q, @$rootScope, @$location, @$window, @$http, @imagoUtils, @imagoModel, @fulfillmentsCenter, @geoIp, @tenantSettings, @imagoCartUtils) ->
 
     @cart =
       items: []
 
-    return @onSettings() if tenantSettings.loaded
+    return @onSettings() if @tenantSettings.loaded
 
     @$rootScope.$on 'settings:loaded', (evt, message) =>
       @onSettings()
@@ -62,8 +63,17 @@ class imagoCart extends Service
     for item in @cart.items
       item.stock = Number(item.fields?.stock?.value?[@fulfillmentsCenter.selected._id])
       item = @imagoCartUtils.updateChangedItem(item)
-      if item.updates?.length
+      if item.stock <= 0 and !item.presale
         @newmessages = true
+        @show = true
+        update = true
+        @messages.push
+          item : item
+          type : 'nostock'
+        _.remove(@cart.items, {_id: item._id})
+      else if item.updates?.length
+        @newmessages = true
+        @show = true
         update = true
 
     @currency = angular.copy(@cart.currency) unless @currency
@@ -166,9 +176,7 @@ class imagoCart extends Service
       @subtotal += item.qty * item.price[@currency]
 
   checkout: ->
-    return unless tenant
-
-    url = "https://#{tenant}.imago.io/account/checkout/#{@cart._id}"
+    url = "https://#{@tenantSettings.tenant}.imago.io/account/checkout/#{@cart._id}"
 
     decorated = ''
     ga? (tracker) =>

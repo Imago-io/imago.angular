@@ -260,6 +260,8 @@
 
     imagoCart.prototype.settings = [];
 
+    imagoCart.prototype.messages = [];
+
     function imagoCart($q, $rootScope, $location, $window, $http, imagoUtils, imagoModel, fulfillmentsCenter, geoIp, tenantSettings, imagoCartUtils) {
       this.$q = $q;
       this.$rootScope = $rootScope;
@@ -270,6 +272,7 @@
       this.imagoModel = imagoModel;
       this.fulfillmentsCenter = fulfillmentsCenter;
       this.geoIp = geoIp;
+      this.tenantSettings = tenantSettings;
       this.imagoCartUtils = imagoCartUtils;
       this.remove = bind(this.remove, this);
       this.update = bind(this.update, this);
@@ -279,7 +282,7 @@
       this.cart = {
         items: []
       };
-      if (tenantSettings.loaded) {
+      if (this.tenantSettings.loaded) {
         return this.onSettings();
       }
       this.$rootScope.$on('settings:loaded', (function(_this) {
@@ -363,8 +366,20 @@
         item = ref[i];
         item.stock = Number((ref1 = item.fields) != null ? (ref2 = ref1.stock) != null ? (ref3 = ref2.value) != null ? ref3[this.fulfillmentsCenter.selected._id] : void 0 : void 0 : void 0);
         item = this.imagoCartUtils.updateChangedItem(item);
-        if ((ref4 = item.updates) != null ? ref4.length : void 0) {
+        if (item.stock <= 0 && !item.presale) {
           this.newmessages = true;
+          this.show = true;
+          update = true;
+          this.messages.push({
+            item: item,
+            type: 'nostock'
+          });
+          _.remove(this.cart.items, {
+            _id: item._id
+          });
+        } else if ((ref4 = item.updates) != null ? ref4.length : void 0) {
+          this.newmessages = true;
+          this.show = true;
           update = true;
         }
       }
@@ -523,10 +538,7 @@
 
     imagoCart.prototype.checkout = function() {
       var decorated, url;
-      if (!tenant) {
-        return;
-      }
-      url = "https://" + tenant + ".imago.io/account/checkout/" + this.cart._id;
+      url = "https://" + this.tenantSettings.tenant + ".imago.io/account/checkout/" + this.cart._id;
       decorated = '';
       if (typeof ga === "function") {
         ga((function(_this) {
