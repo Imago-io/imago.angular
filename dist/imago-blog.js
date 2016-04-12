@@ -13,7 +13,8 @@
           pageSize: '@',
           tags: '=',
           currentPage: '=',
-          shuffle: '='
+          shuffle: '=',
+          recursive: '@'
         },
         restrict: 'E',
         controller: 'imagoPagerController as imagopager',
@@ -51,6 +52,9 @@
           if ((query != null ? query.path : void 0) && _.includes(query.path, '/page/')) {
             idx = query.path.indexOf('/page/');
             query.path = query.path.slice(0, idx);
+          }
+          if (_this.recursive === [true, 'true']) {
+            query.recursive = true;
           }
           return imagoModel.getData([query], {
             localData: false

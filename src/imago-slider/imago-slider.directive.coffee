@@ -14,10 +14,6 @@ class imagoSlider extends Directive
 
       link: (scope, element, attrs, ctrl, transclude) ->
 
-        watchers = []
-
-        scope.imagoslider.length = attrs.length or scope.imagoslider.assets?.length
-
         transclude scope, (clone) ->
           element.children().append(clone)
 
@@ -27,14 +23,10 @@ class imagoSlider extends Directive
             value = JSON.parse value
           scope.imagoslider.conf[key] = value
 
-        if angular.isDefined attrs.length
-          attrs.$observe 'length', (data) ->
-            scope.imagoslider.length = data
-        else
-          scope.$watchCollection 'imagoslider.assets', (data) ->
-            return if not data or not _.isArray data
-            scope.imagoslider.length = data.length
-            scope.prefetch('initial')
+        scope.$watchCollection 'imagoslider.assets', (data) ->
+          return if not data or not _.isArray data
+          scope.imagoslider.length = data.length
+          scope.prefetch('initial')
 
         scope.setSiblings = ->
           scope.imagoslider.conf.siblings = !!(scope.imagoslider.conf.next and scope.imagoslider.conf.prev)
@@ -169,6 +161,8 @@ class imagoSlider extends Directive
 
         if scope.imagoslider.conf.enablekeys
           $document.on 'keydown', keyboardBinding
+
+        watchers = []
 
         watchers.push $rootScope.$on "#{scope.imagoslider.conf.namespace}:change", (evt, index) ->
           scope.clearInterval()

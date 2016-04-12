@@ -13,9 +13,7 @@
           assets: '=?data'
         },
         link: function(scope, element, attrs, ctrl, transclude) {
-          var key, keyboardBinding, ref, value, watchers;
-          watchers = [];
-          scope.imagoslider.length = attrs.length || ((ref = scope.imagoslider.assets) != null ? ref.length : void 0);
+          var key, keyboardBinding, value, watchers;
           transclude(scope, function(clone) {
             return element.children().append(clone);
           });
@@ -29,19 +27,13 @@
             }
             scope.imagoslider.conf[key] = value;
           }
-          if (angular.isDefined(attrs.length)) {
-            attrs.$observe('length', function(data) {
-              return scope.imagoslider.length = data;
-            });
-          } else {
-            scope.$watchCollection('imagoslider.assets', function(data) {
-              if (!data || !_.isArray(data)) {
-                return;
-              }
-              scope.imagoslider.length = data.length;
-              return scope.prefetch('initial');
-            });
-          }
+          scope.$watchCollection('imagoslider.assets', function(data) {
+            if (!data || !_.isArray(data)) {
+              return;
+            }
+            scope.imagoslider.length = data.length;
+            return scope.prefetch('initial');
+          });
           scope.setSiblings = function() {
             return scope.imagoslider.conf.siblings = !!(scope.imagoslider.conf.next && scope.imagoslider.conf.prev);
           };
@@ -113,8 +105,8 @@
             };
           })(this);
           scope.prefetch = function(direction) {
-            var idx, image, ref1, ref2;
-            if (!scope.imagoslider.conf.prefetch || !((ref1 = scope.imagoslider.assets) != null ? ref1.length : void 0)) {
+            var idx, image, ref, ref1;
+            if (!scope.imagoslider.conf.prefetch || !((ref = scope.imagoslider.assets) != null ? ref.length : void 0)) {
               return;
             }
             if (scope.currentIndex === scope.getLast()) {
@@ -126,7 +118,7 @@
             } else if (direction === 'next') {
               idx = angular.copy(scope.currentIndex) + 1;
             }
-            if (!((ref2 = scope.imagoslider.assets[idx]) != null ? ref2.serving_url : void 0) || !scope.imagoslider.servingSize) {
+            if (!((ref1 = scope.imagoslider.assets[idx]) != null ? ref1.serving_url : void 0) || !scope.imagoslider.servingSize) {
               return;
             }
             image = new Image();
@@ -187,6 +179,7 @@
           if (scope.imagoslider.conf.enablekeys) {
             $document.on('keydown', keyboardBinding);
           }
+          watchers = [];
           watchers.push($rootScope.$on(scope.imagoslider.conf.namespace + ":change", function(evt, index) {
             scope.clearInterval();
             return scope.imagoslider.setCurrent(index);

@@ -69,9 +69,10 @@
 
   imagoModel = (function() {
     function imagoModel() {
-      var host, indexRange, sortWorker;
+      var host, indexRange, nextClient, sortWorker;
       sortWorker = 'sort.worker.js';
       host = '//api.imago.io';
+      nextClient = 'public';
       indexRange = 10000;
       this.setSortWorker = function(value) {
         return sortWorker = value;
@@ -82,14 +83,16 @@
       this.setHost = function(value) {
         return host = value;
       };
-      this.getHost = function() {
-        return host;
+      this.setClient = function(value) {
+        return nextClient = value;
       };
       this.$get = function($rootScope, $http, $location, $document, $window, $q, imagoUtils, imagoWorker) {
+        $http.defaults.headers.common['NexClient'] = nextClient;
         return {
           host: host,
           sortWorker: sortWorker,
           indexRange: indexRange,
+          nextClient: nextClient,
           assets: {
             get: function(id) {
               return $http.get(host + "/api/assets/" + id);

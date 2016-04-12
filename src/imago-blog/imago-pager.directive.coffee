@@ -5,15 +5,16 @@ class imagoPager extends Directive
     return {
 
       scope:
-        state: '@'
-        posts: '='
-        prevPage: '&prev'
-        nextPage: '&next'
-        path: '@'
-        pageSize: '@'
-        tags: '='
+        state     : '@'
+        posts     : '='
+        prevPage  : '&prev'
+        nextPage  : '&next'
+        path      : '@'
+        pageSize  : '@'
+        tags      : '='
         currentPage: '='
-        shuffle: '='
+        shuffle   : '='
+        recursive : '@'
       restrict: 'E'
       controller: 'imagoPagerController as imagopager'
       bindToController: true
@@ -45,6 +46,8 @@ class imagoPagerController extends Controller
       if query?.path and _.includes query.path, '/page/'
         idx = query.path.indexOf '/page/'
         query.path = query.path.slice 0, idx
+
+      query.recursive = true if @recursive is [true, 'true']
 
       imagoModel.getData([query], {localData: false}).then (response) =>
         # console.log 'response', response
