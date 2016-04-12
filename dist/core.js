@@ -427,52 +427,99 @@
           filterAssets: function(assets, query) {
             var j, key, len, params, value;
             query = _.omit(query, 'path');
-            if (_.keys(query).length) {
-              for (key in query) {
-                value = query[key];
+            if (!_.keys(query).length) {
+              return assets;
+            }
+            for (key in query) {
+              value = query[key];
+              if (key === 'path') {
+                continue;
+              }
+              if (_.isArray(value)) {
                 for (j = 0, len = value.length; j < len; j++) {
                   params = value[j];
-                  if (key !== 'path') {
-                    assets = _.filter(assets, function(asset) {
-                      var elem, k, len1, ref;
-                      if ((ref = asset.fields) != null ? ref.hasOwnProperty(key) : void 0) {
-                        value = asset.fields[key]['value'];
-                        if (_.isString(value)) {
-                          if (value.match(new RegExp(params, 'i'))) {
-                            return true;
-                          }
+                  assets = _.filter(assets, function(asset) {
+                    var elem, k, len1, ref;
+                    if ((ref = asset.fields) != null ? ref.hasOwnProperty(key) : void 0) {
+                      value = asset.fields[key].value;
+                      if (_.isString(value)) {
+                        if (value.match(new RegExp(params, 'i'))) {
+                          return true;
                         }
-                        if (_.isNumber(value)) {
-                          if (ParseFloat(value === ParseFloat(params))) {
-                            return true;
-                          }
-                        }
-                        if (_.isArray(value)) {
-                          for (k = 0, len1 = value.length; k < len1; k++) {
-                            elem = value[k];
-                            if (elem.match(new RegExp(params, 'i'))) {
-                              return true;
-                            }
-                          }
-                        }
-                        return false;
-                      } else if (asset[key]) {
-                        value = asset[key];
-                        if (_.isString(value)) {
-                          if (value.match(new RegExp(params, 'i'))) {
-                            return true;
-                          }
-                        }
-                        if (_.isNumber(value)) {
-                          if (ParseFloat(value === ParseFloat(params))) {
-                            return true;
-                          }
-                        }
-                        return false;
                       }
-                    });
-                  }
+                      if (_.isNumber(value)) {
+                        if (ParseFloat(value === ParseFloat(params))) {
+                          return true;
+                        }
+                      }
+                      if (_.isArray(value)) {
+                        for (k = 0, len1 = value.length; k < len1; k++) {
+                          elem = value[k];
+                          if (elem.match(new RegExp(params, 'i'))) {
+                            return true;
+                          }
+                        }
+                      }
+                      return false;
+                    } else if (asset[key]) {
+                      value = asset[key];
+                      if (_.isString(value)) {
+                        if (value.match(new RegExp(params, 'i'))) {
+                          return true;
+                        }
+                      }
+                      if (_.isNumber(value)) {
+                        if (ParseFloat(value === ParseFloat(params))) {
+                          return true;
+                        }
+                      }
+                      return false;
+                    } else {
+                      return false;
+                    }
+                  });
                 }
+              } else {
+                assets = _.filter(assets, function(asset) {
+                  var elem, k, len1, ref;
+                  if ((ref = asset.fields) != null ? ref.hasOwnProperty(key) : void 0) {
+                    value = asset.fields[key].value;
+                    if (_.isString(value)) {
+                      if (value.match(new RegExp(value, 'i'))) {
+                        return true;
+                      }
+                    }
+                    if (_.isNumber(value)) {
+                      if (ParseFloat(value === ParseFloat(value))) {
+                        return true;
+                      }
+                    }
+                    if (_.isArray(value)) {
+                      for (k = 0, len1 = value.length; k < len1; k++) {
+                        elem = value[k];
+                        if (elem.match(new RegExp(value, 'i'))) {
+                          return true;
+                        }
+                      }
+                    }
+                    return false;
+                  } else if (asset[key]) {
+                    value = asset[key];
+                    if (_.isString(value)) {
+                      if (value.match(new RegExp(value, 'i'))) {
+                        return true;
+                      }
+                    }
+                    if (_.isNumber(value)) {
+                      if (ParseFloat(value === ParseFloat(value))) {
+                        return true;
+                      }
+                    }
+                    return false;
+                  } else {
+                    return false;
+                  }
+                });
               }
             }
             return assets;
