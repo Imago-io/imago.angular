@@ -8,5 +8,5 @@ class App extends App
 class imagoLoad extends Run
 
   constructor: ($window, $http) ->
-    # if $window.imagoSettings
-    #   $http.defaults.headers.common.Authorization = "Basic #{$window.imagoSettings.apikey}"
+    if $window.imagoSettings
+      $http.defaults.headers.common.Authorization = "Basic #{$window.imagoSettings.apikey}:"

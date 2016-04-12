@@ -11,7 +11,11 @@
   })();
 
   imagoLoad = (function() {
-    function imagoLoad($window, $http) {}
+    function imagoLoad($window, $http) {
+      if ($window.imagoSettings) {
+        $http.defaults.headers.common.Authorization = "Basic " + $window.imagoSettings.apikey + ":";
+      }
+    }
 
     return imagoLoad;
 
