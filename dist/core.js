@@ -425,77 +425,28 @@
             return _.findIndex(this.data, options);
           },
           filterAssets: function(assets, query) {
-            var j, key, len, params, value;
+            var filter, j, key, len, params, value;
             query = _.omit(query, 'path');
-            if (!_.keys(query).length) {
-              return assets;
-            }
-            for (key in query) {
-              value = query[key];
-              if (key === 'path') {
-                continue;
-              }
-              if (_.isArray(value)) {
-                for (j = 0, len = value.length; j < len; j++) {
-                  params = value[j];
-                  assets = _.filter(assets, function(asset) {
-                    var elem, k, len1, ref;
-                    if ((ref = asset.fields) != null ? ref.hasOwnProperty(key) : void 0) {
-                      value = asset.fields[key].value;
-                      if (_.isString(value)) {
-                        if (value.match(new RegExp(params, 'i'))) {
-                          return true;
-                        }
-                      }
-                      if (_.isNumber(value)) {
-                        if (ParseFloat(value === ParseFloat(params))) {
-                          return true;
-                        }
-                      }
-                      if (_.isArray(value)) {
-                        for (k = 0, len1 = value.length; k < len1; k++) {
-                          elem = value[k];
-                          if (elem.match(new RegExp(params, 'i'))) {
-                            return true;
-                          }
-                        }
-                      }
-                      return false;
-                    } else if (asset[key]) {
-                      value = asset[key];
-                      if (_.isString(value)) {
-                        if (value.match(new RegExp(params, 'i'))) {
-                          return true;
-                        }
-                      }
-                      if (_.isNumber(value)) {
-                        if (ParseFloat(value === ParseFloat(params))) {
-                          return true;
-                        }
-                      }
-                      return false;
-                    }
-                  });
-                }
-              } else if (_.isString(value)) {
-                assets = _.filter(assets, function(asset) {
-                  var elem, k, len1, ref;
+            if (_.keys(query).length) {
+              filter = function(params, key) {
+                return _.filter(assets, function(asset) {
+                  var elem, j, len, ref, value;
                   if ((ref = asset.fields) != null ? ref.hasOwnProperty(key) : void 0) {
                     value = asset.fields[key].value;
                     if (_.isString(value)) {
-                      if (value.match(new RegExp(value, 'i'))) {
+                      if (value.match(new RegExp(params, 'i'))) {
                         return true;
                       }
                     }
                     if (_.isNumber(value)) {
-                      if (ParseFloat(value === ParseFloat(value))) {
+                      if (ParseFloat(value === ParseFloat(params))) {
                         return true;
                       }
                     }
                     if (_.isArray(value)) {
-                      for (k = 0, len1 = value.length; k < len1; k++) {
-                        elem = value[k];
-                        if (elem.match(new RegExp(value, 'i'))) {
+                      for (j = 0, len = value.length; j < len; j++) {
+                        elem = value[j];
+                        if (elem.match(new RegExp(params, 'i'))) {
                           return true;
                         }
                       }
@@ -504,20 +455,32 @@
                   } else if (asset[key]) {
                     value = asset[key];
                     if (_.isString(value)) {
-                      if (value.match(new RegExp(value, 'i'))) {
+                      if (value.match(new RegExp(params, 'i'))) {
                         return true;
                       }
                     }
                     if (_.isNumber(value)) {
-                      if (ParseFloat(value === ParseFloat(value))) {
+                      if (ParseFloat(value === ParseFloat(params))) {
                         return true;
                       }
                     }
                     return false;
-                  } else {
-                    return false;
                   }
                 });
+              };
+              for (key in query) {
+                value = query[key];
+                if (key === 'path') {
+                  continue;
+                }
+                if (_.isArray(value)) {
+                  for (j = 0, len = value.length; j < len; j++) {
+                    params = value[j];
+                    assets = filter(params, key);
+                  }
+                } else if (_.isString(value)) {
+                  assets = filter(value, key);
+                }
               }
             }
             return assets;

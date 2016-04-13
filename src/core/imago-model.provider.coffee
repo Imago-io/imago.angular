@@ -277,54 +277,35 @@ class imagoModel extends Provider
           _.findIndex @data, options
 
         filterAssets: (assets, query) ->
-          # delete query.path if query.path
           query = _.omit query, 'path'
-          return assets unless _.keys(query).length
-          for key, value of query
-            continue if key is  'path'
-            if _.isArray value
-              for params in value
-                assets = _.filter assets, (asset) ->
-                  # console.log 'asset', asset[key], params
-                  if asset.fields?.hasOwnProperty key
-                    value = asset.fields[key].value
-
-                    return true if value.match new RegExp params, 'i' if _.isString value
-                    return true if ParseFloat value == ParseFloat params if _.isNumber value
-                    if _.isArray value
-                      for elem in value
-                        return true if elem.match new RegExp params, 'i'
-                    return false
-
-                  else if asset[key]
-                    value = asset[key]
-                    return true if value.match new RegExp params, 'i' if _.isString value
-                    return true if ParseFloat value == ParseFloat params if _.isNumber value
-                    return false
-            else if _.isString value
-              assets = _.filter assets, (asset) ->
-                # console.log 'asset', asset[key], value
+          if _.keys(query).length
+            filter = (params, key) ->
+              return _.filter assets, (asset) ->
                 if asset.fields?.hasOwnProperty key
                   value = asset.fields[key].value
 
-                  return true if value.match new RegExp value, 'i' if _.isString value
-                  return true if ParseFloat value == ParseFloat value if _.isNumber value
+                  return true if value.match new RegExp params, 'i' if _.isString value
+                  return true if ParseFloat value == ParseFloat params if _.isNumber value
                   if _.isArray value
                     for elem in value
-                      return true if elem.match new RegExp value, 'i'
+                      return true if elem.match new RegExp params, 'i'
                   return false
 
                 else if asset[key]
                   value = asset[key]
-                  return true if value.match new RegExp value, 'i' if _.isString value
-                  return true if ParseFloat value == ParseFloat value if _.isNumber value
+                  return true if value.match new RegExp params, 'i' if _.isString value
+                  return true if ParseFloat value == ParseFloat params if _.isNumber value
                   return false
-                else
-                  return false
+
+            for key, value of query
+              continue if key is  'path'
+              if _.isArray value
+                for params in value
+                  assets = filter(params, key)
+              else if _.isString value
+                assets = filter(value, key)
 
           return assets
-
-
 
         updateCount: (parent, number) ->
           parent.count = parent.count + number
