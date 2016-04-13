@@ -301,9 +301,7 @@ class imagoModel extends Provider
                     return true if value.match new RegExp params, 'i' if _.isString value
                     return true if ParseFloat value == ParseFloat params if _.isNumber value
                     return false
-                  else
-                    return false
-            else
+            else if _.isString value
               assets = _.filter assets, (asset) ->
                 # console.log 'asset', asset[key], value
                 if asset.fields?.hasOwnProperty key

@@ -474,12 +474,10 @@
                         }
                       }
                       return false;
-                    } else {
-                      return false;
                     }
                   });
                 }
-              } else {
+              } else if (_.isString(value)) {
                 assets = _.filter(assets, function(asset) {
                   var elem, k, len1, ref;
                   if ((ref = asset.fields) != null ? ref.hasOwnProperty(key) : void 0) {
