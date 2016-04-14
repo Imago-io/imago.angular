@@ -1032,6 +1032,7 @@
           scope.scrollPos = [];
           scope.$on('$viewContentLoaded', function() {
             var history;
+            scope.scrollPos.unshift({});
             history = _.find(scope.scrollPos, {
               path: $location.absUrl()
             });
@@ -1041,15 +1042,14 @@
             }
             return $timeout(function() {
               $window.scrollTo(0, history != null ? history.scroll : void 0);
-              scope.scrollPos.unshift({});
               if (scope.scrollPos.length > 2) {
                 return scope.scrollPos = scope.scrollPos.slice(0, 2);
               }
             }, 500);
           });
-          return scope.$on('$locationChangeStart', function(evt, newUrl, old, newState, oldState) {
+          return scope.$on('$stateChangeStart', function(evt, state1, newParams, state2, oldParams, opts) {
             return scope.scrollPos[0] = {
-              path: old,
+              path: $location.absUrl(),
               scroll: $window.scrollY
             };
           });
