@@ -80,6 +80,9 @@
       this.setIndexRange = function(value) {
         return indexRange = value;
       };
+      this.getHost = function() {
+        return host;
+      };
       this.setHost = function(value) {
         return host = value;
       };
@@ -1025,7 +1028,7 @@
   var ImagoSaveScroll;
 
   ImagoSaveScroll = (function() {
-    function ImagoSaveScroll($window, $timeout, $location) {
+    function ImagoSaveScroll($window, $timeout, $state, $location) {
       return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -1034,22 +1037,22 @@
             var history;
             scope.scrollPos.unshift({});
             history = _.find(scope.scrollPos, {
-              path: $location.absUrl()
+              path: $state.href($state.current, $state.params)
             });
+            if (scope.scrollPos.length >= 2) {
+              scope.scrollPos = scope.scrollPos.slice(0, 2);
+            }
             if (!(history != null ? history.scroll : void 0)) {
               $window.scrollTo(0, 0);
               return;
             }
             return $timeout(function() {
-              $window.scrollTo(0, history != null ? history.scroll : void 0);
-              if (scope.scrollPos.length > 2) {
-                return scope.scrollPos = scope.scrollPos.slice(0, 2);
-              }
+              return $window.scrollTo(0, history != null ? history.scroll : void 0);
             }, 500);
           });
-          return scope.$on('$stateChangeStart', function(evt, state1, newParams, state2, oldParams, opts) {
+          return scope.$on('$stateChangeStart', function(evt, newState, newParams, oldState, oldParams, opts) {
             return scope.scrollPos[0] = {
-              path: $location.absUrl(),
+              path: $state.href(oldState, oldParams),
               scroll: $window.scrollY
             };
           });
@@ -1061,7 +1064,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoSaveScroll', ['$window', '$timeout', '$location', ImagoSaveScroll]);
+  angular.module('imago').directive('imagoSaveScroll', ['$window', '$timeout', '$state', '$location', ImagoSaveScroll]);
 
 }).call(this);
 

@@ -13,6 +13,9 @@ class imagoModel extends Provider
     @setIndexRange = (value) ->
       indexRange = value
 
+    @getHost = ->
+      host
+
     @setHost = (value) ->
       host = value
 
