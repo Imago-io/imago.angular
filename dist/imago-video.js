@@ -205,8 +205,7 @@
 
     imagoVideoController.prototype.getSize = function() {
       this.width = this.$element.children()[0].clientWidth;
-      this.height = this.$element.children()[0].clientHeight;
-      return console.log("getSize: " + this.width + "x" + this.height);
+      return this.height = this.$element.children()[0].clientHeight;
     };
 
     imagoVideoController.prototype.resize = function() {

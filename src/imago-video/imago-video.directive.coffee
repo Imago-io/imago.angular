@@ -143,7 +143,7 @@ class imagoVideoController extends Controller
   getSize: ->
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
-    console.log "getSize: #{@width}x#{@height}"
+    # console.log "getSize: #{@width}x#{@height}"
     # debugger
 
   resize: ->
