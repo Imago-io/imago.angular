@@ -1,0 +1,8 @@
+.imago-instagram-content
+  a.item(
+    ng-href="{{item.link}}" target="_blank"
+    ng-repeat="item in instagram.data track by item.id")
+    .img(ng-style="{'background-image': 'url({{ item.images.standard_resolution.url }})'}")
+    .caption
+      .text(ng-bind-html="::item.caption.text | imagoLinkify: 'instagram'")
+      .likes {{::item.likes.count}}

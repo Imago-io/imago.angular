@@ -20,6 +20,52 @@
 }).call(this);
 
 (function() {
+  var ImagoLinkify;
+
+  ImagoLinkify = (function() {
+    function ImagoLinkify() {
+      return function(_str, type) {
+        var _text;
+        if (!_str || !type) {
+          return;
+        }
+        _text = _str.replace(/(?:https?\:\/\/|www\.)+(?![^\s]*?")([\w.,@?!^=%&amp;:\/~+#-]*[\w@?!^=%&amp;\/~+#-])?/ig, function(url) {
+          var anch, wrap;
+          wrap = document.createElement('div');
+          anch = document.createElement('a');
+          anch.href = url;
+          anch.target = '_blank';
+          anch.innerHTML = url;
+          wrap.appendChild(anch);
+          return wrap.innerHTML;
+        });
+        if (!_text) {
+          return '';
+        }
+        if (type === 'twitter') {
+          _text = _text.replace(/(|\s)*@([\u00C0-\u1FFF\w]+)/g, '$1<a href="https://twitter.com/$2" target="_blank">@$2</a>');
+          _text = _text.replace(/(^|\s)*#([\u00C0-\u1FFF\w]+)/g, '$1<a href="https://twitter.com/search?q=%23$2" target="_blank">#$2</a>');
+        }
+        if (type === 'instagram') {
+          _text = _text.replace(/(|\s)*@([\u00C0-\u1FFF\w]+)/g, '$1<a href="https://instagram.com/$2" target="_blank">@$2</a>');
+          _text = _text.replace(/(^|\s)*#([\u00C0-\u1FFF\w]+)/g, '$1<span class=\'hashtag\'>#$2</span>');
+        }
+        if (type === 'github') {
+          _text = _text.replace(/(|\s)*@(\w+)/g, '$1<a href="https://github.com/$2" target="_blank">@$2</a>');
+        }
+        return _text;
+      };
+    }
+
+    return ImagoLinkify;
+
+  })();
+
+  angular.module('imago').filter('imagoLinkify', [ImagoLinkify]);
+
+}).call(this);
+
+(function() {
   var Normalize;
 
   Normalize = (function() {
