@@ -71,7 +71,7 @@
     function imagoModel() {
       var host, indexRange, nextClient, sortWorker;
       sortWorker = 'sort.worker.js';
-      host = '//api.imago.io';
+      host = 'https://api.imago.io';
       nextClient = 'public';
       indexRange = 10000;
       this.setSortWorker = function(value) {
@@ -1039,7 +1039,7 @@
             history = _.find(scope.scrollPos, {
               path: $state.href($state.current, $state.params)
             });
-            if (scope.scrollPos.length >= 2) {
+            if (scope.scrollPos.length > 2) {
               scope.scrollPos = scope.scrollPos.slice(0, 2);
             }
             if (!(history != null ? history.scroll : void 0)) {
