@@ -103,9 +103,10 @@ class imagoProduct extends Factory
         @selected = variant
 
       addToCart: (product, options, fields) ->
-        unless product
-          @error = true
-        else
+        if product
           @error = false
           product.qty = 1
           imagoCart.add product, options, fields
+        else
+          @error = true
+

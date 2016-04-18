@@ -826,12 +826,12 @@
         };
 
         ProductInstance.prototype.addToCart = function(product, options, fields) {
-          if (!product) {
-            return this.error = true;
-          } else {
+          if (product) {
             this.error = false;
             product.qty = 1;
             return imagoCart.add(product, options, fields);
+          } else {
+            return this.error = true;
           }
         };
 

@@ -33,7 +33,7 @@
     function imagoPagerController($scope, $attrs, imagoModel, $state) {
       this.fetchPosts = (function(_this) {
         return function() {
-          var idx, query;
+          var idx, query, ref;
           _this.count += 1;
           _this.posts = [];
           _this.pageSize = parseInt(_this.pageSize) || 10;
@@ -53,7 +53,7 @@
             idx = query.path.indexOf('/page/');
             query.path = query.path.slice(0, idx);
           }
-          if (_this.recursive === [true, 'true']) {
+          if ((ref = _this.recursive) === true || ref === 'true') {
             query.recursive = true;
           }
           return imagoModel.getData([query], {

@@ -11,7 +11,7 @@ class ImagoSaveScroll extends Directive
         scope.$on '$viewContentLoaded', ->
           scope.scrollPos.unshift({})
           history = _.find scope.scrollPos, {path: $state.href($state.current, $state.params)}
-          if scope.scrollPos.length >= 2
+          if scope.scrollPos.length > 2
             scope.scrollPos = scope.scrollPos.slice 0, 2
 
           if !history?.scroll

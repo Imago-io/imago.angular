@@ -47,7 +47,7 @@ class imagoPagerController extends Controller
         idx = query.path.indexOf '/page/'
         query.path = query.path.slice 0, idx
 
-      query.recursive = true if @recursive is [true, 'true']
+      query.recursive = true if @recursive in [true, 'true']
 
       imagoModel.getData([query], {localData: false}).then (response) =>
         # console.log 'response', response
