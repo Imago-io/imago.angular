@@ -189,11 +189,11 @@
             codec: 'mp4'
           }), 'height').reverse();
           _this.sources.push({
-            src: _this.$sce.trustAsResourceUrl("//" + _this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.first(mp4s).codec) + "&size=" + (_.first(mp4s).size)),
+            src: _this.$sce.trustAsResourceUrl(_this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.first(mp4s).codec) + "&size=" + (_.first(mp4s).size)),
             type: "video/" + (_.first(mp4s).codec)
           });
           _this.sources.push({
-            src: _this.$sce.trustAsResourceUrl("//" + _this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.first(webms).codec) + "&size=" + (_.first(webms).size)),
+            src: _this.$sce.trustAsResourceUrl(_this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.first(webms).codec) + "&size=" + (_.first(webms).size)),
             type: "video/" + (_.first(webms).codec)
           });
           if (_this.asset.serving_url) {
