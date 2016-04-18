@@ -59,7 +59,7 @@
     function imagoModel() {
       var host, indexRange, sortWorker;
       sortWorker = 'sort.worker.js';
-      host = '//api.imago.io';
+      host = 'https://api.imago.io';
       indexRange = 10000;
       this.setSortWorker = function(value) {
         return sortWorker = value;
