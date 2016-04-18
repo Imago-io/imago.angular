@@ -1,5 +1,5 @@
 (function() {
-  var App;
+  var App, imagoLoad;
 
   App = (function() {
     function App() {
@@ -10,7 +10,18 @@
 
   })();
 
-  angular.module('imago', new App());
+  imagoLoad = (function() {
+    function imagoLoad($window, $http) {
+      if ($window.imagoSettings) {
+        $http.defaults.headers.common.Authorization = "Basic " + $window.imagoSettings.apikey + ":";
+      }
+    }
+
+    return imagoLoad;
+
+  })();
+
+  angular.module('imago', new App()).run(['$window', '$http', imagoLoad]);
 
 }).call(this);
 
