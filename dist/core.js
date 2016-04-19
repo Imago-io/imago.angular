@@ -206,7 +206,7 @@
                 }
                 for (key in query) {
                   value = query[key];
-                  if (key === 'fts') {
+                  if (key === 'fts' || key === 'page' || key === 'pagesize') {
                     return reject(query);
                   } else if (key === 'collection') {
                     query = imagoUtils.renameKey('collection', 'path', query);
@@ -226,7 +226,7 @@
                   return reject(query);
                 }
                 localQuery = {
-                  'path': _.isString(path) ? path : _.first(path)
+                  'path': _.isString(path) ? path : _.head(path)
                 };
                 asset = _this.find(localQuery);
                 if (!asset) {

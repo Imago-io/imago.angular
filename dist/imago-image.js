@@ -127,9 +127,9 @@
       this.asset = asset;
       this.placeholderUrl = this.asset.b64 || (this.asset.serving_url + "=s3");
       this.resolution = this.asset.resolution.split('x');
-      this.assetRatio = _.first(this.resolution) / _.last(this.resolution);
+      this.assetRatio = _.head(this.resolution) / _.last(this.resolution);
       this.spacerStyle = {
-        paddingBottom: (_.last(this.resolution) / _.first(this.resolution) * 100) + "%"
+        paddingBottom: (_.last(this.resolution) / _.head(this.resolution) * 100) + "%"
       };
       if (((ref = this.asset.fields) != null ? (ref1 = ref.crop) != null ? ref1.value : void 0 : void 0) && !this.$attrs.align) {
         this.opts.align = this.asset.fields.crop.value;

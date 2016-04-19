@@ -108,13 +108,11 @@ class imagoModel extends Provider
           return $q (resolve, reject) =>
             for key, value of options
               if key is 'localData' and value is false
-                # console.log 'localdata false', query
                 return reject query
 
             for key, value of query
 
-              if key is 'fts'
-                # console.log 'fts'
+              if key in ['fts', 'page', 'pagesize']
                 return reject query
 
               else if key is 'collection'
@@ -137,7 +135,7 @@ class imagoModel extends Provider
             return reject query unless path
 
             localQuery =
-              'path' : if _.isString path then path else _.first(path)
+              'path' : if _.isString path then path else _.head(path)
 
             asset = @find(localQuery)
 

@@ -85,8 +85,8 @@ class imagoVideoController extends Controller
     @asset = asset
     # @placeholderUrl = @asset.b64 or "#{@asset.serving_url}=s3"
     @resolution =  @asset.resolution.split('x')
-    @assetRatio = _.first(@resolution) / _.last(@resolution)
-    @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
+    @assetRatio = _.head(@resolution) / _.last(@resolution)
+    @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.head(@resolution) * 100}%"
 
     if @asset.fields?.crop?.value and not @$attrs.align
       @opts.align = @asset.fields.crop.value
@@ -130,12 +130,12 @@ class imagoVideoController extends Controller
       mp4s  = _.sortBy(_.filter(@asset.fields.formats, codec: 'mp4' ), 'height').reverse()
 
       @sources.push
-        src: @$sce.trustAsResourceUrl("#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{_.first(mp4s).codec}&size=#{_.first(mp4s).size}")
-        type: "video/#{_.first(mp4s).codec}"
+        src: @$sce.trustAsResourceUrl("#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{_.head(mp4s).codec}&size=#{_.head(mp4s).size}")
+        type: "video/#{_.head(mp4s).codec}"
 
       @sources.push
-        src: @$sce.trustAsResourceUrl("#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{_.first(webms).codec}&size=#{_.first(webms).size}")
-        type: "video/#{_.first(webms).codec}"
+        src: @$sce.trustAsResourceUrl("#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{_.head(webms).codec}&size=#{_.head(webms).size}")
+        type: "video/#{_.head(webms).codec}"
 
       @poster = "#{@asset.serving_url}=s2000-h720" if @asset.serving_url
 

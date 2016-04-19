@@ -84,8 +84,8 @@ class imagoImageController extends Controller
     @placeholderUrl = @asset.b64 or "#{@asset.serving_url}=s3"
     # @placeholderUrl = "#{@asset.serving_url}=s30"
     @resolution  = @asset.resolution.split('x')
-    @assetRatio  = _.first(@resolution) / _.last(@resolution)
-    @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.first(@resolution) * 100}%"
+    @assetRatio  = _.head(@resolution) / _.last(@resolution)
+    @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.head(@resolution) * 100}%"
 
     if @asset.fields?.crop?.value and not @$attrs.align
       @opts.align = @asset.fields.crop.value

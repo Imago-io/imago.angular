@@ -131,9 +131,9 @@
       var ref, ref1, ref2, ref3;
       this.asset = asset;
       this.resolution = this.asset.resolution.split('x');
-      this.assetRatio = _.first(this.resolution) / _.last(this.resolution);
+      this.assetRatio = _.head(this.resolution) / _.last(this.resolution);
       this.spacerStyle = {
-        paddingBottom: (_.last(this.resolution) / _.first(this.resolution) * 100) + "%"
+        paddingBottom: (_.last(this.resolution) / _.head(this.resolution) * 100) + "%"
       };
       if (((ref = this.asset.fields) != null ? (ref1 = ref.crop) != null ? ref1.value : void 0 : void 0) && !this.$attrs.align) {
         this.opts.align = this.asset.fields.crop.value;
@@ -189,12 +189,12 @@
             codec: 'mp4'
           }), 'height').reverse();
           _this.sources.push({
-            src: _this.$sce.trustAsResourceUrl(_this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.first(mp4s).codec) + "&size=" + (_.first(mp4s).size)),
-            type: "video/" + (_.first(mp4s).codec)
+            src: _this.$sce.trustAsResourceUrl(_this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.head(mp4s).codec) + "&size=" + (_.head(mp4s).size)),
+            type: "video/" + (_.head(mp4s).codec)
           });
           _this.sources.push({
-            src: _this.$sce.trustAsResourceUrl(_this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.first(webms).codec) + "&size=" + (_.first(webms).size)),
-            type: "video/" + (_.first(webms).codec)
+            src: _this.$sce.trustAsResourceUrl(_this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.head(webms).codec) + "&size=" + (_.head(webms).size)),
+            type: "video/" + (_.head(webms).codec)
           });
           if (_this.asset.serving_url) {
             return _this.poster = _this.asset.serving_url + "=s2000-h720";

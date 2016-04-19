@@ -1,95 +1,99 @@
 class imagoPager extends Directive
 
-  constructor: ->
+  constructor: (imagoModel, $state) ->
 
     return {
 
       scope:
-        state     : '@'
-        posts     : '='
-        prevPage  : '&prev'
-        nextPage  : '&next'
-        path      : '@'
-        pageSize  : '@'
-        tags      : '='
-        currentPage: '='
-        shuffle   : '='
-        recursive : '@'
+        query       : '@'
+        posts       : '='
+        state       : '@'
+        prevPage    : '&prev'
+        nextPage    : '&next'
+        pageSize    : '@'
+        tags        : '=?'
+        currentPage : '=?'
+        opts        : '@'
       restrict: 'E'
-      controller: 'imagoPagerController as imagopager'
-      bindToController: true
       templateUrl: (element, attrs) ->
         return attrs.templateUrl or '/imago/imago-pager.html'
+      link: (scope, element, attrs) ->
+
+        scope.fetchPosts = ->
+          scope.loaded = false
+          scope.count += 1
+          scope.posts = []
+          scope.pageSize = $state.current.data?.pageSize or parseInt(scope.pageSize) or 10
+          scope.currentPage = $state.params.page or parseInt(scope.currentPage) or 1
+          if !scope.state
+            scope.state = $state.current.data?.state or _.head($state.current.name.split('.'))
+
+          query = scope.query or attrs.path or $state.current.data?.query
+          if _.includes query, '{'
+            query = scope.$eval query
+          else
+            query = {path: query}
+
+          query.page = scope.currentPage
+          query.pagesize = scope.pageSize
+
+          if scope.opts and _.includes scope.opts, '{'
+            scope.opts = scope.$eval scope.opts
+
+          scope.opts or= {}
+
+          if $state.params.tag or scope.tags
+            query['tags'] = $state.params.tag or scope.tags
+
+          if query?.path and _.includes query.path, '/page/'
+            idx = query.path.indexOf '/page/'
+            query.path = query.path.slice 0, idx
+
+          imagoModel.getData(query).then (response) =>
+            for collection in response
+              scope.next = collection.next
+
+              if scope.opts.shuffle
+                scope.posts = _.shuffle collection.assets
+              else
+                scope.posts = collection.assets
+
+              scope.totalPages = collection.count / scope.pageSize
+              break
+
+            scope.loaded = true
+
+        scope.prevState = ->
+          if $state.params.tag
+            $state.go "#{scope.state}.filtered.paged", {'tag': $state.params.tag, 'page': scope.currentPage}
+          else if scope.state
+            $state.go "#{scope.state}.paged", {'page': scope.currentPage}
+
+        scope.nextState = ->
+          if $state.params.tag
+            $state.go "#{scope.state}.filtered.paged", {'tag': $state.params.tag, 'page': scope.currentPage}
+          else if scope.state
+            $state.go "#{scope.state}.paged", {'page': scope.currentPage}
+
+        scope.onPrev = ->
+          scope.currentPage--
+          if attrs.prev
+            scope.prevPage()
+          else if scope.state
+            scope.prevState()
+
+        scope.onNext = ->
+          scope.currentPage++
+          if attrs.next
+            scope.nextPage()
+          else if scope.state
+            scope.nextState()
+
+        scope.$watchGroup ['currentPage', 'tags'], scope.fetchPosts
+
+        if scope.state
+          scope.$on '$stateChangeSuccess', (evt, current, params) ->
+            scope.currentPage = 1 if scope.state is current.name
 
     }
 
-class imagoPagerController extends Controller
-
-  constructor: ($scope, $attrs, imagoModel, $state) ->
-
-    @fetchPosts = =>
-      @count += 1
-      @posts = []
-      @pageSize = parseInt(@pageSize) or 10
-      @currentPage = parseInt(@currentPage) or $state.params.page or 1
-      @state = 'blog' unless @state
-
-      query =
-        path:     @path
-        page:     @currentPage
-        pagesize: @pageSize
-
-      if @tags or $state.params.tag
-        query['tags'] = @tags or $state.params.tag
-
-      # console.log 'query', query
-      if query?.path and _.includes query.path, '/page/'
-        idx = query.path.indexOf '/page/'
-        query.path = query.path.slice 0, idx
-
-      query.recursive = true if @recursive in [true, 'true']
-
-      imagoModel.getData([query], {localData: false}).then (response) =>
-        # console.log 'response', response
-        for collection in response
-          @next = collection.next
-
-          if @shuffle is 'true'
-            @posts = _.shuffle collection.assets
-          else
-            @posts = collection.assets
-
-          @totalPages = collection.count / @pageSize
-          break
-
-    @prevState = ->
-      if $state.params.tag
-        $state.go "#{@state}.filtered.paged", {'tag': $state.params.tag, 'page': @currentPage}
-      else if @state
-        $state.go "#{@state}.paged", {'page': @currentPage}
-
-    @nextState = ->
-      if $state.params.tag
-        $state.go "#{@state}.filtered.paged", {'tag': $state.params.tag, 'page': @currentPage}
-      else if @state
-        $state.go "#{@state}.paged", {'page': @currentPage}
-
-    @onPrev = =>
-      @currentPage--
-      if $attrs.prev
-        @prevPage()
-      else if @state
-        @prevState()
-
-    @onNext = =>
-      @currentPage++
-      if $attrs.next
-        @nextPage()
-      else if @state
-        @nextState()
-
-    $scope.$watchGroup ['imagopager.currentPage', 'imagopager.tags'], @fetchPosts
-
-    if @state
-      $scope.$on '$stateChangeSuccess', (evt, current, params) =>
-        @currentPage = 1 if @state is current.name

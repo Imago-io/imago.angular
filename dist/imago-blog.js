@@ -1,26 +1,122 @@
 (function() {
-  var imagoPager, imagoPagerController;
+  var imagoPager;
 
   imagoPager = (function() {
-    function imagoPager() {
+    function imagoPager(imagoModel, $state) {
       return {
         scope: {
-          state: '@',
+          query: '@',
           posts: '=',
+          state: '@',
           prevPage: '&prev',
           nextPage: '&next',
-          path: '@',
           pageSize: '@',
-          tags: '=',
-          currentPage: '=',
-          shuffle: '=',
-          recursive: '@'
+          tags: '=?',
+          currentPage: '=?',
+          opts: '@'
         },
         restrict: 'E',
-        controller: 'imagoPagerController as imagopager',
-        bindToController: true,
         templateUrl: function(element, attrs) {
           return attrs.templateUrl || '/imago/imago-pager.html';
+        },
+        link: function(scope, element, attrs) {
+          scope.fetchPosts = function() {
+            var idx, query, ref, ref1, ref2;
+            scope.loaded = false;
+            scope.count += 1;
+            scope.posts = [];
+            scope.pageSize = ((ref = $state.current.data) != null ? ref.pageSize : void 0) || parseInt(scope.pageSize) || 10;
+            scope.currentPage = $state.params.page || parseInt(scope.currentPage) || 1;
+            if (!scope.state) {
+              scope.state = ((ref1 = $state.current.data) != null ? ref1.state : void 0) || _.head($state.current.name.split('.'));
+            }
+            query = scope.query || attrs.path || ((ref2 = $state.current.data) != null ? ref2.query : void 0);
+            if (_.includes(query, '{')) {
+              query = scope.$eval(query);
+            } else {
+              query = {
+                path: query
+              };
+            }
+            query.page = scope.currentPage;
+            query.pagesize = scope.pageSize;
+            if (scope.opts && _.includes(scope.opts, '{')) {
+              scope.opts = scope.$eval(scope.opts);
+            }
+            scope.opts || (scope.opts = {});
+            if ($state.params.tag || scope.tags) {
+              query['tags'] = $state.params.tag || scope.tags;
+            }
+            if ((query != null ? query.path : void 0) && _.includes(query.path, '/page/')) {
+              idx = query.path.indexOf('/page/');
+              query.path = query.path.slice(0, idx);
+            }
+            return imagoModel.getData(query).then((function(_this) {
+              return function(response) {
+                var collection, i, len;
+                for (i = 0, len = response.length; i < len; i++) {
+                  collection = response[i];
+                  scope.next = collection.next;
+                  if (scope.opts.shuffle) {
+                    scope.posts = _.shuffle(collection.assets);
+                  } else {
+                    scope.posts = collection.assets;
+                  }
+                  scope.totalPages = collection.count / scope.pageSize;
+                  break;
+                }
+                return scope.loaded = true;
+              };
+            })(this));
+          };
+          scope.prevState = function() {
+            if ($state.params.tag) {
+              return $state.go(scope.state + ".filtered.paged", {
+                'tag': $state.params.tag,
+                'page': scope.currentPage
+              });
+            } else if (scope.state) {
+              return $state.go(scope.state + ".paged", {
+                'page': scope.currentPage
+              });
+            }
+          };
+          scope.nextState = function() {
+            if ($state.params.tag) {
+              return $state.go(scope.state + ".filtered.paged", {
+                'tag': $state.params.tag,
+                'page': scope.currentPage
+              });
+            } else if (scope.state) {
+              return $state.go(scope.state + ".paged", {
+                'page': scope.currentPage
+              });
+            }
+          };
+          scope.onPrev = function() {
+            scope.currentPage--;
+            if (attrs.prev) {
+              return scope.prevPage();
+            } else if (scope.state) {
+              return scope.prevState();
+            }
+          };
+          scope.onNext = function() {
+            scope.currentPage++;
+            if (attrs.next) {
+              return scope.nextPage();
+            } else if (scope.state) {
+              return scope.nextState();
+            }
+          };
+          scope.$watchGroup(['currentPage', 'tags'], scope.fetchPosts);
+          if (scope.state) {
+            return scope.$on('$stateChangeSuccess', function(evt, current, params) {
+              if (scope.state === current.name) {
+                return scope.currentPage = 1;
+              }
+            });
+          }
         }
       };
     }
@@ -29,115 +125,8 @@
 
   })();
 
-  imagoPagerController = (function() {
-    function imagoPagerController($scope, $attrs, imagoModel, $state) {
-      this.fetchPosts = (function(_this) {
-        return function() {
-          var idx, query, ref;
-          _this.count += 1;
-          _this.posts = [];
-          _this.pageSize = parseInt(_this.pageSize) || 10;
-          _this.currentPage = parseInt(_this.currentPage) || $state.params.page || 1;
-          if (!_this.state) {
-            _this.state = 'blog';
-          }
-          query = {
-            path: _this.path,
-            page: _this.currentPage,
-            pagesize: _this.pageSize
-          };
-          if (_this.tags || $state.params.tag) {
-            query['tags'] = _this.tags || $state.params.tag;
-          }
-          if ((query != null ? query.path : void 0) && _.includes(query.path, '/page/')) {
-            idx = query.path.indexOf('/page/');
-            query.path = query.path.slice(0, idx);
-          }
-          if ((ref = _this.recursive) === true || ref === 'true') {
-            query.recursive = true;
-          }
-          return imagoModel.getData([query], {
-            localData: false
-          }).then(function(response) {
-            var collection, i, len, results;
-            results = [];
-            for (i = 0, len = response.length; i < len; i++) {
-              collection = response[i];
-              _this.next = collection.next;
-              if (_this.shuffle === 'true') {
-                _this.posts = _.shuffle(collection.assets);
-              } else {
-                _this.posts = collection.assets;
-              }
-              _this.totalPages = collection.count / _this.pageSize;
-              break;
-            }
-            return results;
-          });
-        };
-      })(this);
-      this.prevState = function() {
-        if ($state.params.tag) {
-          return $state.go(this.state + ".filtered.paged", {
-            'tag': $state.params.tag,
-            'page': this.currentPage
-          });
-        } else if (this.state) {
-          return $state.go(this.state + ".paged", {
-            'page': this.currentPage
-          });
-        }
-      };
-      this.nextState = function() {
-        if ($state.params.tag) {
-          return $state.go(this.state + ".filtered.paged", {
-            'tag': $state.params.tag,
-            'page': this.currentPage
-          });
-        } else if (this.state) {
-          return $state.go(this.state + ".paged", {
-            'page': this.currentPage
-          });
-        }
-      };
-      this.onPrev = (function(_this) {
-        return function() {
-          _this.currentPage--;
-          if ($attrs.prev) {
-            return _this.prevPage();
-          } else if (_this.state) {
-            return _this.prevState();
-          }
-        };
-      })(this);
-      this.onNext = (function(_this) {
-        return function() {
-          _this.currentPage++;
-          if ($attrs.next) {
-            return _this.nextPage();
-          } else if (_this.state) {
-            return _this.nextState();
-          }
-        };
-      })(this);
-      $scope.$watchGroup(['imagopager.currentPage', 'imagopager.tags'], this.fetchPosts);
-      if (this.state) {
-        $scope.$on('$stateChangeSuccess', (function(_this) {
-          return function(evt, current, params) {
-            if (_this.state === current.name) {
-              return _this.currentPage = 1;
-            }
-          };
-        })(this));
-      }
-    }
-
-    return imagoPagerController;
-
-  })();
-
-  angular.module('imago').directive('imagoPager', [imagoPager]).controller('imagoPagerController', ['$scope', '$attrs', 'imagoModel', '$state', imagoPagerController]);
+  angular.module('imago').directive('imagoPager', ['imagoModel', '$state', imagoPager]);
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-pager.html","<div class=\"imago-pager-content\"><button ng-disabled=\"imagopager.currentPage &lt;= 1\" ng-click=\"imagopager.onPrev()\" class=\"prev\">Previous</button><button ng-disabled=\"(imagopager.currentPage &gt;= imagopager.totalPages &amp;&amp; !imagopager.next) || (imagopager.posts.length &lt; imagopager.pageSize &amp;&amp; !imagopager.next) || !imagopager.next\" ng-click=\"imagopager.onNext()\" class=\"next\">Next</button></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-pager.html","<div ng-show=\"loaded\" class=\"imago-pager-content\"><button ng-disabled=\"currentPage &lt;= 1\" ng-click=\"onPrev()\" class=\"prev\">Previous</button><button ng-disabled=\"(currentPage &gt;= totalPages &amp;&amp; !next) || (posts.length &lt; pageSize &amp;&amp; !next) || !next\" ng-click=\"onNext()\" class=\"next\">Next</button></div>");}]);
