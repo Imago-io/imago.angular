@@ -201,7 +201,7 @@ class imagoVideo extends Directive
           for format, i in scope.source.fields.formats
             continue unless codec is format.codec
             formats.push(
-                "src" : "//#{imagoModel.host}/api/play_redirect?uuid=#{scope.source.uuid}&codec=#{format.codec}&quality=hd&max_size=#{format.size}"
+                "src" : "#{imagoModel.host}/api/play_redirect?uuid=#{scope.source.uuid}&codec=#{format.codec}&quality=hd&max_size=#{format.size}"
                 "size": format.size
                 "codec": format.codec
                 "type": "video/#{codec}"
