@@ -126,6 +126,7 @@
       var ref, ref1, ref2, ref3;
       this.asset = asset;
       this.placeholderUrl = this.asset.b64 || (this.asset.serving_url + "=s3");
+      this.placeholderUrl = this.asset.serving_url + "=s300";
       this.resolution = this.asset.resolution.split('x');
       this.assetRatio = _.head(this.resolution) / _.last(this.resolution);
       this.spacerStyle = {
@@ -226,7 +227,9 @@
     imagoImageController.prototype.getServingUrl = function() {
       var servingSize;
       this.visible = true;
-      if (this.mainSide === "autoheight") {
+      if (this.opts.sizemode === 'fitheight') {
+        servingSize = Math.round(Math.max(this.height, this.width * this.assetRatio));
+      } else if (this.mainSide === "autoheight") {
         servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
       } else if (this.opts.sizemode === 'crop' && this.height) {
         if (this.assetRatio <= this.wrapperRatio) {

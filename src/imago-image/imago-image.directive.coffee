@@ -82,7 +82,7 @@ class imagoImageController extends Controller
   init: (asset) ->
     @asset = asset
     @placeholderUrl = @asset.b64 or "#{@asset.serving_url}=s3"
-    # @placeholderUrl = "#{@asset.serving_url}=s30"
+    @placeholderUrl = "#{@asset.serving_url}=s300"
     @resolution  = @asset.resolution.split('x')
     @assetRatio  = _.head(@resolution) / _.last(@resolution)
     @spacerStyle = paddingBottom: "#{_.last(@resolution) / _.head(@resolution) * 100}%"
@@ -111,10 +111,10 @@ class imagoImageController extends Controller
           @getServingUrl()
 
 
-    # console.log '@opts', @opts
-    # unless @opts.width or @opts.height
-      # @$scope.$applyAsync =>
-      # console.log 'asdf', @opts.width or @opts.height, @opts.width, @opts.height
+    # console.log '@opts', @opts.width, @opts.width
+    # if @opts.width or @opts.height
+    #   @$scope.$applyAsync =>
+    #   console.log 'asdf', @opts.width or @opts.height, @opts.width, @opts.height
 
 
     @$scope.$applyAsync =>
@@ -180,8 +180,10 @@ class imagoImageController extends Controller
     @visible = true
 
     # console.log "before: #{@width}x#{@height}"
+    if @opts.sizemode is 'fitheight'
+      servingSize = Math.round(Math.max(@height, @width * @assetRatio))
 
-    if @mainSide is "autoheight"
+    else if @mainSide is "autoheight"
       servingSize = Math.round(Math.max(@height, @height * @assetRatio))
 
     # else if @mainSide is "autowidth"
