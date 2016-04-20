@@ -185,7 +185,7 @@
           } else {
             if (_this.opts.sizemode === 'crop') {
               _this.mainSide = _this.assetRatio > 1 ? 'height' : 'width';
-            } else {
+            } else if (_this.opts.sizemode === 'fit') {
               _this.mainSide = _this.assetRatio < 1 ? 'height' : 'width';
             }
           }
@@ -218,7 +218,7 @@
         this.wrapperRatio = this.width / this.height;
         if (this.opts.sizemode === 'crop') {
           return this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
-        } else {
+        } else if (this.opts.sizemode === 'fit') {
           return this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
         }
       }
@@ -237,7 +237,7 @@
         } else {
           servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
         }
-      } else {
+      } else if (this.opts.sizemode === 'fit') {
         if (this.assetRatio <= this.wrapperRatio && this.height) {
           servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
         } else {

@@ -135,7 +135,7 @@ class imagoImageController extends Controller
 
         if @opts.sizemode is 'crop'
           @mainSide = if @assetRatio > 1 then 'height' else 'width'
-        else
+        else if @opts.sizemode is 'fit'
           @mainSide = if @assetRatio < 1 then 'height' else 'width'
 
       # console.log '@width, @height, @mainSide', @width, @height, @mainSide, @opts.sizemode,
@@ -172,7 +172,7 @@ class imagoImageController extends Controller
       @wrapperRatio = @width / @height
       if @opts.sizemode is 'crop'
         @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
-      else
+      else if @opts.sizemode is 'fit'
         @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
       # console.log "resize INNER #{@width}x#{@height}"
 
@@ -198,7 +198,7 @@ class imagoImageController extends Controller
         servingSize = Math.round(Math.max(@height, @height * @assetRatio))
 
 
-    else # sizemode fit
+    else if @opts.sizemode is 'fit'
       if @assetRatio <= @wrapperRatio and @height
         # console.log 'fit full height', 'asset', @assetRatio, 'wrapper', @wrapperRatio,  "#{@height * @assetRatio} x #{@height}"
         servingSize = Math.round(Math.max(@height, @height * @assetRatio))
