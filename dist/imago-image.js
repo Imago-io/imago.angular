@@ -126,7 +126,6 @@
       var ref, ref1, ref2, ref3;
       this.asset = asset;
       this.placeholderUrl = this.asset.b64 || (this.asset.serving_url + "=s3");
-      this.placeholderUrl = this.asset.serving_url + "=s300";
       this.resolution = this.asset.resolution.split('x');
       this.assetRatio = _.head(this.resolution) / _.last(this.resolution);
       this.spacerStyle = {
@@ -185,7 +184,7 @@
           } else {
             if (_this.opts.sizemode === 'crop') {
               _this.mainSide = _this.assetRatio > 1 ? 'height' : 'width';
-            } else if (_this.opts.sizemode === 'fit') {
+            } else {
               _this.mainSide = _this.assetRatio < 1 ? 'height' : 'width';
             }
           }
@@ -218,7 +217,7 @@
         this.wrapperRatio = this.width / this.height;
         if (this.opts.sizemode === 'crop') {
           return this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
-        } else if (this.opts.sizemode === 'fit') {
+        } else {
           return this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
         }
       }
@@ -227,9 +226,7 @@
     imagoImageController.prototype.getServingUrl = function() {
       var servingSize;
       this.visible = true;
-      if (this.opts.sizemode === 'fitheight') {
-        servingSize = Math.round(Math.max(this.height, this.width * this.assetRatio));
-      } else if (this.mainSide === "autoheight") {
+      if (this.mainSide === "autoheight") {
         servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
       } else if (this.opts.sizemode === 'crop' && this.height) {
         if (this.assetRatio <= this.wrapperRatio) {
@@ -237,7 +234,7 @@
         } else {
           servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
         }
-      } else if (this.opts.sizemode === 'fit') {
+      } else {
         if (this.assetRatio <= this.wrapperRatio && this.height) {
           servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
         } else {
