@@ -282,6 +282,10 @@
                       results.push(data.push(_this.create(res)));
                     }
                     return results;
+                  }, function(err) {
+                    if (err.status === 401) {
+                      return console.warn('Imago API warning:', err.data);
+                    }
                   }));
                   return $q.all(fetches).then(function() {
                     var ref, ref1;

@@ -1,0 +1,11 @@
+b imago-pager-template 2
+
+ng-outlet
+
+.imago-pager-content
+  button.prev(
+    ng-disabled="currentPage <= 1"
+    ng-click="onPrev()") Previous
+  button.next(
+    ng-disabled="(currentPage >= totalPages && !next) || (posts.length < pageSize && !next) || !next"
+    ng-click="onNext()") Next

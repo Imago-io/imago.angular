@@ -1,4 +1,61 @@
 (function() {
+  var imagoPagerController, imagoPagerTest;
+
+  imagoPagerController = (function() {
+    function imagoPagerController($location) {
+      console.log('query', this.query);
+    }
+
+    return imagoPagerController;
+
+  })();
+
+  imagoPagerTest = (function() {
+    function imagoPagerTest() {
+      return {
+        bindings: {
+          query: '@',
+          posts: '=',
+          state: '@',
+          prevPage: '&prev',
+          nextPage: '&next',
+          pageSize: '@',
+          tags: '=?',
+          currentPage: '=?',
+          opts: '@'
+        },
+        controller: 'imagoPagerController as imagopager',
+        templateUrl: function($attrs) {
+          return $attrs.templateUrl || '/imago/imago-pager-test.html';
+        },
+        $routeConfig: [
+          {
+            path: '/',
+            name: 'imagoPagerBase',
+            useAsDefault: true
+          }, {
+            path: '/page/:page',
+            name: 'imagoPagerPage'
+          }, {
+            path: '/tags/:tag',
+            name: 'imagoPagerFiltered'
+          }, {
+            path: '/tags/:tag/page/:page',
+            name: 'imagoPagerFilteredPage'
+          }
+        ]
+      };
+    }
+
+    return imagoPagerTest;
+
+  })();
+
+  angular.module('imago').controller('imagoPagerController', ['$location', imagoPagerController]).component('imagoPagerTest', new imagoPagerTest());
+
+}).call(this);
+
+(function() {
   var imagoPager;
 
   imagoPager = (function() {
@@ -129,4 +186,5 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-pager.html","<div ng-show=\"loaded\" class=\"imago-pager-content\"><button ng-disabled=\"currentPage &lt;= 1\" ng-click=\"onPrev()\" class=\"prev\">Previous</button><button ng-disabled=\"(currentPage &gt;= totalPages &amp;&amp; !next) || (posts.length &lt; pageSize &amp;&amp; !next) || !next\" ng-click=\"onNext()\" class=\"next\">Next</button></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-pager-test.html","<b>imago-pager-template 2</b><ng-outlet></ng-outlet><div class=\"imago-pager-content\"><button ng-disabled=\"currentPage &lt;= 1\" ng-click=\"onPrev()\" class=\"prev\">Previous</button><button ng-disabled=\"(currentPage &gt;= totalPages &amp;&amp; !next) || (posts.length &lt; pageSize &amp;&amp; !next) || !next\" ng-click=\"onNext()\" class=\"next\">Next</button></div>");
+$templateCache.put("/imago/imago-pager.html","<div ng-show=\"loaded\" class=\"imago-pager-content\"><button ng-disabled=\"currentPage &lt;= 1\" ng-click=\"onPrev()\" class=\"prev\">Previous</button><button ng-disabled=\"(currentPage &gt;= totalPages &amp;&amp; !next) || (posts.length &lt; pageSize &amp;&amp; !next) || !next\" ng-click=\"onNext()\" class=\"next\">Next</button></div>");}]);

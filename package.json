@@ -18,7 +18,7 @@
     "gulp-if": "^1.2.5",
     "gulp-jade": "*",
     "gulp-load-plugins": "^1.0.0",
-    "gulp-ng-classify": "*",
+    "gulp-ng-classify": "Imago-io/gulp-ng-classify#master",
     "gulp-order": "^1.1.1",
     "gulp-plumber": "*",
     "gulp-rename": "^1.2.0",

@@ -3,17 +3,18 @@ class GeoIp extends Service
   data: {}
   loaded: false
 
-  constructor: (@$rootScope, @$http, @imagoUtils) ->
+  constructor: (@$rootScope, @$http, @imagoModel, @imagoUtils) ->
     @get()
 
   get: ->
-    @$http.get('//api.imago.io/geoip').then (response) =>
+    @$http.get("#{@imagoModel.host}/geoip").then (response) =>
       return @getCookie() if _.isEmpty response.data
       code = @imagoUtils.getCountryByCode(response.data.country_code)
       @imagoUtils.cookie 'countryGeo', response.data.country_code
       @data.country = code
       @$rootScope.$emit 'geoip:loaded', @data
       @loaded = true
+      return response.data
     , (err) =>
       @getCookie()
 

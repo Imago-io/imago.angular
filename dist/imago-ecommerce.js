@@ -92,15 +92,16 @@
 
     GeoIp.prototype.loaded = false;
 
-    function GeoIp($rootScope, $http, imagoUtils) {
+    function GeoIp($rootScope, $http, imagoModel, imagoUtils) {
       this.$rootScope = $rootScope;
       this.$http = $http;
+      this.imagoModel = imagoModel;
       this.imagoUtils = imagoUtils;
       this.get();
     }
 
     GeoIp.prototype.get = function() {
-      return this.$http.get('//api.imago.io/geoip').then((function(_this) {
+      return this.$http.get(this.imagoModel.host + "/geoip").then((function(_this) {
         return function(response) {
           var code;
           if (_.isEmpty(response.data)) {
@@ -110,7 +111,8 @@
           _this.imagoUtils.cookie('countryGeo', response.data.country_code);
           _this.data.country = code;
           _this.$rootScope.$emit('geoip:loaded', _this.data);
-          return _this.loaded = true;
+          _this.loaded = true;
+          return response.data;
         };
       })(this), (function(_this) {
         return function(err) {
@@ -135,7 +137,7 @@
 
   })();
 
-  angular.module('imago').service('geoIp', ['$rootScope', '$http', 'imagoUtils', GeoIp]);
+  angular.module('imago').service('geoIp', ['$rootScope', '$http', 'imagoModel', 'imagoUtils', GeoIp]);
 
 }).call(this);
 

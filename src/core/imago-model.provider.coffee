@@ -180,6 +180,10 @@ class imagoModel extends Provider
                 for res in response.data
                   data.push @create res
 
+              , (err) ->
+                if err.status is 401
+                  console.warn 'Imago API warning:', err.data
+
               $q.all(fetches).then =>
 
                 if !options.skipTitle
