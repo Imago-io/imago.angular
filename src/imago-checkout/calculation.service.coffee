@@ -63,7 +63,7 @@ class Calculation extends Service
 
     @$http.get(url).then (response) =>
       if response.data.length is 1
-        @coupon = response.data[0]
+        @coupon = _.head response.data
         @couponState = 'valid'
       else
         @coupon = null

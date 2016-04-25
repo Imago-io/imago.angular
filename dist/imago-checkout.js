@@ -208,7 +208,7 @@
       return this.$http.get(url).then((function(_this) {
         return function(response) {
           if (response.data.length === 1) {
-            _this.coupon = response.data[0];
+            _this.coupon = _.head(response.data);
             _this.couponState = 'valid';
           } else {
             _this.coupon = null;
