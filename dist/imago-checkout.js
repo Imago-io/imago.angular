@@ -194,13 +194,18 @@
     };
 
     Calculation.prototype.checkCoupon = function(code) {
+      var ref, ref1, url;
       if (!code) {
         this.coupon = null;
         this.couponState = null;
         this.calculate();
         return;
       }
-      return this.$http.get(this.imagoModel.host + '/api/coupons?code=' + code).then((function(_this) {
+      url = this.imagoModel.host + "/api/coupons?code=" + code;
+      if ((ref = this.form) != null ? (ref1 = ref.user) != null ? ref1.email : void 0 : void 0) {
+        url += "&email=" + this.form.user.email;
+      }
+      return this.$http.get(url).then((function(_this) {
         return function(response) {
           if (response.data.length === 1) {
             _this.coupon = response.data[0];

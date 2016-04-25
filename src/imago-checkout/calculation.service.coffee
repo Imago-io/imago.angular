@@ -58,7 +58,10 @@ class Calculation extends Service
       @calculate()
       return
 
-    @$http.get(@imagoModel.host + '/api/coupons?code=' + code).then (response) =>
+    url = "#{@imagoModel.host}/api/coupons?code=#{code}"
+    url += "&email=#{@form.user.email}" if @form?.user?.email
+
+    @$http.get(url).then (response) =>
       if response.data.length is 1
         @coupon = response.data[0]
         @couponState = 'valid'
