@@ -1,8 +1,8 @@
 .field-border-style
-  border-top: 1px solid #bbb
-  border-right: 1px solid #ddd
-  border-bottom: 1px solid #ddd
-  border-left: 1px solid #ddd
+  border-top:    1px solid darken(white, 8%)
+  border-right:  1px solid darken(white, 5%)
+  border-bottom: 1px solid darken(white, 5%)
+  border-left:   2px solid darken(white, 5%)
 
 
 .fieldBgStyle
@@ -79,6 +79,18 @@ $filed-box-shadow: none
       box-shadow: $filed-box-shadow
       border-radius: $field-border-radius
       box-sizing: border-box
+
+  input
+    &[type="text"],
+    &[type="password"],
+    &[type="email"],
+    &[type="url"],
+    &[type="time"],
+    &[type="number"],
+    &[type="search"],
+    &[type="tel"]
+      appearance: none
+
   select,
   textarea
     padding: 1.1em 0.6em 0.25em 0.6em
@@ -284,74 +296,134 @@ form.ng-submitted
   input[type="checkbox"].ng-invalid-required +  label:before
     border: 2px solid darken(red, 10%) !important
 
-.imago-field
-  &.number
-    display: inline-block
-    width: 30px
-    white-space: nowrap
-    height: 26px
-    position: relative
-    line-height: normal
-    background: green
+// .imago-field
+//   &.number
+//     display: inline-block
+//     width: 30px
+//     white-space: nowrap
+//     height: 26px
+//     position: relative
+//     line-height: normal
+//     background: green
 
-    input
-      text-align: right
-      border: none
-      display: inline-block
-      width: 100%
-      height: 26px
-      padding: 0
-      padding-right: 18px
-      border-radius: 0
+//     input
+//       text-align: right
+//       border: none
+//       display: inline-block
+//       width: 100%
+//       height: 26px
+//       padding: 0
+//       padding-right: 18px
+//       border-radius: 0
 
-    button.increment,
-    button.decrement
-      font-size: 0
-      position: absolute
-      right: 0
-      height: 50%
-      width: 13px
-      border: none
-      background: none
-      cursor: pointer
-      &:hover
-        background: white
-      &:active
-        background: darken(white, 10%)
-      &:after
-        opacity: 0.5
-      &:hover:after
-        opacity: 1
-      &:disabled
-        opacity: 0.2
+//     button.increment,
+//     button.decrement
+//       font-size: 0
+//       position: absolute
+//       right: 0
+//       height: 50%
+//       width: 13px
+//       border: none
+//       background: none
+//       cursor: pointer
+//       &:hover
+//         background: white
+//       &:active
+//         background: darken(white, 10%)
+//       &:after
+//         opacity: 0.5
+//       &:hover:after
+//         opacity: 1
+//       &:disabled
+//         opacity: 0.2
 
-    .increment
-      top: 0
-      transform-style: preserve-3d
-      &:after
-        position: absolute
-        bottom: 2px
-        left: 2px
-        content: ''
-        height: 0
-        transform: scaleY(1) scaleX(0.8)
-        border-left: 5px solid transparent
-        border-right: 5px solid transparent
-        border-bottom:  5px solid black
-        border-radius: 1px
+//     .increment
+//       top: 0
+//       transform-style: preserve-3d
+//       &:after
+//         position: absolute
+//         bottom: 2px
+//         left: 2px
+//         content: ''
+//         height: 0
+//         transform: scaleY(1) scaleX(0.8)
+//         border-left: 5px solid transparent
+//         border-right: 5px solid transparent
+//         border-bottom:  5px solid black
+//         border-radius: 1px
 
-    .decrement
-      bottom: 0
-      &:after
-        position: absolute
-        top: 2px
-        left: 2px
-        content: ''
-        height: 0
-        transform: scaleY(1) scaleX(0.8)
-        border-left: 5px solid transparent
-        border-right: 5px solid transparent
-        border-top:  5px solid black
-        border-radius: 1px
+//     .decrement
+//       bottom: 0
+//       &:after
+//         position: absolute
+//         top: 2px
+//         left: 2px
+//         content: ''
+//         height: 0
+//         transform: scaleY(1) scaleX(0.8)
+//         border-left: 5px solid transparent
+//         border-right: 5px solid transparent
+//         border-top:  5px solid black
+//         border-radius: 1px
+
+
+
+// .imago-field
+//   background: green
+//   &.number
+//     input
+//       background: red !important
+//     button.increment,
+//     button.decrement
+//       font-size: 0
+//       position: absolute
+//       right: 0
+//       height: 20px
+//       width: 20px
+//       border: none
+//       background: none
+//       cursor: pointer
+//       overflow: hidden
+//       background: red !important
+//       vertical-align: top
+
+//       &:hover
+//         background: white
+//         &:after
+//           border: 2px solid black
+//       &:active
+//         &:after
+//           border: 1px solid black
+//       &:after
+//         opacity: 0.5
+//       &:hover:after
+//         opacity: 1
+//       &:disabled
+//         opacity: 0.2
+
+
+//     button.increment
+//       bottom: 50%
+//       &:after
+//         content: ''
+//         width: 20px
+//         height: 20px
+//         position: absolute
+//         left: 0
+//         top: 0
+//         transform: rotate(45deg) translateX(13px) translateY(13px)
+//         border: 1px solid black
+
+//     button.decrement
+//       top: calc(50% + 3px)
+//       &:after
+//         content: ''
+//         width:  20px
+//         height: 20px
+//         position: absolute
+//         left: 0
+//         top: 0
+//         transform: rotate(45deg) translateX(-13px) translateY(-13px)
+//         border: 1px solid black
 
 
