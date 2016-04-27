@@ -1,7 +1,5 @@
 (function() {
-  var imagoPagerController, imagoPagerTest,
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+  var imagoPagerController, imagoPagerTest;
 
   imagoPagerController = (function() {
     function imagoPagerController($location) {
@@ -12,9 +10,7 @@
 
   })();
 
-  imagoPagerTest = (function(superClass) {
-    extend(imagoPagerTest, superClass);
-
+  imagoPagerTest = (function() {
     function imagoPagerTest() {
       return {
         bindings: {
@@ -53,9 +49,9 @@
 
     return imagoPagerTest;
 
-  })(Component);
+  })();
 
-  angular.module('imago').controller('imagoPagerController', ['$location', imagoPagerController]);
+  angular.module('imago').controller('imagoPagerController', ['$location', imagoPagerController]).component('imagoPagerTest', new imagoPagerTest());
 
 }).call(this);
 
