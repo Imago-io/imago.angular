@@ -19,8 +19,11 @@ class ImagoFetch extends Directive
 
 class ImagoFetchController extends Controller
 
-  constructor: (imagoModel) ->
+  constructor: ($scope, imagoModel) ->
     throw 'No query set in imagofetch' unless @query
+
+    if  _.includes @query, '{'
+      @query = $scope.$eval @query
 
     imagoModel.getData(@query).then (response) =>
       for data in response

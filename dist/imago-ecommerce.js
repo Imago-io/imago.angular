@@ -700,7 +700,7 @@
         }
 
         ProductInstance.prototype.getOptions = function() {
-          var base, capKey, i, item, j, k, key, len, len1, len2, name, obj, order, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, variant;
+          var base, capKey, i, item, j, k, key, len, len1, len2, name, obj, order, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, variant;
           this.options = {};
           if (this.variants.length === 1) {
             ref = this.variants;
@@ -721,31 +721,31 @@
               ref9 = this.optionsWhitelist;
               for (k = 0, len2 = ref9.length; k < len2; k++) {
                 item = ref9[k];
-                if (!variant.fields[item.name].value) {
+                if (!((ref10 = variant.fields[item.name]) != null ? ref10.value : void 0)) {
                   continue;
                 }
                 obj = {};
                 for (key in item) {
-                  obj[key] = (ref10 = variant.fields) != null ? (ref11 = ref10[item[key]]) != null ? ref11.value : void 0 : void 0;
+                  obj[key] = (ref11 = variant.fields) != null ? (ref12 = ref11[item[key]]) != null ? ref12.value : void 0 : void 0;
                 }
                 obj.normname = _.kebabCase(obj.name);
                 (base = this.options)[name = item.name] || (base[name] = []);
                 this.options[item.name].push(obj);
               }
-              variant.stock = Number((ref12 = variant.fields) != null ? (ref13 = ref12.stock) != null ? (ref14 = ref13.value) != null ? ref14[fulfillmentsCenter.selected._id] : void 0 : void 0 : void 0);
-              variant.presale = (ref15 = variant.fields) != null ? (ref16 = ref15.presale) != null ? ref16.value : void 0 : void 0;
+              variant.stock = Number((ref13 = variant.fields) != null ? (ref14 = ref13.stock) != null ? (ref15 = ref14.value) != null ? ref15[fulfillmentsCenter.selected._id] : void 0 : void 0 : void 0);
+              variant.presale = (ref16 = variant.fields) != null ? (ref17 = ref16.presale) != null ? ref17.value : void 0 : void 0;
               variant.lowstock = variant.stock <= this.lowStock && variant.stock ? true : false;
             }
-            if (((ref17 = this.options.size) != null ? ref17.length : void 0) > 1) {
+            if (((ref18 = this.options.size) != null ? ref18.length : void 0) > 1) {
               order = ['xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl'];
               this.options.size.sort(function(a, b) {
                 return order.indexOf(a.normname) - order.indexOf(b.normname);
               });
             }
             for (key in this.options) {
-              this.options[key] = _.uniq(this.options[key], 'name');
+              this.options[key] = _.uniqBy(this.options[key], 'name');
               capKey = _.capitalize(key);
-              if (((ref18 = this.options[key]) != null ? ref18.length : void 0) === 1) {
+              if (((ref19 = this.options[key]) != null ? ref19.length : void 0) === 1) {
                 this[key] = this.options[key][0].normname;
               }
             }

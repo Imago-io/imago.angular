@@ -25,9 +25,12 @@
   })();
 
   ImagoFetchController = (function() {
-    function ImagoFetchController(imagoModel) {
+    function ImagoFetchController($scope, imagoModel) {
       if (!this.query) {
         throw 'No query set in imagofetch';
+      }
+      if (_.includes(this.query, '{')) {
+        this.query = $scope.$eval(this.query);
       }
       imagoModel.getData(this.query).then((function(_this) {
         return function(response) {
@@ -54,7 +57,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoFetch', ['imagoModel', 'imagoUtils', ImagoFetch]).controller('imagoFetchController', ['imagoModel', ImagoFetchController]);
+  angular.module('imago').directive('imagoFetch', ['imagoModel', 'imagoUtils', ImagoFetch]).controller('imagoFetchController', ['$scope', 'imagoModel', ImagoFetchController]);
 
 }).call(this);
 
