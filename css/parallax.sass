@@ -2,8 +2,8 @@ $parallax-depth: 0 !default
 $parallax-perspective: 1 !default
 
 @mixin parallax-parent ($perspective: $parallax-perspective)
-  +perspective($perspective * 1px)
-  +transform-style(preserve-3d)
+  perspective: $parallax-perspective * 1px
+  transform-style: preserve-3d
   -webkit-overflow-scrolling: auto
   position: relative
   height: 100vh
@@ -11,10 +11,10 @@ $parallax-perspective: 1 !default
   overflow-y: auto
 
 @mixin parallax($depth: $parallax-depth, $perspective: $parallax-perspective)
-  +transform-style(preserve-3d)
+  transform-style: preserve-3d
   transform: translateZ($depth * 1px) scale(1 + ($depth * -1) / $perspective)
 
 @mixin parallax-group
-  +transform-style(preserve-3d)
+  transform-style: preserve-3d
   position: relative
   height: 100vh
