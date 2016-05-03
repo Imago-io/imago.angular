@@ -47,9 +47,8 @@ class imagoProduct extends Factory
           # uniqify options
           for key of @options
             @options[key] = _.uniqBy @options[key], 'name'
-            capKey = _.capitalize(key)
             if @options[key]?.length is 1
-              @[key] = @options[key][0].normname
+              @[key] = @options[key][0].name
 
           @selectVariant()
 

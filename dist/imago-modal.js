@@ -2,7 +2,7 @@
   var ImagoModal, imagoModalController;
 
   ImagoModal = (function() {
-    function ImagoModal($document, keyCodes) {
+    function ImagoModal($document) {
       return {
         restrict: 'E',
         scope: true,
@@ -27,7 +27,7 @@
               if (!scope.modal.active) {
                 return;
               }
-              if (evt.keyCode === keyCodes.escape) {
+              if (evt.keyCode === 27) {
                 scope.modal.disable();
               }
               return scope.$digest();
@@ -68,7 +68,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoModal', ['$document', 'keyCodes', ImagoModal]).controller('imagoModalController', ['$rootScope', '$scope', imagoModalController]);
+  angular.module('imago').directive('imagoModal', ['$document', ImagoModal]).controller('imagoModalController', ['$rootScope', '$scope', imagoModalController]);
 
 }).call(this);
 

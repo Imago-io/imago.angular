@@ -700,7 +700,7 @@
         }
 
         ProductInstance.prototype.getOptions = function() {
-          var base, capKey, i, item, j, k, key, len, len1, len2, name, obj, order, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, variant;
+          var base, i, item, j, k, key, len, len1, len2, name, obj, order, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, variant;
           this.options = {};
           if (this.variants.length === 1) {
             ref = this.variants;
@@ -744,9 +744,8 @@
             }
             for (key in this.options) {
               this.options[key] = _.uniqBy(this.options[key], 'name');
-              capKey = _.capitalize(key);
               if (((ref19 = this.options[key]) != null ? ref19.length : void 0) === 1) {
-                this[key] = this.options[key][0].normname;
+                this[key] = this.options[key][0].name;
               }
             }
             return this.selectVariant();

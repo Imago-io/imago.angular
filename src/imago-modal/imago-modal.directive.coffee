@@ -1,6 +1,6 @@
 class ImagoModal extends Directive
 
-  constructor: ($document, keyCodes) ->
+  constructor: ($document) ->
 
     return {
 
@@ -24,7 +24,7 @@ class ImagoModal extends Directive
 
           disableOnEsc = (evt) ->
             return unless scope.modal.active
-            scope.modal.disable() if evt.keyCode is keyCodes.escape
+            scope.modal.disable() if evt.keyCode is 27
             scope.$digest()
 
           $document.on 'keydown', disableOnEsc
