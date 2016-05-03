@@ -1,5 +1,6 @@
 (function() {
-  var imagoVideo, imagoVideoController;
+  var imagoVideo, imagoVideoController,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   imagoVideo = (function() {
     function imagoVideo($rootScope, imagoUtils1, imagoModel) {
@@ -97,6 +98,7 @@
       this.$element = $element;
       this.$sce = $sce;
       this.imagoModel = imagoModel1;
+      this.onPlayerReady = bind(this.onPlayerReady, this);
       this.watchers = [];
       this.sources = [];
       this.dpr = Math.ceil(window.devicePixelRatio, 1) || 1;
@@ -110,6 +112,7 @@
         align: 'center center',
         sizemode: 'fit',
         loop: false,
+        autoplayInview: false,
         responsive: true,
         theme: '//storage.googleapis.com/videoangular-default-theme/videogular.min.css'
       };
@@ -140,6 +143,9 @@
       }
       if (((ref2 = this.asset.fields) != null ? (ref3 = ref2.sizemode) != null ? ref3.value : void 0 : void 0) && this.asset.fields.sizemode.value !== 'default' && !this.$attrs.sizemode) {
         this.opts.sizemode = this.asset.fields.sizemode.value;
+      }
+      if (this.opts.autoplayInview === false) {
+        this.removeInView = true;
       }
       if (this.opts.responsive) {
         this.watchers.push(this.$rootScope.$on('resize', (function(_this) {
@@ -208,6 +214,20 @@
       return this.height = this.$element.children()[0].clientHeight;
     };
 
+    imagoVideoController.prototype.onPlayerReady = function(api) {
+      if (this.opts.autoplayInview) {
+        return this.$scope.$watch('imagovideo.visible', (function(_this) {
+          return function(value) {
+            if (value) {
+              return api.play();
+            } else {
+              return api.pause();
+            }
+          };
+        })(this));
+      }
+    };
+
     imagoVideoController.prototype.resize = function() {
       var ref;
       if ((ref = this.mainSide) !== 'autoheight' && ref !== 'autowidth') {
@@ -228,4 +248,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-video.html","<div ng-class=\"[imagovideo.opts.align, imagovideo.opts.sizemode, imagovideo.mainSide]\" class=\"imago-video-content\"><div class=\"imago-video-wrapper\"><div ng-style=\"imagovideo.spacerStyle\" class=\"spacer\"></div><videogular vg-auto-play=\"::imagovideo.opts.autoplay\" vg-theme=\"::imagovideo.opts.theme\" ng-if=\"imagovideo.ready\"><vg-media vg-src=\"::imagovideo.sources\" vg-loop=\"::imagovideo.opts.loop\" vg-preload=\"::imagovideo.opts.preload\"></vg-media><vg-controls ng-show=\"::imagovideo.opts.controls\" vg-autohide=\"::imagovideo.opts.controlsAutohide\"><vg-play-pause-button></vg-play-pause-button><vg-time-display>{{ currentTime | date:\'mm:ss\' }}</vg-time-display><vg-scrub-bar><vg-scrub-bar-current-time></vg-scrub-bar-current-time></vg-scrub-bar><vg-time-display>{{ timeLeft | date:\'mm:ss\' }}</vg-time-display><vg-volume><vg-mute-button></vg-mute-button><vg-volume-bar></vg-volume-bar></vg-volume><vg-fullscreen-button></vg-fullscreen-button></vg-controls><vg-overlay-play></vg-overlay-play><vg-poster vg-url=\"::imagovideo.poster\"></vg-poster></videogular></div></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-video.html","<div ng-class=\"[imagovideo.opts.align, imagovideo.opts.sizemode, imagovideo.mainSide]\" in-view=\"imagovideo.visible = $inview\" in-view-remove=\"imagovideo.removeInView\" in-view-options=\"{debounce: 50}\" class=\"imago-video-content\"><div class=\"imago-video-wrapper\"><div ng-style=\"imagovideo.spacerStyle\" class=\"spacer\"></div><videogular vg-auto-play=\"::imagovideo.opts.autoplay\" vg-theme=\"::imagovideo.opts.theme\" ng-if=\"imagovideo.ready\" vg-player-ready=\"imagovideo.onPlayerReady($API)\"><vg-media vg-src=\"::imagovideo.sources\" vg-loop=\"::imagovideo.opts.loop\" vg-preload=\"::imagovideo.opts.preload\"></vg-media><vg-controls ng-show=\"::imagovideo.opts.controls\" vg-autohide=\"::imagovideo.opts.controlsAutohide\"><vg-play-pause-button></vg-play-pause-button><vg-time-display>{{ currentTime | date:\'mm:ss\' }}</vg-time-display><vg-scrub-bar><vg-scrub-bar-current-time></vg-scrub-bar-current-time></vg-scrub-bar><vg-time-display>{{ timeLeft | date:\'mm:ss\' }}</vg-time-display><vg-volume><vg-mute-button></vg-mute-button><vg-volume-bar></vg-volume-bar></vg-volume><vg-fullscreen-button></vg-fullscreen-button></vg-controls><vg-overlay-play></vg-overlay-play><vg-poster vg-url=\"::imagovideo.poster\"></vg-poster></videogular></div></div>");}]);

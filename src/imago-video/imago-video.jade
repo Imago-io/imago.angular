@@ -1,5 +1,8 @@
 .imago-video-content(
     ng-class="[imagovideo.opts.align, imagovideo.opts.sizemode, imagovideo.mainSide]"
+    in-view="imagovideo.visible = $inview"
+    in-view-remove="imagovideo.removeInView"
+    in-view-options="{debounce: 50}"
   )
   //- pre {{imagovideo.opts.align}} {{imagovideo.opts.sizemode}} {{imagovideo.mainSide}}
   .imago-video-wrapper
@@ -8,6 +11,7 @@
         vg-auto-play="::imagovideo.opts.autoplay"
         vg-theme="::imagovideo.opts.theme"
         ng-if="imagovideo.ready"
+        vg-player-ready="imagovideo.onPlayerReady($API)"
       )
       vg-media(
         vg-src="::imagovideo.sources"
@@ -16,8 +20,7 @@
       )
       vg-controls(
           ng-show="::imagovideo.opts.controls"
-          vg-autohide="::imagovideo.opts.controlsAutohide"
-          )
+          vg-autohide="::imagovideo.opts.controlsAutohide")
         vg-play-pause-button
         vg-time-display {{ currentTime | date:'mm:ss' }}
         vg-scrub-bar

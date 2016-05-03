@@ -72,6 +72,7 @@ class imagoVideoController extends Controller
       align             : 'center center'
       sizemode          : 'fit'
       loop              : false
+      autoplayInview    : false
       # width             : ''
       # height            : ''
       responsive        : true
@@ -94,6 +95,9 @@ class imagoVideoController extends Controller
       @asset.fields.sizemode.value isnt 'default' and not @$attrs.sizemode
         @opts.sizemode = @asset.fields.sizemode.value
 
+    if @opts.autoplayInview is false
+      @removeInView = true
+
     if @opts.responsive
       @watchers.push @$rootScope.$on 'resize', =>
         # @$scope.$applyAsync =>
@@ -113,7 +117,6 @@ class imagoVideoController extends Controller
       else if @width > 0 and @height is 0
         @mainSide = 'autowidth'
       else
-
         if @opts.sizemode is 'crop'
           @mainSide = if @assetRatio > 1 then 'height' else 'width'
         else
@@ -145,6 +148,14 @@ class imagoVideoController extends Controller
     @height = @$element.children()[0].clientHeight
     # console.log "getSize: #{@width}x#{@height}"
     # debugger
+
+  onPlayerReady: (api) =>
+    if @opts.autoplayInview
+      @$scope.$watch 'imagovideo.visible', (value) =>
+        if value
+          api.play()
+        else
+          api.pause()
 
   resize: ->
     # @spacerStyle.width = "#{@height * @assetRatio}px"
