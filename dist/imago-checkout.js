@@ -683,7 +683,7 @@
       var ref, ref1;
       form.costs = angular.copy(this.costs);
       form.costs.shipping_options = angular.copy(this.shipping_options);
-      form.costs.coupon = (this.coupon ? angular.copy(this.coupon) : null);
+      form.costs.coupon = angular.copy(this.coupon) || null;
       form.shipping_address || (form.shipping_address = {});
       form.billing_address['phone'] = angular.copy(this.form.phone);
       form.shipping_address['phone'] = angular.copy(this.form.phone);
@@ -704,7 +704,7 @@
       this.form.cartId = angular.copy(this.cart._id);
       this.form.billing_address.name = angular.copy((ref = this.form.user) != null ? ref.name : void 0);
       this.form = this.formatForm(this.form);
-      return this.$http.post(this.imagoModel.host + '/api/checkout', this.form);
+      return this.$http.post(this.imagoModel.host + "/api/checkout", this.form);
     };
 
     Calculation.prototype.saveCart = function(async) {

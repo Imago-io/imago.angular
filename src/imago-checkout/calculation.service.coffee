@@ -163,7 +163,7 @@ class Calculation extends Service
 
       @getShippingRate().then (rates) =>
         @calculateShippingRunning = false
-        unless rates?.length
+        if !rates?.length
           @shipping_options = undefined
           @shippingRates = []
           @error.noshippingrule = true if @country
@@ -343,7 +343,7 @@ class Calculation extends Service
   formatForm: (form) ->
     form.costs = angular.copy @costs
     form.costs.shipping_options = angular.copy @shipping_options
-    form.costs.coupon = (if @coupon then angular.copy(@coupon) else null)
+    form.costs.coupon = angular.copy(@coupon) or null
     form.shipping_address or= {}
     form.billing_address['phone']  = angular.copy @form.phone
     form.shipping_address['phone'] = angular.copy @form.phone
@@ -362,7 +362,7 @@ class Calculation extends Service
     @form.billing_address.name = angular.copy @form.user?.name
     @form = @formatForm(@form)
 
-    return @$http.post(@imagoModel.host + '/api/checkout', @form)
+    @$http.post "#{@imagoModel.host}/api/checkout", @form
 
   saveCart: (async) ->
     form = angular.copy @cart
