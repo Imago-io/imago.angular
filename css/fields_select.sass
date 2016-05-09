@@ -1,0 +1,41 @@
+.imago-field
+  select
+    width: 100%
+    appearance: none
+    margin: 0
+    padding: $imago-field-padding
+    display: inline-block
+    @extend .field-border-style
+    @extend .field-font-style
+    background-color: $imago-field-background-color
+    box-shadow: $imago-field-box-shadow
+    border-radius: $imago-field-border-radius
+    box-sizing: border-box
+    &[multiple]
+      height: auto
+
+  select:focus
+    outline: 0
+    background-color: white
+
+  select[disabled]
+    cursor: not-allowed
+    background-color: $imago-field-background-color
+    color: #cad2d3
+
+  select[readonly]
+    background: #eee
+    color: #777
+
+  select
+    &.ng-invalid,
+    &.ng-invalid-required
+      border-left: $imago-field-border-width-invalid solid $imago-field-border-color-invalid !important
+
+
+
+  // select:focus:invalid
+  //   box-shadow: 0 0 5px $imago-field-border-color-invalid
+
+  // select:focus:invalid:focus
+  //   box-shadow: 0 0 5px $imago-field-border-color-invalid

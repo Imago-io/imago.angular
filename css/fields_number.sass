@@ -1,0 +1,77 @@
+
+// number
+.imago-field-number-content
+  input[type="number"]
+    // appearance: none
+    -moz-appearance: textfield
+    // -webkit-appearance: textfield
+    &::-webkit-inner-spin-button
+      -webkit-appearance: none
+    &::-webkit-outer-spin-button
+      -webkit-appearance: none
+    padding-right: 3em
+
+    &.ng-invalid,
+    &.ng-invalid-required
+      border-left: $imago-field-border-width-invalid solid $imago-field-border-color-invalid
+
+
+  button.increment,
+  button.decrement
+    display: inline-block
+    vertical-align: bottom
+    width:  16px
+    height: 16px
+    padding: 0
+    margin: 0
+    cursor: pointer
+    border: 2px solid black
+    border-radius: 2px
+    position: absolute
+    top: 50%
+    right: 1em
+    transform: translateY(-50%)
+    &:hover
+      background-color: darken(white, 10%)
+    &:active
+      background-color: black
+      &:after,
+      &:before
+        background-color: white
+
+  button[disabled]
+    opacity: 0.2
+    cursor: not-allowed
+    &:active
+      background-color: darken(white, 10%)
+      &:after,
+      &:before
+        background-color: black
+
+
+  button.increment
+  button.decrement
+    // margin-left: 10px
+    transform: translate(-90%,-50%)
+
+  button.increment:before,
+  button.increment:after,
+  button.decrement:after
+    transition: opacity 0.25s ease
+    position: absolute
+    z-index: 100
+    top: 50%
+    left: 50%
+    height: 2px
+    width: 8px
+    margin-left: -4px
+    margin-top: -1px
+    content: ''
+    background: black
+  button.increment:before
+    transform: rotate(90deg)
+
+  button.decrement:deactive,
+  button.increment:deactive
+    opacity: 0.4
+    cursor: not-allowed

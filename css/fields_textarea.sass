@@ -1,0 +1,34 @@
+.imago-field
+  textarea
+    padding: $imago-field-padding
+    display: inline-block
+    @extend .field-border-style
+    @extend .field-font-style
+    background-color: $imago-field-background-color
+    box-shadow: $imago-field-box-shadow
+    border-radius: $imago-field-border-radius
+    box-sizing: border-box
+    resize: vertical
+    width: 100%
+    appearance: none
+    + label
+      letter-spacing: $imago-field-letter-spacing
+
+  textarea:focus
+    outline: 0
+    box-shadow: 0 0 5px rgba(0,192,255,0.3)
+    background-color: white
+
+  textarea[disabled]
+    cursor: not-allowed
+    background-color: $imago-field-background-color
+    color: #cad2d3
+
+  textarea[readonly]
+    background: $imago-field-background-color-readonly
+    color: $imago-field-color-readonly
+
+  textarea
+    &.ng-invalid,
+    &.ng-invalid-required
+      border-left: $imago-field-border-width-invalid solid $imago-field-border-color-invalid !important

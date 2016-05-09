@@ -1,0 +1,41 @@
+.imago-field
+  input[type="checkbox"]
+    display: none
+    padding: 0
+    margin: 0
+    + label
+      text-transform: initial
+      font-size: 1em
+      position: static
+      vertical-align: bottom
+      padding: 0
+
+
+    + label:before
+      margin: 0.25em 0
+      background-color: #fff
+      border: 1px solid #e5e5e5
+      content: ""
+      display: inline-block
+      margin-right: .75em
+      vertical-align: middle
+      width: 1.5em
+      font-size: .75em
+      height: 1.5em
+      line-height: 1.5em
+      text-align: center
+      border-radius: $imago-field-border-radius
+
+
+    &:focus
+      outline: 0
+
+    &:checked + label:before
+      content: "\2713"
+
+    &.ng-invalid-required + label:before
+      border: $imago-field-border-width-invalid solid $imago-field-border-color-invalid
+
+
+
+    // ng-untouched ng-dirty ng-valid-parse ng-invalid ng-invalid-required

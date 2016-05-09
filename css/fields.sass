@@ -1,3 +1,30 @@
+
+$imago-field-padding: 1.25em 0.75em 0.5em 0.75em !default
+$imago-field-border-radius: 2px !default
+$imago-field-border-color: darken(white, 30%)!default
+$imago-field-border-color-invalid: rgba(red, 1) !default
+$imago-field-border-width-invalid: 2px!default
+$imago-field-border-color-focus: rgba(74,185,255, 0.5) !default
+$imago-field-background-color: darken(white, 1%) !default
+$imago-field-box-shadow: none !default
+$imago-field-letter-spacing: 0.05em !default
+
+
+$imago-field-background-color-readonly: #eee
+$imago-field-color-readonly: #777
+
+
+@import ./fields_input
+@import ./fields_select
+@import ./fields_checkbox
+@import ./fields_radio
+@import ./fields_textarea
+@import ./fields_number
+@import ./fields_currency
+@import ./fields_creditcard
+
+
+
 .field-border-style
   border-top:    1px solid darken(white, 8%)
   border-right:  1px solid darken(white, 5%)
@@ -9,221 +36,29 @@
   background: linear-gradient(to bottom, #eee, #fff) no-repeat
 
 .field-font-style
-  font-size: 0.85em
-
-
-$field-border-radius: 2px
-$field-border-color-invalid: rgba(255, 0, 0, 0.3)
-$field-border-color-focus: rgba(74,185,255, 0.5)
-$field-background-color: darken(white, 1%)
-// $filed-box-shadow: inset 0 0px 3px #ddd
-$filed-box-shadow: none
-
-
-.imago-checkbox
-  user-select: none
-  label
-    cursor: pointer
-
-  input[type="checkbox"],
-  input[type="radio"]
-    display: none
-  input[type="checkbox"] + label:before
-    background-color: #fff
-    border: 1px solid #e5e5e5
-    content: ""
-    display: inline-block
-    height: 1.25em
-    margin-right: 1em
-    vertical-align: middle
-    width: 1.25em
-    font-size: .75em
-    line-height: 1.25em
-    text-align: center
-  input[type="checkbox"]:checked + label:before
-    content: "\2713"
-
+  font-size: inherit
+  font-family: inherit
 
 .imago-field
   position: relative
-  margin: 3px 0 10px 0
-  padding: 0 5px
+  padding: 0
   width: 100%
-  display: inline-block
+  text-align: left
+  line-height: normal
 
-  // input
-  //   width: 100%
-  //   padding: 1.1em 0.6em 0.25em 0.6em
 
-  input
-    &[type="text"],
-    &[type="password"],
-    &[type="email"],
-    &[type="url"],
-    &[type="date"],
-    &[type="month"],
-    &[type="time"],
-    &[type="datetime"],
-    &[type="datetime-local"],
-    &[type="week"],
-    &[type="number"],
-    &[type="search"],
-    &[type="tel"],
-    &[type="color"]
-      width: 100%
-      padding: 1.1em 0.6em 0.25em 0.6em
-      display: inline-block
-      @extend .field-border-style
-      @extend .field-font-style
-      background-color: $field-background-color
-      box-shadow: $filed-box-shadow
-      border-radius: $field-border-radius
-      box-sizing: border-box
-
-  input
-    &[type="text"],
-    &[type="password"],
-    &[type="email"],
-    &[type="url"],
-    &[type="time"],
-    &[type="number"],
-    &[type="search"],
-    &[type="tel"]
-      appearance: none
-
-  select,
-  textarea
-    padding: 1.1em 0.6em 0.25em 0.6em
-    display: inline-block
-    @extend .field-border-style
-    @extend .field-font-style
-    background-color: $field-background-color
-    box-shadow: $filed-box-shadow
-    border-radius: $field-border-radius
-    box-sizing: border-box
-  textarea
-    resize: vertical
-    width: 100%
-  input
-    &:not([type])
-      width: 100%
-      padding: 1.1em 0.6em 0.25em 0.6em
-      display: inline-block
-      @extend .field-border-style
-      @extend .field-font-style
-      box-shadow: $filed-box-shadow
-      border-radius: $field-border-radius
-      box-sizing: border-box
-      text-align: center
-    &[type="color"]
-      padding: 0.2em 0.5em
-    &[type="text"]:focus,
-    &[type="password"]:focus,
-    &[type="email"]:focus,
-    &[type="url"]:focus,
-    &[type="date"]:focus,
-    &[type="month"]:focus,
-    &[type="time"]:focus,
-    &[type="datetime"]:focus,
-    &[type="datetime-local"]:focus,
-    &[type="week"]:focus,
-    &[type="number"]:focus,
-    &[type="search"]:focus,
-    &[type="tel"]:focus,
-    &[type="color"]:focus
-      outline: 0
-      // outline: thin dotted
-      // border-color: $field-border-color-focus
-      box-shadow: 0 0 5px $field-border-color-focus
-      background-color: white
-  select:focus,
-  textarea:focus
-    outline: 0
-    // outline: thin dotted
-    box-shadow: 0 0 5px rgba(0,192,255,0.3)
-    background-color: white
-  input
-    &:not([type]):focus
-      outline: 0
-      padding: 1.1em 0.6em 0.25em 0.6em
-      // outline: thin dotted
-      // border-color: #129FEA
-    &[type="file"]:focus,
-    &[type="radio"]:focus,
-    &[type="checkbox"]:focus
-      outline: 0
-      // outline: thin dotted #333
-      // outline: 1px auto #129FEA
-  .imago-checkbox,
-  .imago-radio
-    margin: 0.5em 0
-    display: block
-    label
-      margin-left: 0.625em
-  input
-    &[type="text"][disabled],
-    &[type="password"][disabled],
-    &[type="email"][disabled],
-    &[type="url"][disabled],
-    &[type="date"][disabled],
-    &[type="month"][disabled],
-    &[type="time"][disabled],
-    &[type="datetime"][disabled],
-    &[type="datetime-local"][disabled],
-    &[type="week"][disabled],
-    &[type="number"][disabled],
-    &[type="search"][disabled],
-    &[type="tel"][disabled],
-    &[type="color"][disabled]
-      cursor: not-allowed
-      background-color: $field-background-color
-      color: #cad2d3
-  select[disabled],
-  textarea[disabled]
-    cursor: not-allowed
-    background-color: $field-background-color
-    color: #cad2d3
-  input
-    &:not([type])[disabled]
-      cursor: not-allowed
-      background-color: $field-background-color
-      color: #cad2d3
-    &[readonly]
-      background: #eee
-      color: #777
-      // border-color: #ccc
-  select[readonly],
-  textarea[readonly]
-    background: #eee
-    color: #777
-    // border-color: #ccc
-  input:focus:invalid,
-  textarea:focus:invalid,
-  select:focus:invalid
-    box-shadow: 0 0 5px $field-border-color-invalid
-  input:focus:invalid:focus,
-  textarea:focus:invalid:focus,
-  select:focus:invalid:focus
-    box-shadow: 0 0 5px $field-border-color-invalid
-  input
-    &[type="file"]:focus:invalid:focus,
-    &[type="radio"]:focus:invalid:focus,
-    &[type="checkbox"]:focus:invalid:focus
-      outline-color: $field-border-color-invalid
-  select
-    @extend .field-border-style
-    background-color: white
-    &[multiple]
-      height: auto
   label
-    padding: 0 7px
+    padding: 0 0.3em
     position: absolute
-    left: 2px
-    right: 2px
-    top: 4px
-    font-size: 0.6em
+    top: 6px
+    left: 10px
+    right: 10px
+    font-size: 0.6rem
     text-transform: uppercase
-    color: #999
+    color: darken(white, 70%)
+    z-index: 2
+
+
   fieldset
     margin: 0
     padding: 0.35em 0 0.75em
@@ -236,194 +71,13 @@ $filed-box-shadow: none
     color: #333
     border-bottom: 1px solid #e5e5e5
 
+  input,textarea
+    font-weight: inherit
+    font-family: inherit
 
 
-$cropwidget: 45px
-$cropinner:  23px
-
-.imago-crop
-  box-sizing: border-box
-  width: $cropwidget + 10
-  display: inline-block
-  vertical-align: top
-
-  .box
-    margin-left: auto
-    margin-right: auto
-    display: inline-block
-    width: $cropwidget
-    height: $cropwidget
-    position: relative
-    border-radius: 2px
-    background: black
-
-    .inner
-      border-radius: 1px
-      position: absolute
-      background: darken(white, 5%)
-      width: $cropinner
-      height: $cropinner
-      transition: all 0.15s ease
-      // box-shadow: 0 0 1px
-    .over
-      +pos(absolute, 0, 0, 0, 0)
-
-    &.left-top     .inner
-      transform: translate3d(1px,1px,0)
-    &.center-top   .inner
-      transform: translate3d(11px,1px,0)
-    &.right-top    .inner
-      transform: translate3d(21px,1px,0)
-    &.left-center  .inner
-      transform: translate3d(1px,11px,0)
-    &.center-center .inner
-      transform: translate3d(11px,11px,0)
-    &.right-center .inner
-      transform: translate3d(21px,11px,0)
-    &.left-bottom  .inner
-      transform: translate3d(1px,21px,0)
-    &.center-bottom .inner
-      transform: translate3d(11px,21px,0)
-    &.right-bottom .inner
-      transform: translate3d(21px,21px,0)
-
-input.ng-touched.ng-invalid,
-div.ng-invalid-out-of-bounds input,
-form.ng-submitted .ng-invalid-required
-  border-left: 2px solid darken(red,10%) !important
-
-form.ng-submitted
-  input[type="checkbox"].ng-invalid-required +  label:before
-    border: 2px solid darken(red, 10%) !important
-
-// .imago-field
-//   &.number
-//     display: inline-block
-//     width: 30px
-//     white-space: nowrap
-//     height: 26px
-//     position: relative
-//     line-height: normal
-//     background: green
-
-//     input
-//       text-align: right
-//       border: none
-//       display: inline-block
-//       width: 100%
-//       height: 26px
-//       padding: 0
-//       padding-right: 18px
-//       border-radius: 0
-
-//     button.increment,
-//     button.decrement
-//       font-size: 0
-//       position: absolute
-//       right: 0
-//       height: 50%
-//       width: 13px
-//       border: none
-//       background: none
-//       cursor: pointer
-//       &:hover
-//         background: white
-//       &:active
-//         background: darken(white, 10%)
-//       &:after
-//         opacity: 0.5
-//       &:hover:after
-//         opacity: 1
-//       &:disabled
-//         opacity: 0.2
-
-//     .increment
-//       top: 0
-//       transform-style: preserve-3d
-//       &:after
-//         position: absolute
-//         bottom: 2px
-//         left: 2px
-//         content: ''
-//         height: 0
-//         transform: scaleY(1) scaleX(0.8)
-//         border-left: 5px solid transparent
-//         border-right: 5px solid transparent
-//         border-bottom:  5px solid black
-//         border-radius: 1px
-
-//     .decrement
-//       bottom: 0
-//       &:after
-//         position: absolute
-//         top: 2px
-//         left: 2px
-//         content: ''
-//         height: 0
-//         transform: scaleY(1) scaleX(0.8)
-//         border-left: 5px solid transparent
-//         border-right: 5px solid transparent
-//         border-top:  5px solid black
-//         border-radius: 1px
-
-
-
-// .imago-field
-//   background: green
-//   &.number
-//     input
-//       background: red !important
-//     button.increment,
-//     button.decrement
-//       font-size: 0
-//       position: absolute
-//       right: 0
-//       height: 20px
-//       width: 20px
-//       border: none
-//       background: none
-//       cursor: pointer
-//       overflow: hidden
-//       background: red !important
-//       vertical-align: top
-
-//       &:hover
-//         background: white
-//         &:after
-//           border: 2px solid black
-//       &:active
-//         &:after
-//           border: 1px solid black
-//       &:after
-//         opacity: 0.5
-//       &:hover:after
-//         opacity: 1
-//       &:disabled
-//         opacity: 0.2
-
-
-//     button.increment
-//       bottom: 50%
-//       &:after
-//         content: ''
-//         width: 20px
-//         height: 20px
-//         position: absolute
-//         left: 0
-//         top: 0
-//         transform: rotate(45deg) translateX(13px) translateY(13px)
-//         border: 1px solid black
-
-//     button.decrement
-//       top: calc(50% + 3px)
-//       &:after
-//         content: ''
-//         width:  20px
-//         height: 20px
-//         position: absolute
-//         left: 0
-//         top: 0
-//         transform: rotate(45deg) translateX(-13px) translateY(-13px)
-//         border: 1px solid black
-
+input
+  &.ng-invalid-card:not(:focus)
+    // background: rgba(255, 0, 0, 0.1) !important
+    border-left: 1px solid darken(red,5%)
 

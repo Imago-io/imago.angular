@@ -1,0 +1,36 @@
+.imago-field
+  display: inline-block
+  input[type="radio"]
+    display: none
+
+    + label
+        text-transform: initial
+        font-size: 1em
+        position: static
+
+    + label:before
+      margin: 0.5em 0
+      background-color: #fff
+      border: 1px solid darken($imago-field-border-color, 20%)
+      content: ""
+      display: inline-block
+      margin-right: .75em
+      vertical-align: middle
+      width: 1.25em
+      font-size: .75em
+      height: 1.25em
+      line-height: 1.25em
+      border-radius: $imago-field-border-radius
+      border-radius: 50%
+
+
+    &:focus
+      outline: 0
+
+    &:checked + label:before
+      border-width: 5px
+
+    &:focus:invalid
+      outline-color: $imago-field-border-color-invalid
+
+

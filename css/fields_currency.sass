@@ -1,0 +1,44 @@
+
+
+.imago-field.currency
+  margin: 0
+  .wrapper
+    width: 100%
+    padding: $imago-field-padding
+    margin: 3px 0 -8px 0  // @reco very bad fix
+    display: inline-block
+    @extend .field-border-style
+    @extend .field-font-style
+    box-shadow: $imago-field-box-shadow
+    border-radius: $imago-field-border-radius
+    overflow: hidden
+    background-color: $imago-field-background-color
+    &.focus
+      background: white
+
+    select,
+    input
+      margin: 0
+      padding: 0
+      display: inline-block
+      border: none
+      border-radius: 0
+
+    select
+      border: none
+      appearance: none
+      background: none
+      width: auto
+      position: absolute
+      left: 10px
+
+
+    input
+      text-align: right
+      padding-right: .4em
+      margin-right: 0
+      // float: right
+      width: 100%
+      background: none
+      &:hover
+        background: none
