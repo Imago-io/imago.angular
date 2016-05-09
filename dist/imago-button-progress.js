@@ -12,32 +12,37 @@
         },
         link: function(scope, element, attrs) {
           var key, promise, ref;
+          scope.opts = {
+            duration: 1000
+          };
+          for (key in attrs) {
+            if (!scope.opts[key]) {
+              continue;
+            }
+            if ((ref = attrs[key]) === 'true' || ref === 'false') {
+              scope.opts[key] = JSON.parse(attrs[key]);
+            } else if (!isNaN(attrs[key])) {
+              scope.opts[key] = Number(attrs[key]);
+            } else {
+              scope.opts[key] = attrs[key];
+            }
+          }
           scope.actionType = attrs.progress ? 'progress' : 'action';
-          if (attrs.progress) {
-            scope.$watch('progress', function(value) {
+          if (scope.actionType === 'progress') {
+            return scope.$watch('progress', function(value) {
+              if (!_.isBoolean(value)) {
+                return;
+              }
               if (value === true) {
-                return scope.animateClass = ['animate', 'progress'];
+                return scope.animateClass = ['progress'];
               } else {
-                return scope.animateClass = [];
+                scope.animateClass = ['progress', 'done'];
+                return $timeout(function() {
+                  return scope.animateClass = [];
+                }, scope.opts.duration);
               }
             });
-          }
-          if (attrs.action) {
-            scope.opts = {
-              duration: 1000
-            };
-            for (key in attrs) {
-              if (!scope.opts[key]) {
-                continue;
-              }
-              if ((ref = attrs[key]) === 'true' || ref === 'false') {
-                scope.opts[key] = JSON.parse(attrs[key]);
-              } else if (!isNaN(attrs[key])) {
-                scope.opts[key] = Number(attrs[key]);
-              } else {
-                scope.opts[key] = attrs[key];
-              }
-            }
+          } else if (scope.actionType === 'action') {
             scope.style = {
               transitonDuration: scope.opts.duration
             };
@@ -53,7 +58,7 @@
             };
             scope.mouseDown = function() {
               scope.allowAction = false;
-              scope.animateClass = ['animate', 'progress'];
+              scope.animateClass = ['progress'];
               scope.$digest();
               return promise = $timeout(function() {
                 scope.allowAction = true;
@@ -87,4 +92,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-button-progress.html","<button class=\"btn btn-progress\"><div ng-style=\"style\" ng-class=\"animateClass\" class=\"progress-bar type-{{actionType}}\"></div><div ng-transclude=\"ng-transclude\" class=\"imago-button-progress-content\"></div></button>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-button-progress.html","<button class=\"btn btn-progress\"><div ng-style=\"style\" ng-class=\"animateClass\" class=\"progress-bar type-{{actionType}}\"></div><div ng-class=\"animateClass\" class=\"success-bar\"></div><div ng-transclude=\"ng-transclude\" class=\"imago-button-progress-content\"></div></button>");}]);
