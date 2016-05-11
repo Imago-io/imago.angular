@@ -637,7 +637,7 @@
               'maxStock': true
             };
           }
-          if (stock === 0) {
+          if (stock <= 0) {
             this.cartError[item._id] = {
               'noStock': true
             };

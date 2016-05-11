@@ -314,7 +314,7 @@ class Calculation extends Service
         changed = true
 
         @cartError[item._id] = {'maxStock': true} if stock != 0
-        @cartError[item._id] = {'noStock': true} if stock is 0
+        @cartError[item._id] = {'noStock': true} if stock <= 0
 
     if changed
       @$http.put(@imagoModel.host + '/api/carts/' + @cart._id, @cart)
