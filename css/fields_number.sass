@@ -1,16 +1,10 @@
 
 // number
 .imago-field-number-content
-  input[type="number"]
-    // appearance: none
-    -moz-appearance: textfield
-    // -webkit-appearance: textfield
-    &::-webkit-inner-spin-button
-      -webkit-appearance: none
-    &::-webkit-outer-spin-button
-      -webkit-appearance: none
+  @extend .imago-field
+  input[type="text"]
     padding-right: 3em
-
+    // background: red!important
     &.ng-invalid,
     &.ng-invalid-required
       border-left: $imago-field-border-width-invalid solid $imago-field-border-color-invalid
