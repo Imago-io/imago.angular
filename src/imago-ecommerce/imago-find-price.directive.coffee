@@ -39,7 +39,7 @@ class imagoFindPriceController extends Controller
 
   findOpts: ->
     return unless @imagoCart.currency and @options?.length and @product
-    @variants = _.clone @options
+    @variants = _.cloneDeep @options
 
     if @attrs
       for name in @attrs

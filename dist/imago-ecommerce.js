@@ -627,7 +627,7 @@
       if (!(this.imagoCart.currency && ((ref = this.options) != null ? ref.length : void 0) && this.product)) {
         return;
       }
-      this.variants = _.clone(this.options);
+      this.variants = _.cloneDeep(this.options);
       if (this.attrs) {
         ref1 = this.attrs;
         for (i = 0, len = ref1.length; i < len; i++) {
