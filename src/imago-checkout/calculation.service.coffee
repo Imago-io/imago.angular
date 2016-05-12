@@ -324,6 +324,7 @@ class Calculation extends Service
 
   calculate: =>
     @checkStock =>
+
       @costs =
         subtotal    : 0
         shipping    : 0
@@ -339,6 +340,7 @@ class Calculation extends Service
       @$q.all([@calculateTax(), @calculateShipping()]).then =>
         @applyCoupon(@coupon, @costs) if @coupon
         @calculateTotal()
+        @finalCosts = angular.copy @costs
 
   formatForm: (form) ->
     form.costs = angular.copy @costs

@@ -673,7 +673,8 @@
             if (_this.coupon) {
               _this.applyCoupon(_this.coupon, _this.costs);
             }
-            return _this.calculateTotal();
+            _this.calculateTotal();
+            return _this.finalCosts = angular.copy(_this.costs);
           });
         };
       })(this));
