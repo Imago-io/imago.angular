@@ -66,7 +66,6 @@ class imagoVideoController extends Controller
       autobuffer        : null
       autoplay          : false
       controls          : true
-      controlsAutohide  : true
       preload           : false
       size              : 'hd'
       align             : 'center center'
