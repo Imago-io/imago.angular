@@ -93,9 +93,6 @@ class imagoImageController extends Controller
       @asset.fields.sizemode.value isnt 'default' and not @$attrs.sizemode
         @opts.sizemode = @asset.fields.sizemode.value
 
-    if @opts.lazy is false
-      @removeInView = true
-
     if @opts.responsive
       @watchers.push @$rootScope.$on 'resize', =>
         return unless @visible

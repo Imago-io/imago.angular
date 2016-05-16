@@ -339,10 +339,9 @@ class imagoModel extends Provider
           options.stream = true if _.isUndefined options.stream
           options.attribute = '_id' if _.isUndefined options.attribute
           return $q (resolve, reject) =>
-            copy = angular.copy data
-            copy = [copy] if !_.isArray copy
+            data = [data] if !_.isArray data
 
-            for asset in copy
+            for asset, idx in data
               query = {}
               query[options.attribute] = asset[options.attribute]
               asset = _.omit(asset, 'assets')
@@ -351,6 +350,7 @@ class imagoModel extends Provider
                 if find.base64_url and asset.serving_url
                   asset.base64_url = null
                 _.assign(find, asset)
+                data[idx] = find
               else
                 @data.push asset
 
@@ -358,11 +358,11 @@ class imagoModel extends Provider
                 asset.base64_url = null
 
             if options.save
-              resolve @assets.batch(copy)
+              resolve @assets.batch(data)
             else
-              resolve copy
+              resolve data
 
-            $rootScope.$emit('assets:update', copy) if options.stream
+            $rootScope.$emit('assets:update', data) if options.stream
 
         delete: (assets, options = {}) ->
           return $q (resolve, reject) =>

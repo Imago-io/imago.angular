@@ -546,13 +546,12 @@
             }
             return $q((function(_this) {
               return function(resolve, reject) {
-                var asset, copy, find, j, len, query;
-                copy = angular.copy(data);
-                if (!_.isArray(copy)) {
-                  copy = [copy];
+                var asset, find, idx, j, len, query;
+                if (!_.isArray(data)) {
+                  data = [data];
                 }
-                for (j = 0, len = copy.length; j < len; j++) {
-                  asset = copy[j];
+                for (idx = j = 0, len = data.length; j < len; idx = ++j) {
+                  asset = data[idx];
                   query = {};
                   query[options.attribute] = asset[options.attribute];
                   asset = _.omit(asset, 'assets');
@@ -562,6 +561,7 @@
                       asset.base64_url = null;
                     }
                     _.assign(find, asset);
+                    data[idx] = find;
                   } else {
                     _this.data.push(asset);
                   }
@@ -570,12 +570,12 @@
                   }
                 }
                 if (options.save) {
-                  resolve(_this.assets.batch(copy));
+                  resolve(_this.assets.batch(data));
                 } else {
-                  resolve(copy);
+                  resolve(data);
                 }
                 if (options.stream) {
-                  return $rootScope.$emit('assets:update', copy);
+                  return $rootScope.$emit('assets:update', data);
                 }
               };
             })(this));

@@ -94,9 +94,6 @@ class imagoVideoController extends Controller
       @asset.fields.sizemode.value isnt 'default' and not @$attrs.sizemode
         @opts.sizemode = @asset.fields.sizemode.value
 
-    if @opts.autoplayInview is false
-      @removeInView = true
-
     if @opts.responsive
       @watchers.push @$rootScope.$on 'resize', =>
         # @$scope.$applyAsync =>
