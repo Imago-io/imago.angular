@@ -212,11 +212,6 @@
     function imagoCart() {
       return {
         restrict: 'E',
-        scope: {
-          min: '=',
-          max: '=',
-          ngModel: '='
-        },
         transclude: true,
         templateUrl: function(element, attrs) {
           return attrs.templateUrl || '/imago/imago-cart.html';
