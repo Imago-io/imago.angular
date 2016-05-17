@@ -146,6 +146,7 @@ class imagoVideoController extends Controller
     # debugger
 
   onPlayerReady: (api) =>
+    console.log '@opts.autoplayInview', @opts.autoplayInview
     if @opts.autoplayInview
       @$scope.$watch 'imagovideo.visible', (value) =>
         if value

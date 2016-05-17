@@ -1,13 +1,11 @@
-class imagoFindPrice extends Directive
+class imagoFindPrice extends Component
 
   constructor: ->
 
     return {
 
-      restrict: 'E'
-      scope: true
       controller: 'imagoFindPriceController as findprice'
-      bindToController:
+      bindings:
         options: '=variants'
         product: '='
         attributes: '@'

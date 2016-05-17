@@ -97,8 +97,9 @@ class imagoCart extends Service
 
   add: (item, options, fields) ->
     return console.log 'item required' unless item
-    return console.log 'quantity required' unless item.qty
+    return console.log 'no stock' if (item.stock <= 0 or !item.stock) and !item.presale
 
+    item.qty or= 1
     item.finalsale = item.fields?.finalSale?.value
     item.presale = item.fields?.presale?.value
 

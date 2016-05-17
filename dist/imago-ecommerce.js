@@ -420,9 +420,10 @@
       if (!item) {
         return console.log('item required');
       }
-      if (!item.qty) {
-        return console.log('quantity required');
+      if ((item.stock <= 0 || !item.stock) && !item.presale) {
+        return console.log('no stock');
       }
+      item.qty || (item.qty = 1);
       item.finalsale = (ref = item.fields) != null ? (ref1 = ref.finalSale) != null ? ref1.value : void 0 : void 0;
       item.presale = (ref2 = item.fields) != null ? (ref3 = ref2.presale) != null ? ref3.value : void 0 : void 0;
       if (_.isArray(options) && (options != null ? options.length : void 0)) {
@@ -571,10 +572,8 @@
   imagoFindPrice = (function() {
     function imagoFindPrice() {
       return {
-        restrict: 'E',
-        scope: true,
         controller: 'imagoFindPriceController as findprice',
-        bindToController: {
+        bindings: {
           options: '=variants',
           product: '=',
           attributes: '@'
@@ -675,7 +674,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoFindPrice', [imagoFindPrice]).controller('imagoFindPriceController', ['$scope', '$parse', 'imagoCart', imagoFindPriceController]);
+  angular.module('imago').component('imagoFindPrice', new imagoFindPrice()).controller('imagoFindPriceController', ['$scope', '$parse', 'imagoCart', imagoFindPriceController]);
 
 }).call(this);
 
@@ -710,7 +709,7 @@
               variant.presale = (ref4 = variant.fields) != null ? (ref5 = ref4.presale) != null ? ref5.value : void 0 : void 0;
               variant.lowstock = variant.stock <= this.lowStock && variant.stock ? true : false;
             }
-            return this.selected = this.variants[0];
+            return this.selected = _.head(this.variants);
           } else {
             ref6 = this.variants;
             for (j = 0, len1 = ref6.length; j < len1; j++) {
@@ -745,7 +744,7 @@
             for (key in this.options) {
               this.options[key] = _.uniqBy(this.options[key], 'name');
               if (((ref19 = this.options[key]) != null ? ref19.length : void 0) === 1) {
-                this[key] = this.options[key][0].name;
+                this[key] = _.head(this.options[key]).name;
               }
             }
             return this.selectVariant();
@@ -819,21 +818,12 @@
             };
           })(this));
           if (!variant) {
-            return this.selected = 0;
+            this.selected = 0;
+            return;
           }
           variant.price = (ref = variant.fields) != null ? (ref1 = ref.price) != null ? ref1.value : void 0 : void 0;
           variant.discountedPrice = (ref2 = variant.fields) != null ? (ref3 = ref2.discountedPrice) != null ? ref3.value : void 0 : void 0;
           return this.selected = variant;
-        };
-
-        ProductInstance.prototype.addToCart = function(product, options, fields) {
-          if (product) {
-            this.error = false;
-            product.qty = 1;
-            return imagoCart.add(product, options, fields);
-          } else {
-            return this.error = true;
-          }
         };
 
         return ProductInstance;

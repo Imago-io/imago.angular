@@ -21,7 +21,7 @@ class imagoProduct extends Factory
             variant.presale = variant.fields?.presale?.value
             variant.lowstock = if variant.stock <= @lowStock and variant.stock then true else false
 
-          @selected = @variants[0]
+          @selected = _.head @variants
 
         else
           for variant in @variants
@@ -48,7 +48,7 @@ class imagoProduct extends Factory
           for key of @options
             @options[key] = _.uniqBy @options[key], 'name'
             if @options[key]?.length is 1
-              @[key] = @options[key][0].name
+              @[key] = _.head(@options[key]).name
 
           @selectVariant()
 
@@ -94,18 +94,11 @@ class imagoProduct extends Factory
 
           return valid
 
-        unless variant
-          return @selected = 0
+        if !variant
+          @selected = 0
+          return
 
         variant.price = variant.fields?.price?.value
         variant.discountedPrice = variant.fields?.discountedPrice?.value
         @selected = variant
-
-      addToCart: (product, options, fields) ->
-        if product
-          @error = false
-          product.qty = 1
-          imagoCart.add product, options, fields
-        else
-          @error = true
 
