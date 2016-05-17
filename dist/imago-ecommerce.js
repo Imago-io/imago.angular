@@ -267,9 +267,10 @@
 
     imagoCart.prototype.messages = [];
 
-    function imagoCart($q, $rootScope, $location, $window, $http, imagoUtils, imagoModel, fulfillmentsCenter, geoIp, tenantSettings, imagoCartUtils) {
+    function imagoCart($q, $rootScope, $timeout, $location, $window, $http, imagoUtils, imagoModel, fulfillmentsCenter, geoIp, tenantSettings, imagoCartUtils) {
       this.$q = $q;
       this.$rootScope = $rootScope;
+      this.$timeout = $timeout;
       this.$location = $location;
       this.$window = $window;
       this.$http = $http;
@@ -493,7 +494,11 @@
       } else {
         this.cart.items.push(copy);
       }
-      this.show = true;
+      this.$timeout((function(_this) {
+        return function() {
+          return _this.show = true;
+        };
+      })(this));
       this.calculate();
       return this.checkCart().then((function(_this) {
         return function(response) {
@@ -561,7 +566,7 @@
 
   })();
 
-  angular.module('imago').service('imagoCart', ['$q', '$rootScope', '$location', '$window', '$http', 'imagoUtils', 'imagoModel', 'fulfillmentsCenter', 'geoIp', 'tenantSettings', 'imagoCartUtils', imagoCart]);
+  angular.module('imago').service('imagoCart', ['$q', '$rootScope', '$timeout', '$location', '$window', '$http', 'imagoUtils', 'imagoModel', 'fulfillmentsCenter', 'geoIp', 'tenantSettings', 'imagoCartUtils', imagoCart]);
 
 }).call(this);
 

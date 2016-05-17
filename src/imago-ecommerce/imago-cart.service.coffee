@@ -5,7 +5,7 @@ class imagoCart extends Service
   settings: []
   messages: []
 
-  constructor: (@$q, @$rootScope, @$location, @$window, @$http, @imagoUtils, @imagoModel, @fulfillmentsCenter, @geoIp, @tenantSettings, @imagoCartUtils) ->
+  constructor: (@$q, @$rootScope, @$timeout, @$location, @$window, @$http, @imagoUtils, @imagoModel, @fulfillmentsCenter, @geoIp, @tenantSettings, @imagoCartUtils) ->
 
     @cart =
       items: []
@@ -144,7 +144,7 @@ class imagoCart extends Service
     else
       @cart.items.push copy
 
-    @show = true
+    @$timeout => @show = true
     @calculate()
 
     # console.log '@cart', @cart
