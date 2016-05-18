@@ -5,7 +5,6 @@
     function ImagoSubscribe() {
       return {
         require: 'form',
-        restrict: 'E',
         transclude: true,
         controller: 'imagoSubscribeController as imagosubscribe',
         templateUrl: function(element, attrs) {
@@ -25,7 +24,7 @@
         if (validate.$invalid) {
           return;
         }
-        form = $parse($attrs.imagoSubscribe)($scope);
+        form = $parse($attrs.data)($scope);
         this.submitted = true;
         return $http.post(imagoModel.host + "/api/subscribe", form).then((function(_this) {
           return function(response) {

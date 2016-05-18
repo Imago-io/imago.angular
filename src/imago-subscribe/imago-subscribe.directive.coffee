@@ -5,7 +5,6 @@ class ImagoSubscribe extends Directive
     return {
 
       require: 'form'
-      restrict: 'E'
       transclude: true
       controller: 'imagoSubscribeController as imagosubscribe'
       templateUrl: (element, attrs) ->
@@ -19,7 +18,7 @@ class ImagoSubscribeController extends Controller
 
     @submit = (validate) ->
       return if validate.$invalid
-      form = $parse($attrs.imagoSubscribe)($scope)
+      form = $parse($attrs.data)($scope)
 
       @submitted = true
 
