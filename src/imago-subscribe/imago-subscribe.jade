@@ -1,6 +1,6 @@
 .imago-subscribe-content
   div(ng-transclude ng-hide="imagosubscribe.submitted && !imagosubscribe.error")
 
-  .error(ng-show="imagosubscribe.submitted && imagosubscribe.error") please try again later
+  .error(ng-show="imagosubscribe.error") please try again later
 
   .submitted(ng-show="imagosubscribe.submitted && !imagosubscribe.error") subscription created

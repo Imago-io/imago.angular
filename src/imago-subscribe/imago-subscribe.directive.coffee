@@ -30,4 +30,3 @@ class ImagoSubscribeController extends Controller
       @error = false
     , (error) ->
       @error = true
-      @submitted = false
