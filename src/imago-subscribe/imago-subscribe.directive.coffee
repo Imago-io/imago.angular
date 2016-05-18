@@ -5,8 +5,12 @@ class ImagoSubscribe extends Directive
     return {
 
       require: 'form'
+      restrict: 'A'
       transclude: true
+      scope: true
       controller: 'imagoSubscribeController as imagosubscribe'
+      bindToController:
+        data: '='
       templateUrl: (element, attrs) ->
         return attrs.templateUrl or '/imago/imago-subscribe.html'
 
@@ -14,17 +18,16 @@ class ImagoSubscribe extends Directive
 
 class ImagoSubscribeController extends Controller
 
-  constructor:($scope, $attrs, $http, $parse, imagoModel) ->
+  constructor:(@$scope, @$attrs, @$http, @imagoModel) ->
 
-    @submit = (validate) ->
-      return if validate.$invalid
-      form = $parse($attrs.data)($scope)
+  submit: ->
+    if @$attrs.name
+      return if @$scope.$eval(@$attrs.name).$invalid
 
-      @submitted = true
+    @submitted = true
 
-      $http.post("#{imagoModel.host}/api/subscribe", form).then (response) =>
-        @error = false
-        console.log 'response', response
-      , (error) ->
-        @error = true
-        console.log 'error', error
+    @$http.post("#{@imagoModel.host}/api/subscribe", @data).then (response) =>
+      @error = false
+    , (error) ->
+      @error = true
+      @submitted = false

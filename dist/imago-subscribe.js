@@ -5,8 +5,13 @@
     function ImagoSubscribe() {
       return {
         require: 'form',
+        restrict: 'A',
         transclude: true,
+        scope: true,
         controller: 'imagoSubscribeController as imagosubscribe',
+        bindToController: {
+          data: '='
+        },
         templateUrl: function(element, attrs) {
           return attrs.templateUrl || '/imago/imago-subscribe.html';
         }
@@ -18,31 +23,35 @@
   })();
 
   ImagoSubscribeController = (function() {
-    function ImagoSubscribeController($scope, $attrs, $http, $parse, imagoModel) {
-      this.submit = function(validate) {
-        var form;
-        if (validate.$invalid) {
+    function ImagoSubscribeController($scope, $attrs, $http, imagoModel) {
+      this.$scope = $scope;
+      this.$attrs = $attrs;
+      this.$http = $http;
+      this.imagoModel = imagoModel;
+    }
+
+    ImagoSubscribeController.prototype.submit = function() {
+      if (this.$attrs.name) {
+        if (this.$scope.$eval(this.$attrs.name).$invalid) {
           return;
         }
-        form = $parse($attrs.data)($scope);
-        this.submitted = true;
-        return $http.post(imagoModel.host + "/api/subscribe", form).then((function(_this) {
-          return function(response) {
-            _this.error = false;
-            return console.log('response', response);
-          };
-        })(this), function(error) {
-          this.error = true;
-          return console.log('error', error);
-        });
-      };
-    }
+      }
+      this.submitted = true;
+      return this.$http.post(this.imagoModel.host + "/api/subscribe", this.data).then((function(_this) {
+        return function(response) {
+          return _this.error = false;
+        };
+      })(this), function(error) {
+        this.error = true;
+        return this.submitted = false;
+      });
+    };
 
     return ImagoSubscribeController;
 
   })();
 
-  angular.module('imago').directive('imagoSubscribe', [ImagoSubscribe]).controller('imagoSubscribeController', ['$scope', '$attrs', '$http', '$parse', 'imagoModel', ImagoSubscribeController]);
+  angular.module('imago').directive('imagoSubscribe', [ImagoSubscribe]).controller('imagoSubscribeController', ['$scope', '$attrs', '$http', 'imagoModel', ImagoSubscribeController]);
 
 }).call(this);
 
