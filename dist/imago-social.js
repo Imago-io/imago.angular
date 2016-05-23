@@ -24,14 +24,13 @@
   imagoShare = (function() {
     function imagoShare() {
       return {
-        restrict: 'E',
-        scope: {
-          asset: "="
+        bindings: {
+          asset: '<',
+          data: '@'
         },
         controller: 'imagoShareController as imagoshare',
-        bindToController: true,
-        templateUrl: function(element, attrs) {
-          return attrs.templateUrl || '/imago/imago-share.html';
+        templateUrl: function($attrs) {
+          return $attrs.templateUrl || '/imago/imago-share.html';
         }
       };
     }
@@ -41,21 +40,16 @@
   })();
 
   imagoShareController = (function() {
-    function imagoShareController($scope, $attrs, $location) {
-      var watcher;
+    function imagoShareController($scope, $location) {
       this.$scope = $scope;
-      this.$attrs = $attrs;
       this.$location = $location;
       this.init();
-      watcher = this.$scope.$watch('imagoshare.asset', (function(_this) {
-        return function(value) {
-          if (!value) {
-            return;
-          }
-          watcher();
-          return _this.init();
-        };
-      })(this));
+      this.$onChanges = function(changes) {
+        if (!changes.asset.currentValue) {
+          return;
+        }
+        return this.init();
+      };
     }
 
     imagoShareController.prototype.init = function() {
@@ -66,10 +60,10 @@
         this.location = this.$location.absUrl();
       }
       this.location = encodeURIComponent(this.location);
-      if (!this.$attrs.imagoShare) {
+      if (!this.data) {
         return console.log('You need to specify one service at least.');
       }
-      options = this.$scope.$eval(this.$attrs.imagoShare);
+      options = this.$scope.$eval(this.data);
       if (_.isArray(options)) {
         results = [];
         for (i = 0, len = options.length; i < len; i++) {
@@ -77,7 +71,7 @@
           results.push(this.$scope[item] = true);
         }
         return results;
-      } else if (this.$attrs.imagoShare === 'all') {
+      } else if (this.data === 'all') {
         return this.$scope.all = true;
       }
     };
@@ -86,7 +80,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoShare', [imagoShare]).controller('imagoShareController', ['$scope', '$attrs', '$location', imagoShareController]);
+  angular.module('imago').component('imagoShare', new imagoShare()).controller('imagoShareController', ['$scope', '$location', imagoShareController]);
 
 }).call(this);
 
