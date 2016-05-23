@@ -18,7 +18,7 @@
           for (key in form) {
             value = form[key];
             if (indexOf.call(defaultFields, key) < 0) {
-              _message += "<b>" + (_.startCase(key)) + "</b>:: " + value + "<br><br>";
+              _message += "<b>" + (_.startCase(key)) + "</b>: " + value + "<br><br>";
             }
             obj[key] = value || '';
           }
