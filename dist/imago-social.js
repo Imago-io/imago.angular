@@ -19,7 +19,8 @@
 }).call(this);
 
 (function() {
-  var imagoShare, imagoShareController;
+  var imagoShare, imagoShareController,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   imagoShare = (function() {
     function imagoShare() {
@@ -43,14 +44,20 @@
     function imagoShareController($scope, $location) {
       this.$scope = $scope;
       this.$location = $location;
-      this.init();
-      this.$onChanges = function(changes) {
-        if (!changes.asset.currentValue) {
-          return;
-        }
-        return this.init();
-      };
+      this.$onChanges = bind(this.$onChanges, this);
+      this.$onInit = bind(this.$onInit, this);
     }
+
+    imagoShareController.prototype.$onInit = function() {
+      return this.init();
+    };
+
+    imagoShareController.prototype.$onChanges = function(changes) {
+      if (!changes.asset.currentValue) {
+        return;
+      }
+      return this.init();
+    };
 
     imagoShareController.prototype.init = function() {
       var i, item, len, options, ref, results;

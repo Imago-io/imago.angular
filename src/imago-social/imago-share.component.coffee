@@ -17,11 +17,12 @@ class imagoShareController extends Controller
 
   constructor: (@$scope, @$location) ->
 
+  $onInit: =>
     @init()
 
-    @$onChanges = (changes) ->
-      return if !changes.asset.currentValue
-      @init()
+  $onChanges: (changes) =>
+    return if !changes.asset.currentValue
+    @init()
 
   init: ->
     if @asset?.path
