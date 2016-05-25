@@ -14,7 +14,7 @@ class ImagoButtonConfirm extends Component
 
 class ImagoButtonConfirmController extends Controller
 
-  constructor: (@$timeout) ->
+  constructor: ->
 
   onClick: (evt) ->
     if @confirm or evt.metaKey

@@ -197,7 +197,7 @@
             }
             return $q((function(_this) {
               return function(resolve, reject) {
-                var asset, key, localQuery, path, value;
+                var asset, item, j, key, len, localQuery, path, ref, value;
                 for (key in options) {
                   value = options[key];
                   if (key === 'localData' && value === false) {
@@ -233,10 +233,19 @@
                   return reject(query);
                 }
                 asset.assets = _this.findChildren(asset);
-                if ((asset.count || asset.assets.length) || asset.count === 0) {
-                  if (asset.assets.length !== asset.count || asset.count === 0) {
+                if ((asset.count || asset.assets.length) || !asset.count) {
+                  if (asset.assets.length !== asset.count || !asset.count) {
                     return reject(query);
                   } else {
+                    if (query.recursive) {
+                      ref = asset.assets;
+                      for (j = 0, len = ref.length; j < len; j++) {
+                        item = ref[j];
+                        if (item.assets.length !== item.count) {
+                          return reject(query);
+                        }
+                      }
+                    }
                     asset.assets = _this.filterAssets(asset.assets, query);
                     return resolve(asset);
                   }
@@ -433,7 +442,7 @@
           },
           filterAssets: function(assets, query) {
             var filter, j, key, len, params, value;
-            query = _.omit(query, 'path');
+            query = _.omit(query, ['path', 'recursive']);
             if (_.keys(query).length) {
               filter = function(params, key) {
                 return _.filter(assets, function(asset) {

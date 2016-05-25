@@ -18,9 +18,7 @@
   })();
 
   ImagoButtonConfirmController = (function() {
-    function ImagoButtonConfirmController($timeout) {
-      this.$timeout = $timeout;
-    }
+    function ImagoButtonConfirmController() {}
 
     ImagoButtonConfirmController.prototype.onClick = function(evt) {
       if (this.confirm || evt.metaKey) {
@@ -37,7 +35,7 @@
 
   })();
 
-  angular.module('imago').component('imagoButtonConfirm', new ImagoButtonConfirm()).controller('imagoButtonConfirmController', ['$timeout', ImagoButtonConfirmController]);
+  angular.module('imago').component('imagoButtonConfirm', new ImagoButtonConfirm()).controller('imagoButtonConfirmController', [ImagoButtonConfirmController]);
 
 }).call(this);
 
