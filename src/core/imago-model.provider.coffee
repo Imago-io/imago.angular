@@ -80,8 +80,8 @@ class imagoModel extends Provider
           download: (ids, res) ->
             $http.post "#{host}/api/assets/download", {assets: ids, resolution: res}
 
-          pdfRequest: (ids, orientation) ->
-            $http.post "#{host}/api/assets/pdf", {assets: ids, orientation}
+          pdfRequest: (data) ->
+            $http.post "#{host}/api/assets/pdf", data
 
           spreadRequest: (data) ->
             $http.post "#{host}/api/assets/spread", data
