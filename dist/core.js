@@ -159,11 +159,8 @@
                 resolution: res
               });
             },
-            pdfRequest: function(ids, orientation) {
-              return $http.post(host + "/api/assets/pdf", {
-                assets: ids,
-                orientation: orientation
-              });
+            pdfRequest: function(data) {
+              return $http.post(host + "/api/assets/pdf", data);
             },
             spreadRequest: function(data) {
               return $http.post(host + "/api/assets/spread", data);
