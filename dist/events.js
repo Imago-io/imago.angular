@@ -92,13 +92,33 @@
   StopPropagation = (function() {
     function StopPropagation() {
       return {
-        link: function(scope, element, attr) {
-          element.bind('click', function(evt) {
-            return evt.stopPropagation();
-          });
-          return element.bind('dblclick', function(evt) {
-            return evt.stopPropagation();
-          });
+        link: function(scope, element, attrs) {
+          var createBind, i, item, len, options, results;
+          options = attrs.stopPropagation;
+          if (options === 'stop-propagation' || options === '') {
+            element.bind('click', function(evt) {
+              return evt.stopPropagation();
+            });
+            return element.bind('dblclick', function(evt) {
+              return evt.stopPropagation();
+            });
+          } else {
+            createBind = function(eventName) {
+              return element.bind(eventName, function(evt) {
+                return evt.stopPropagation();
+              });
+            };
+            options = options.split(' ');
+            if (!options.length) {
+              return;
+            }
+            results = [];
+            for (i = 0, len = options.length; i < len; i++) {
+              item = options[i];
+              results.push(createBind(item));
+            }
+            return results;
+          }
         }
       };
     }

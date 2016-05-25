@@ -132,24 +132,29 @@ class imagoModel extends Provider
             if path?.slice(-1) is '/' and path.length > 1
               path = path.substring(0, path.length - 1)
 
-            return reject query unless path
+            return reject query if !path
 
             localQuery =
               'path' : if _.isString path then path else _.head(path)
 
             asset = @find(localQuery)
 
-            return reject query unless asset
+            return reject query if !asset
 
             asset.assets = @findChildren(asset)
 
-            if (asset.count or asset.assets.length) or asset.count is 0
+            if (asset.count or asset.assets.length) or !asset.count
 
-              if asset.assets.length isnt asset.count or asset.count is 0
+              if asset.assets.length isnt asset.count or !asset.count
                 # console.log "count not same as assets.length - go to server", asset.count, asset.assets.length
                 return reject query
 
               else
+                if query.recursive
+                  # console.log 'recursive', asset.assets.length, asset.count
+                  for item in asset.assets
+                    return reject query if item.assets.length isnt item.count
+
                 asset.assets = @filterAssets(asset.assets, query)
                 return resolve asset
 
@@ -282,7 +287,7 @@ class imagoModel extends Provider
           _.findIndex @data, options
 
         filterAssets: (assets, query) ->
-          query = _.omit query, 'path'
+          query = _.omit query, ['path', 'recursive']
           if _.keys(query).length
             filter = (params, key) ->
               return _.filter assets, (asset) ->
