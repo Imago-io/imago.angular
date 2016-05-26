@@ -5,7 +5,7 @@ class imagoProduct extends Factory
     return class ProductInstance
 
       constructor: (@variants, options) ->
-        return unless @variants and options
+        return if !@variants?.length or !options
 
         for key of options
           @[key] = options[key]

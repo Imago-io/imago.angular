@@ -11,7 +11,8 @@ class GeoIp extends Service
       return @getCookie() if _.isEmpty response.data
       code = @imagoUtils.getCountryByCode(response.data.country_code)
       @imagoUtils.cookie 'countryGeo', response.data.country_code
-      @data.country = code
+      response.data.country = code
+      @data = response.data
       @$rootScope.$emit 'geoip:loaded', @data
       @loaded = true
       return response.data

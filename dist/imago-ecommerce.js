@@ -109,7 +109,8 @@
           }
           code = _this.imagoUtils.getCountryByCode(response.data.country_code);
           _this.imagoUtils.cookie('countryGeo', response.data.country_code);
-          _this.data.country = code;
+          response.data.country = code;
+          _this.data = response.data;
           _this.$rootScope.$emit('geoip:loaded', _this.data);
           _this.loaded = true;
           return response.data;
@@ -686,8 +687,11 @@
       var ProductInstance;
       return ProductInstance = (function() {
         function ProductInstance(variants, options) {
-          var key;
+          var key, ref;
           this.variants = variants;
+          if (!((ref = this.variants) != null ? ref.length : void 0) || !options) {
+            return;
+          }
           for (key in options) {
             this[key] = options[key];
           }
