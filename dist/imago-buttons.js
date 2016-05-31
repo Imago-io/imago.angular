@@ -49,7 +49,8 @@
         transclude: true,
         scope: {
           action: '&',
-          progress: '='
+          progress: '=',
+          disabled: '=?ngDisabled'
         },
         link: function(scope, element, attrs) {
           var key, promise, ref;
@@ -134,4 +135,4 @@
 }).call(this);
 
 angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-button-confirm.html","<button ng-click=\"$ctrl.onClick($event)\" class=\"btn btn-confirm\"><span ng-show=\"$ctrl.confirm\" class=\"message-confirm\">Sure?</span><div ng-hide=\"$ctrl.confirm\" ng-transclude=\"ng-transclude\" class=\"imago-button-confirm-content\"></div></button>");
-$templateCache.put("/imago/imago-button-progress.html","<button class=\"btn btn-progress\"><div ng-style=\"style\" ng-class=\"animateClass\" class=\"progress-bar type-{{actionType}}\"></div><div ng-class=\"animateClass\" class=\"success-bar\"></div><div ng-transclude=\"ng-transclude\" class=\"imago-button-progress-content\"></div></button>");}]);
+$templateCache.put("/imago/imago-button-progress.html","<button ng-disabled=\"disabled\" class=\"btn btn-progress\"><div ng-style=\"style\" ng-class=\"animateClass\" class=\"progress-bar type-{{actionType}}\"></div><div ng-class=\"animateClass\" class=\"success-bar\"></div><div ng-transclude=\"ng-transclude\" class=\"imago-button-progress-content\"></div></button>");}]);

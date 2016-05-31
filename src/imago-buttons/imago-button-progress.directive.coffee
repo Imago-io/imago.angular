@@ -8,6 +8,7 @@ class ImagoButtonProgress extends Directive
       scope:
         action: '&'
         progress: '='
+        disabled: '=?ngDisabled'
       link: (scope, element, attrs) ->
 
         scope.opts =
