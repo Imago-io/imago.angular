@@ -153,11 +153,9 @@
     };
 
     Calculation.prototype.deleteItem = function(item) {
-      var idx;
-      idx = _.findIndex(this.cart.items, {
+      _.remove(this.cart.items, {
         id: item.id
       });
-      this.cart.items.splice(idx, 1);
       return this.updateCart();
     };
 

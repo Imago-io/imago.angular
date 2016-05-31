@@ -32,7 +32,9 @@
       if (_.includes(this.query, '{')) {
         this.query = $scope.$eval(this.query);
       }
-      imagoModel.getData(this.query).then((function(_this) {
+      imagoModel.getData(this.query, {
+        skipTitle: true
+      }).then((function(_this) {
         return function(response) {
           var data, i, item, j, len, len1, ref, results;
           results = [];

@@ -396,20 +396,16 @@
     };
 
     imagoCart.prototype.checkCart = function() {
-      var defer;
-      defer = this.$q.defer();
       if (this.cart._id) {
-        defer.resolve('update');
-      } else {
-        this.create(this.cart).then((function(_this) {
-          return function(response) {
-            _.assign(_this.cart, response.data);
-            _this.imagoUtils.cookie('imagoCart', response.data._id);
-            return defer.resolve('created');
-          };
-        })(this));
+        return this.$q.resolve('update');
       }
-      return defer.promise;
+      return this.create(this.cart).then((function(_this) {
+        return function(response) {
+          _.assign(_this.cart, response.data);
+          _this.imagoUtils.cookie('imagoCart', response.data._id);
+          return response.data;
+        };
+      })(this));
     };
 
     imagoCart.prototype.create = function(cart) {

@@ -19,8 +19,7 @@ class Calculation extends Service
     @calculate()
 
   deleteItem: (item) =>
-    idx = _.findIndex @cart.items, {id: item.id}
-    @cart.items.splice idx, 1
+    _.remove @cart.items, {id: item.id}
     @updateCart()
 
   changeAddress: (section, type) =>

@@ -82,15 +82,13 @@ class imagoCart extends Service
     @checkGeoIp()
 
   checkCart: =>
-    defer = @$q.defer()
     if @cart._id
-      defer.resolve('update')
-    else
-      @create(@cart).then (response) =>
-        _.assign @cart, response.data
-        @imagoUtils.cookie('imagoCart', response.data._id)
-        defer.resolve('created')
-    defer.promise
+      return @$q.resolve('update')
+
+    @create(@cart).then (response) =>
+      _.assign @cart, response.data
+      @imagoUtils.cookie('imagoCart', response.data._id)
+      return response.data
 
   create: (cart) =>
     return @$http.post("#{@imagoModel.host}/api/carts", cart)
