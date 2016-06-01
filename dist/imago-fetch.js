@@ -46,6 +46,7 @@
               if (item.path === '/home') {
                 item.path = '/';
               }
+              item.normname = imagoUtils.normalize(item.name);
             }
             _this.result = data;
             break;

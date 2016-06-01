@@ -29,5 +29,6 @@ class ImagoFetchController extends Controller
       for data in response
         for item in data.assets
           item.path = '/' if item.path is '/home'
+          item.normname = imagoUtils.normalize(item.name)
         @result = data
         break
