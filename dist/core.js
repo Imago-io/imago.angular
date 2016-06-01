@@ -307,7 +307,7 @@
                   }));
                   return $q.all(fetches).then(function() {
                     var ref, ref1;
-                    if (config.updatePageTitle || options.updatePageTitle === false) {
+                    if (options.updatePageTitle || (config.updatePageTitle && _.isUndefined(options.updatePageTitle))) {
                       if (options.title) {
                         $document.prop('title', options.title);
                       } else if (data.length === 1 && ((ref = data[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {

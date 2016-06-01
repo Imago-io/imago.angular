@@ -201,7 +201,7 @@ class imagoModel extends Provider
 
               $q.all(fetches).then =>
 
-                if config.updatePageTitle or options.updatePageTitle is false
+                if options.updatePageTitle or (config.updatePageTitle and _.isUndefined(options.updatePageTitle))
                   if options.title
                     $document.prop 'title', options.title
                   else if data.length is 1 and data[0].fields?.title?.value
