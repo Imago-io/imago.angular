@@ -7,6 +7,9 @@ class imagoModel extends Provider
     nextClient = 'public'
     indexRange = 10000
 
+    config =
+      updatePageTitle: true
+
     @setSortWorker = (value) ->
       sortWorker = value
 
@@ -21,6 +24,13 @@ class imagoModel extends Provider
 
     @setClient = (value) ->
       nextClient = value
+
+    @getDefaults = ->
+      results
+
+    @setDefaults = (value) ->
+      throw 'defaults needs to be an object' if !_.isPlainObject value
+      _.assign config, value
 
     @$get = ($rootScope, $http, $location, $document, $window, $q, imagoUtils, imagoWorker) ->
 
@@ -191,7 +201,7 @@ class imagoModel extends Provider
 
               $q.all(fetches).then =>
 
-                if !options.skipTitle
+                if config.updatePageTitle or options.updatePageTitle is false
                   if options.title
                     $document.prop 'title', options.title
                   else if data.length is 1 and data[0].fields?.title?.value

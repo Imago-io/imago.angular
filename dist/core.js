@@ -69,11 +69,14 @@
 
   imagoModel = (function() {
     function imagoModel() {
-      var host, indexRange, nextClient, sortWorker;
+      var config, host, indexRange, nextClient, sortWorker;
       sortWorker = 'sort.worker.js';
       host = 'https://api.imago.io';
       nextClient = 'public';
       indexRange = 10000;
+      config = {
+        updatePageTitle: true
+      };
       this.setSortWorker = function(value) {
         return sortWorker = value;
       };
@@ -88,6 +91,15 @@
       };
       this.setClient = function(value) {
         return nextClient = value;
+      };
+      this.getDefaults = function() {
+        return results;
+      };
+      this.setDefaults = function(value) {
+        if (!_.isPlainObject(value)) {
+          throw 'defaults needs to be an object';
+        }
+        return _.assign(config, value);
       };
       this.$get = function($rootScope, $http, $location, $document, $window, $q, imagoUtils, imagoWorker) {
         $http.defaults.headers.common['NexClient'] = nextClient;
@@ -277,17 +289,17 @@
                 rejected = [];
                 fetch = function() {
                   fetches.push(_this.search(rejected).then(function(response) {
-                    var j, len, ref, res, results;
+                    var j, len, ref, res, results1;
                     if (!(response != null ? response.data : void 0)) {
                       return;
                     }
                     ref = response.data;
-                    results = [];
+                    results1 = [];
                     for (j = 0, len = ref.length; j < len; j++) {
                       res = ref[j];
-                      results.push(data.push(_this.create(res)));
+                      results1.push(data.push(_this.create(res)));
                     }
-                    return results;
+                    return results1;
                   }, function(err) {
                     if (err.status === 401) {
                       return console.warn('Imago API warning:', err.data);
@@ -295,7 +307,7 @@
                   }));
                   return $q.all(fetches).then(function() {
                     var ref, ref1;
-                    if (!options.skipTitle) {
+                    if (config.updatePageTitle || options.updatePageTitle === false) {
                       if (options.title) {
                         $document.prop('title', options.title);
                       } else if (data.length === 1 && ((ref = data[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {
@@ -371,16 +383,16 @@
             return this.populateData(asset.assets);
           },
           populateData: function(assets) {
-            var asset, j, len, results;
+            var asset, j, len, results1;
             if (!_.isArray(assets)) {
               return;
             }
-            results = [];
+            results1 = [];
             for (j = 0, len = assets.length; j < len; j++) {
               asset = assets[j];
-              results.push(this.addAsset(asset));
+              results1.push(this.addAsset(asset));
             }
-            return results;
+            return results1;
           },
           getById: function(id) {
             var asset;

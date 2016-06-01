@@ -25,7 +25,7 @@ class ImagoFetchController extends Controller
     if  _.includes @query, '{'
       @query = $scope.$eval @query
 
-    imagoModel.getData(@query, {skipTitle: true}).then (response) =>
+    imagoModel.getData(@query, {updatePageTitle: true}).then (response) =>
       for data in response
         for item in data.assets
           item.path = '/' if item.path is '/home'
