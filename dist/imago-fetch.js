@@ -2,7 +2,7 @@
   var ImagoFetch, ImagoFetchController;
 
   ImagoFetch = (function() {
-    function ImagoFetch(imagoModel, imagoUtils) {
+    function ImagoFetch() {
       return {
         restrict: 'E',
         scope: true,
@@ -25,7 +25,7 @@
   })();
 
   ImagoFetchController = (function() {
-    function ImagoFetchController($scope, imagoModel) {
+    function ImagoFetchController($scope, imagoModel, imagoUtils) {
       if (!this.query) {
         throw 'No query set in imagofetch';
       }
@@ -60,7 +60,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoFetch', ['imagoModel', 'imagoUtils', ImagoFetch]).controller('imagoFetchController', ['$scope', 'imagoModel', ImagoFetchController]);
+  angular.module('imago').directive('imagoFetch', [ImagoFetch]).controller('imagoFetchController', ['$scope', 'imagoModel', 'imagoUtils', ImagoFetchController]);
 
 }).call(this);
 

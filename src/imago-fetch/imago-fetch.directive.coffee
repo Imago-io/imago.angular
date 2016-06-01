@@ -1,6 +1,6 @@
 class ImagoFetch extends Directive
 
-  constructor: (imagoModel, imagoUtils) ->
+  constructor: ->
 
     return {
 
@@ -19,7 +19,7 @@ class ImagoFetch extends Directive
 
 class ImagoFetchController extends Controller
 
-  constructor: ($scope, imagoModel) ->
+  constructor: ($scope, imagoModel, imagoUtils) ->
     throw 'No query set in imagofetch' unless @query
 
     if  _.includes @query, '{'
