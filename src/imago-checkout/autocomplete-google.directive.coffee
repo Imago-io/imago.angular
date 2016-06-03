@@ -24,7 +24,7 @@ class AutocompleteGoogle extends Directive
           # form['street'] = place.name
           form = $parse(attrs.autocompleteGoogle)(scope)
 
-          viewValue = place.name || modelCtrl.$viewValue;
+          viewValue = place.name or modelCtrl.$viewValue;
 
           componentConf =
             locality: {label: 'city', value: 'long_name'}
@@ -40,21 +40,11 @@ class AutocompleteGoogle extends Directive
             data[componentConf[type].label] = elem[componentConf[type].value] or ''
 
           for label, value of data
-            if label is 'country' and imagoUtils.inUsa(value)
-              form[label] = 'United States'
-            else
-              form[label] = value
+            form[label] = value
 
           $parse(attrs.autocompleteOnsuccess)(scope) if attrs.autocompleteOnsuccess
           scope.$apply ->
             modelCtrl.$setViewValue(viewValue)
-            modelCtrl.$render()
-
-        element.on 'focusout', (evt) ->
-          # viewValue = if place and place.formatted_address then viewValue else modelCtrl.$viewValue
-          viewValue = if modelCtrl.$viewValue then modelCtrl.$viewValue else if place and place.formatted_address then viewValue
-          scope.$apply ->
-            modelCtrl.$setViewValue viewValue
             modelCtrl.$render()
 
     }

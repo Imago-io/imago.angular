@@ -23,7 +23,7 @@
           });
           viewValue = void 0;
           place = void 0;
-          google.maps.event.addListener(autocomplete, 'place_changed', function() {
+          return google.maps.event.addListener(autocomplete, 'place_changed', function() {
             var componentConf, data, elem, form, i, label, len, ref, type, value;
             place = autocomplete.getPlace();
             if (!place.address_components) {
@@ -61,22 +61,11 @@
             }
             for (label in data) {
               value = data[label];
-              if (label === 'country' && imagoUtils.inUsa(value)) {
-                form[label] = 'United States';
-              } else {
-                form[label] = value;
-              }
+              form[label] = value;
             }
             if (attrs.autocompleteOnsuccess) {
               $parse(attrs.autocompleteOnsuccess)(scope);
             }
-            return scope.$apply(function() {
-              modelCtrl.$setViewValue(viewValue);
-              return modelCtrl.$render();
-            });
-          });
-          return element.on('focusout', function(evt) {
-            viewValue = modelCtrl.$viewValue ? modelCtrl.$viewValue : place && place.formatted_address ? viewValue : void 0;
             return scope.$apply(function() {
               modelCtrl.$setViewValue(viewValue);
               return modelCtrl.$render();
