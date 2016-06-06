@@ -1,62 +1,20 @@
-class imagoVideo extends Directive
+class imagoVideo extends Component
 
-  constructor: (@$rootScope, @imagoUtils, imagoModel) ->
+  constructor: ->
 
     return {
 
-      restrict: 'E'
-      scope: true
       templateUrl: '/imago/imago-video.html'
       controller: 'imagoVideoController as imagovideo'
-      bindToController: true
-      link: (scope, element, attrs) ->
-
-        for key of attrs
-          continue if _.isUndefined scope.imagovideo.opts[key]
-          if attrs[key] in ['true', 'false']
-            scope.imagovideo.opts[key] = JSON.parse attrs[key]
-          else if not isNaN attrs[key]
-            scope.imagovideo.opts[key] = Number attrs[key]
-          else
-            scope.imagovideo.opts[key] = attrs[key]
-
-        destroy = ->
-          scope.$applyAsync ->
-            scope.$destroy()
-            element.remove()
-
-        if attrs.data.match(/[0-9a-fA-F]{24}/)
-          watcher = attrs.$observe 'data', (asset) ->
-            return unless asset
-            watcher()
-            imagoModel.getById(asset).then (response) ->
-              if !response?.fields?.formats?.length
-                trackJs?.track "Video #{response._id} has no formats"
-                return destroy()
-              scope.imagovideo.init(response)
-
-        else if attrs.data.match(/^\//)
-          imagoModel.getData(attrs.data).then (response) ->
-            for item in response
-              if !item.fields?.formats?.length
-                trackJs?.track "Video #{item._id} has no formats"
-                return destroy()
-              scope.imagovideo.init(item)
-              break
-        else
-          watcher = scope.$watch attrs.data, (asset) =>
-            return unless asset
-            watcher()
-            if !asset.fields?.formats?.length
-              trackJs?.track "Video #{asset._id} has no formats"
-              return destroy()
-            scope.imagovideo.init(asset)
+      bindings:
+        data: '<?'
+        onReady: '&?'
 
     }
 
 class imagoVideoController extends Controller
 
-  constructor: (@$rootScope, @$attrs, @$scope, @$element, @$sce, @imagoModel) ->
+  constructor: (@$rootScope, @$attrs, @$scope, @$element, @$sce, @imagoUtils, @imagoModel) ->
 
     @watchers   = []
     @sources = []
@@ -77,9 +35,48 @@ class imagoVideoController extends Controller
       responsive        : true
       theme             : '//storage.googleapis.com/videoangular-default-theme/videogular.min.css'
 
-    @$scope.$on '$destroy', =>
-      watcher() for watcher in @watchers
+  $postLink: ->
+    for key of @$attrs
+      continue if _.isUndefined @opts[key]
+      if @$attrs[key] in ['true', 'false']
+        @opts[key] = JSON.parse @$attrs[key]
+      else if not isNaN @$attrs[key]
+        @opts[key] = Number @$attrs[key]
+      else
+        @opts[key] = @$attrs[key]
 
+    if @$attrs.data.match(/[0-9a-fA-F]{24}/)
+      watcher = @$attrs.$observe 'data', (asset) =>
+        return unless asset
+        watcher()
+        @imagoModel.getById(asset).then (response) =>
+          if !response?.fields?.formats?.length
+            trackJs?.track "Video #{response._id} has no formats"
+            return @destroy()
+          @init(response)
+
+    else if @$attrs.data.match(/^\//)
+      @imagoModel.getData(@$attrs.data).then (response) =>
+        for item in response
+          if !item.fields?.formats?.length
+            trackJs?.track "Video #{item._id} has no formats"
+            return @destroy()
+          @init(item)
+          break
+    else
+      return @destroy() if !@data
+      if !@data?.fields?.formats?.length
+        trackJs?.track "Video #{@data._id} has no formats"
+        return @destroy()
+      @init(@data)
+
+  $onDestroy: ->
+    watcher() for watcher in @watchers
+
+  destroy: ->
+    @$scope.$applyAsync ->
+      @$scope.$destroy()
+      @$element.remove()
 
   init: (asset) ->
     @asset = asset
@@ -121,7 +118,7 @@ class imagoVideoController extends Controller
       @ready = true
       @resize()
 
-      if imagoUtils.isMobile()
+      if @imagoUtils.isMobile()
         @asset.fields.formats = _.filter @asset.fields.formats, (source) ->
           return true unless source.size in ['1080p']
 
@@ -146,7 +143,8 @@ class imagoVideoController extends Controller
     # debugger
 
   onPlayerReady: (api) =>
-    console.log '@opts.autoplayInview', @opts.autoplayInview
+    if @onReady
+      @onReady({api: api})
     if @opts.autoplayInview
       @$scope.$watch 'imagovideo.visible', (value) =>
         if value

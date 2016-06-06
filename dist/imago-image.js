@@ -3,77 +3,15 @@
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   imagoImage = (function() {
-    function imagoImage(imagoModel) {
+    function imagoImage() {
       return {
-        restrict: 'E',
-        scope: true,
         templateUrl: '/imago/imago-image.html',
         controller: 'imagoImageController as imagoimage',
-        require: '?^imagoSlider',
-        bindToController: true,
-        link: function(scope, element, attrs, imagoSlider) {
-          var destroy, key, ref, watcher;
-          for (key in attrs) {
-            if (_.isUndefined(scope.imagoimage.opts[key])) {
-              continue;
-            }
-            if ((ref = attrs[key]) === 'true' || ref === 'false') {
-              scope.imagoimage.opts[key] = JSON.parse(attrs[key]);
-            } else if (!isNaN(attrs[key])) {
-              scope.imagoimage.opts[key] = Number(attrs[key]);
-            } else {
-              scope.imagoimage.opts[key] = attrs[key];
-            }
-          }
-          destroy = function() {
-            return scope.$applyAsync(function() {
-              scope.$destroy();
-              return element.remove();
-            });
-          };
-          if (attrs.data.match(/[0-9a-fA-F]{24}/)) {
-            watcher = attrs.$observe('data', function(asset) {
-              if (!asset) {
-                return;
-              }
-              watcher();
-              return imagoModel.getById(asset).then(function(response) {
-                if (!(response != null ? response.serving_url : void 0)) {
-                  return destroy();
-                }
-                return scope.imagoimage.init(response);
-              });
-            });
-          } else if (attrs.data.match(/^\//)) {
-            imagoModel.getData(attrs.data).then(function(response) {
-              var i, item, len;
-              for (i = 0, len = response.length; i < len; i++) {
-                item = response[i];
-                if (!(item != null ? item.serving_url : void 0)) {
-                  return destroy();
-                }
-                scope.imagoimage.init(item);
-                break;
-              }
-            });
-          } else {
-            watcher = scope.$watch(attrs.data, function(asset) {
-              if (!asset) {
-                return;
-              }
-              watcher();
-              if (!asset.serving_url) {
-                return destroy();
-              }
-              return scope.imagoimage.init(asset);
-            });
-          }
-          return scope.setServingSize = function(servingSize) {
-            if (!imagoSlider) {
-              return;
-            }
-            return imagoSlider.setServingSize(servingSize);
-          };
+        require: {
+          sliderCtrl: '?^imagoSlider'
+        },
+        bindings: {
+          data: '<?'
         }
       };
     }
@@ -83,14 +21,14 @@
   })();
 
   imagoImageController = (function() {
-    function imagoImageController($rootScope, $attrs, $scope, $element, $timeout, $parse) {
+    function imagoImageController($rootScope, $attrs, $scope, $element, imagoModel1) {
       this.$rootScope = $rootScope;
       this.$attrs = $attrs;
       this.$scope = $scope;
       this.$element = $element;
-      this.$timeout = $timeout;
-      this.$parse = $parse;
+      this.imagoModel = imagoModel1;
       this.render = bind(this.render, this);
+      this.setServingSize = bind(this.setServingSize, this);
       this.loaded = false;
       this.imageStyle = {};
       this.watchers = [];
@@ -108,19 +46,78 @@
         height: void 0,
         path: ''
       };
-      this.$scope.$on('$destroy', (function(_this) {
+    }
+
+    imagoImageController.prototype.$postLink = function() {
+      var key, ref, ref1, watcher;
+      for (key in this.$attrs) {
+        if (_.isUndefined(this.opts[key])) {
+          continue;
+        }
+        if ((ref = this.$attrs[key]) === 'true' || ref === 'false') {
+          this.opts[key] = JSON.parse(this.$attrs[key]);
+        } else if (!isNaN(this.$attrs[key])) {
+          this.opts[key] = Number(this.$attrs[key]);
+        } else {
+          this.opts[key] = this.$attrs[key];
+        }
+      }
+      if (this.$attrs.data.match(/[0-9a-fA-F]{24}/)) {
+        return watcher = this.$attrs.$observe('data', (function(_this) {
+          return function(asset) {
+            if (!asset) {
+              return;
+            }
+            watcher();
+            return imagoModel.getById(asset).then(function(response) {
+              if (!(response != null ? response.serving_url : void 0)) {
+                return _this.destroy();
+              }
+              return _this.init(response);
+            });
+          };
+        })(this));
+      } else if (this.$attrs.data.match(/^\//)) {
+        return imagoModel.getData(this.$attrs.data).then((function(_this) {
+          return function(response) {
+            var i, item, len;
+            for (i = 0, len = response.length; i < len; i++) {
+              item = response[i];
+              if (!(item != null ? item.serving_url : void 0)) {
+                return _this.destroy();
+              }
+              _this.init(item);
+              break;
+            }
+          };
+        })(this));
+      } else {
+        if (!((ref1 = this.data) != null ? ref1.serving_url : void 0)) {
+          return this.destroy();
+        }
+        return this.init(this.data);
+      }
+    };
+
+    imagoImageController.prototype.$onDestroy = function() {
+      var i, len, ref, results, watcher;
+      ref = this.watchers;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        watcher = ref[i];
+        results.push(watcher());
+      }
+      return results;
+    };
+
+    imagoImageController.prototype.destroy = function() {
+      return this.$scope.$applyAsync((function(_this) {
         return function() {
-          var i, len, ref, results, watcher;
-          ref = _this.watchers;
-          results = [];
-          for (i = 0, len = ref.length; i < len; i++) {
-            watcher = ref[i];
-            results.push(watcher());
-          }
-          return results;
+          _this.$scope.$destroy();
+          return _this.$element.remove();
         };
       })(this));
-    }
+    };
 
     imagoImageController.prototype.init = function(asset) {
       var ref, ref1, ref2, ref3;
@@ -208,6 +205,13 @@
       return this.height = this.$element.children()[0].clientHeight;
     };
 
+    imagoImageController.prototype.setServingSize = function(servingSize) {
+      if (!this.sliderCtrl) {
+        return;
+      }
+      return this.sliderCtrl.setServingSize(servingSize);
+    };
+
     imagoImageController.prototype.resize = function() {
       var ref;
       if ((ref = this.mainSide) !== 'autoheight' && ref !== 'autowidth') {
@@ -245,7 +249,7 @@
       }
       this.servingSize = Math.max(servingSize, 60);
       this.opts.servingUrl = this.asset.serving_url + "=s" + (this.servingSize * this.opts.scale);
-      this.$scope.setServingSize("=s" + (servingSize * this.opts.scale));
+      this.setServingSize("=s" + (servingSize * this.opts.scale));
       return this.render();
     };
 
@@ -267,7 +271,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoImage', ['imagoModel', imagoImage]).controller('imagoImageController', ['$rootScope', '$attrs', '$scope', '$element', '$timeout', '$parse', imagoImageController]);
+  angular.module('imago').component('imagoImage', new imagoImage()).controller('imagoImageController', ['$rootScope', '$attrs', '$scope', '$element', 'imagoModel', imagoImageController]);
 
 }).call(this);
 

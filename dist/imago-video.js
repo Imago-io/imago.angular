@@ -3,85 +3,13 @@
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   imagoVideo = (function() {
-    function imagoVideo($rootScope, imagoUtils1, imagoModel) {
-      this.$rootScope = $rootScope;
-      this.imagoUtils = imagoUtils1;
+    function imagoVideo() {
       return {
-        restrict: 'E',
-        scope: true,
         templateUrl: '/imago/imago-video.html',
         controller: 'imagoVideoController as imagovideo',
-        bindToController: true,
-        link: function(scope, element, attrs) {
-          var destroy, key, ref, watcher;
-          for (key in attrs) {
-            if (_.isUndefined(scope.imagovideo.opts[key])) {
-              continue;
-            }
-            if ((ref = attrs[key]) === 'true' || ref === 'false') {
-              scope.imagovideo.opts[key] = JSON.parse(attrs[key]);
-            } else if (!isNaN(attrs[key])) {
-              scope.imagovideo.opts[key] = Number(attrs[key]);
-            } else {
-              scope.imagovideo.opts[key] = attrs[key];
-            }
-          }
-          destroy = function() {
-            return scope.$applyAsync(function() {
-              scope.$destroy();
-              return element.remove();
-            });
-          };
-          if (attrs.data.match(/[0-9a-fA-F]{24}/)) {
-            return watcher = attrs.$observe('data', function(asset) {
-              if (!asset) {
-                return;
-              }
-              watcher();
-              return imagoModel.getById(asset).then(function(response) {
-                var ref1, ref2;
-                if (!(response != null ? (ref1 = response.fields) != null ? (ref2 = ref1.formats) != null ? ref2.length : void 0 : void 0 : void 0)) {
-                  if (typeof trackJs !== "undefined" && trackJs !== null) {
-                    trackJs.track("Video " + response._id + " has no formats");
-                  }
-                  return destroy();
-                }
-                return scope.imagovideo.init(response);
-              });
-            });
-          } else if (attrs.data.match(/^\//)) {
-            return imagoModel.getData(attrs.data).then(function(response) {
-              var i, item, len, ref1, ref2;
-              for (i = 0, len = response.length; i < len; i++) {
-                item = response[i];
-                if (!((ref1 = item.fields) != null ? (ref2 = ref1.formats) != null ? ref2.length : void 0 : void 0)) {
-                  if (typeof trackJs !== "undefined" && trackJs !== null) {
-                    trackJs.track("Video " + item._id + " has no formats");
-                  }
-                  return destroy();
-                }
-                scope.imagovideo.init(item);
-                break;
-              }
-            });
-          } else {
-            return watcher = scope.$watch(attrs.data, (function(_this) {
-              return function(asset) {
-                var ref1, ref2;
-                if (!asset) {
-                  return;
-                }
-                watcher();
-                if (!((ref1 = asset.fields) != null ? (ref2 = ref1.formats) != null ? ref2.length : void 0 : void 0)) {
-                  if (typeof trackJs !== "undefined" && trackJs !== null) {
-                    trackJs.track("Video " + asset._id + " has no formats");
-                  }
-                  return destroy();
-                }
-                return scope.imagovideo.init(asset);
-              };
-            })(this));
-          }
+        bindings: {
+          data: '<?',
+          onReady: '&?'
         }
       };
     }
@@ -91,13 +19,14 @@
   })();
 
   imagoVideoController = (function() {
-    function imagoVideoController($rootScope, $attrs, $scope, $element, $sce, imagoModel1) {
+    function imagoVideoController($rootScope, $attrs, $scope, $element, $sce, imagoUtils, imagoModel) {
       this.$rootScope = $rootScope;
       this.$attrs = $attrs;
       this.$scope = $scope;
       this.$element = $element;
       this.$sce = $sce;
-      this.imagoModel = imagoModel1;
+      this.imagoUtils = imagoUtils;
+      this.imagoModel = imagoModel;
       this.onPlayerReady = bind(this.onPlayerReady, this);
       this.watchers = [];
       this.sources = [];
@@ -115,19 +44,89 @@
         responsive: true,
         theme: '//storage.googleapis.com/videoangular-default-theme/videogular.min.css'
       };
-      this.$scope.$on('$destroy', (function(_this) {
-        return function() {
-          var i, len, ref, results, watcher;
-          ref = _this.watchers;
-          results = [];
-          for (i = 0, len = ref.length; i < len; i++) {
-            watcher = ref[i];
-            results.push(watcher());
-          }
-          return results;
-        };
-      })(this));
     }
+
+    imagoVideoController.prototype.$postLink = function() {
+      var key, ref, ref1, ref2, ref3, watcher;
+      for (key in this.$attrs) {
+        if (_.isUndefined(this.opts[key])) {
+          continue;
+        }
+        if ((ref = this.$attrs[key]) === 'true' || ref === 'false') {
+          this.opts[key] = JSON.parse(this.$attrs[key]);
+        } else if (!isNaN(this.$attrs[key])) {
+          this.opts[key] = Number(this.$attrs[key]);
+        } else {
+          this.opts[key] = this.$attrs[key];
+        }
+      }
+      if (this.$attrs.data.match(/[0-9a-fA-F]{24}/)) {
+        return watcher = this.$attrs.$observe('data', (function(_this) {
+          return function(asset) {
+            if (!asset) {
+              return;
+            }
+            watcher();
+            return _this.imagoModel.getById(asset).then(function(response) {
+              var ref1, ref2;
+              if (!(response != null ? (ref1 = response.fields) != null ? (ref2 = ref1.formats) != null ? ref2.length : void 0 : void 0 : void 0)) {
+                if (typeof trackJs !== "undefined" && trackJs !== null) {
+                  trackJs.track("Video " + response._id + " has no formats");
+                }
+                return _this.destroy();
+              }
+              return _this.init(response);
+            });
+          };
+        })(this));
+      } else if (this.$attrs.data.match(/^\//)) {
+        return this.imagoModel.getData(this.$attrs.data).then((function(_this) {
+          return function(response) {
+            var i, item, len, ref1, ref2;
+            for (i = 0, len = response.length; i < len; i++) {
+              item = response[i];
+              if (!((ref1 = item.fields) != null ? (ref2 = ref1.formats) != null ? ref2.length : void 0 : void 0)) {
+                if (typeof trackJs !== "undefined" && trackJs !== null) {
+                  trackJs.track("Video " + item._id + " has no formats");
+                }
+                return _this.destroy();
+              }
+              _this.init(item);
+              break;
+            }
+          };
+        })(this));
+      } else {
+        if (!this.data) {
+          return this.destroy();
+        }
+        if (!((ref1 = this.data) != null ? (ref2 = ref1.fields) != null ? (ref3 = ref2.formats) != null ? ref3.length : void 0 : void 0 : void 0)) {
+          if (typeof trackJs !== "undefined" && trackJs !== null) {
+            trackJs.track("Video " + this.data._id + " has no formats");
+          }
+          return this.destroy();
+        }
+        return this.init(this.data);
+      }
+    };
+
+    imagoVideoController.prototype.$onDestroy = function() {
+      var i, len, ref, results, watcher;
+      ref = this.watchers;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        watcher = ref[i];
+        results.push(watcher());
+      }
+      return results;
+    };
+
+    imagoVideoController.prototype.destroy = function() {
+      return this.$scope.$applyAsync(function() {
+        this.$scope.$destroy();
+        return this.$element.remove();
+      });
+    };
 
     imagoVideoController.prototype.init = function(asset) {
       var ref, ref1, ref2, ref3;
@@ -176,7 +175,7 @@
           }
           _this.ready = true;
           _this.resize();
-          if (imagoUtils.isMobile()) {
+          if (_this.imagoUtils.isMobile()) {
             _this.asset.fields.formats = _.filter(_this.asset.fields.formats, function(source) {
               var ref4;
               if ((ref4 = source.size) !== '1080p') {
@@ -211,7 +210,11 @@
     };
 
     imagoVideoController.prototype.onPlayerReady = function(api) {
-      console.log('@opts.autoplayInview', this.opts.autoplayInview);
+      if (this.onReady) {
+        this.onReady({
+          api: api
+        });
+      }
       if (this.opts.autoplayInview) {
         return this.$scope.$watch('imagovideo.visible', (function(_this) {
           return function(value) {
@@ -241,7 +244,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoVideo', ['$rootScope', 'imagoUtils', 'imagoModel', imagoVideo]).controller('imagoVideoController', ['$rootScope', '$attrs', '$scope', '$element', '$sce', 'imagoModel', imagoVideoController]);
+  angular.module('imago').component('imagoVideo', new imagoVideo()).controller('imagoVideoController', ['$rootScope', '$attrs', '$scope', '$element', '$sce', 'imagoUtils', 'imagoModel', imagoVideoController]);
 
 }).call(this);
 

@@ -1,62 +1,21 @@
-class imagoImage extends Directive
+class imagoImage extends Component
 
-  constructor: (imagoModel) ->
+  constructor: ->
 
     return {
 
-      restrict: 'E'
-      scope: true
       templateUrl: '/imago/imago-image.html'
       controller: 'imagoImageController as imagoimage'
-      require: '?^imagoSlider'
-      bindToController: true
-      link: (scope, element, attrs, imagoSlider) ->
-
-        for key of attrs
-          continue if _.isUndefined scope.imagoimage.opts[key]
-          if attrs[key] in ['true', 'false']
-            scope.imagoimage.opts[key] = JSON.parse attrs[key]
-          else if not isNaN attrs[key]
-            scope.imagoimage.opts[key] = Number attrs[key]
-          else
-            scope.imagoimage.opts[key] = attrs[key]
-
-        destroy = ->
-          scope.$applyAsync ->
-            scope.$destroy()
-            element.remove()
-
-        if attrs.data.match(/[0-9a-fA-F]{24}/)
-          watcher = attrs.$observe 'data', (asset) ->
-            return unless asset
-            watcher()
-            imagoModel.getById(asset).then (response) ->
-              return destroy() if !response?.serving_url
-              scope.imagoimage.init(response)
-        else if attrs.data.match(/^\//)
-          imagoModel.getData(attrs.data).then (response) ->
-            for item in response
-              return destroy() if !item?.serving_url
-              scope.imagoimage.init(item)
-              break
-        else
-          watcher = scope.$watch attrs.data, (asset) ->
-            return unless asset
-            watcher()
-            return destroy() if !asset.serving_url
-            scope.imagoimage.init(asset)
-
-        # Imago Slider
-
-        scope.setServingSize = (servingSize) ->
-          return unless imagoSlider
-          imagoSlider.setServingSize(servingSize)
+      require:
+        sliderCtrl: '?^imagoSlider'
+      bindings:
+        data: '<?'
 
     }
 
 class imagoImageController extends Controller
 
-  constructor: (@$rootScope, @$attrs, @$scope, @$element, @$timeout, @$parse) ->
+  constructor: (@$rootScope, @$attrs, @$scope, @$element, @imagoModel) ->
 
     @loaded     = false
     @imageStyle = {}
@@ -76,8 +35,40 @@ class imagoImageController extends Controller
       height      : undefined
       path        : ''
 
-    @$scope.$on '$destroy', =>
-      watcher() for watcher in @watchers
+  $postLink: ->
+    for key of @$attrs
+      continue if _.isUndefined @opts[key]
+      if @$attrs[key] in ['true', 'false']
+        @opts[key] = JSON.parse @$attrs[key]
+      else if not isNaN @$attrs[key]
+        @opts[key] = Number @$attrs[key]
+      else
+        @opts[key] = @$attrs[key]
+
+    if @$attrs.data.match(/[0-9a-fA-F]{24}/)
+      watcher = @$attrs.$observe 'data', (asset) =>
+        return unless asset
+        watcher()
+        imagoModel.getById(asset).then (response) =>
+          return @destroy() if !response?.serving_url
+          @init(response)
+    else if @$attrs.data.match(/^\//)
+      imagoModel.getData(@$attrs.data).then (response) =>
+        for item in response
+          return @destroy() if !item?.serving_url
+          @init(item)
+          break
+    else
+      return @destroy() if !@data?.serving_url
+      @init(@data)
+
+  $onDestroy: ->
+    watcher() for watcher in @watchers
+
+  destroy: ->
+    @$scope.$applyAsync =>
+      @$scope.$destroy()
+      @$element.remove()
 
   init: (asset) ->
     @asset = asset
@@ -145,23 +136,19 @@ class imagoImageController extends Controller
           @resize()
           @getServingUrl()
 
-          # @$timeout =>
-          #   @getServingUrl()
-          # , 250
-
       else
         @getSize()
         @resize()
         @getServingUrl()
-        # @$timeout =>
-        #   @getServingUrl()
-        # , 250
-
 
   getSize: ->
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
     # console.log "getSize #{@width}x#{@height}"
+
+  setServingSize: (servingSize) =>
+    return if !@sliderCtrl
+    @sliderCtrl.setServingSize(servingSize)
 
   resize: ->
     # console.log "resize #{@width}x#{@height}"
@@ -213,7 +200,7 @@ class imagoImageController extends Controller
 
     @opts.servingUrl = "#{ @asset.serving_url }=s#{ @servingSize * @opts.scale }"
 
-    @$scope.setServingSize("=s#{ servingSize * @opts.scale }")
+    @setServingSize("=s#{ servingSize * @opts.scale }")
 
     @render()
 
