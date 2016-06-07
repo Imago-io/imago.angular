@@ -5,7 +5,7 @@
     function imagoContact() {
       return {
         restrict: 'E',
-        scope: {},
+        scope: true,
         controller: 'imagoContactController as contact',
         templateUrl: function(element, attrs) {
           return attrs.templateUrl || '/imago/imago-contact.html';

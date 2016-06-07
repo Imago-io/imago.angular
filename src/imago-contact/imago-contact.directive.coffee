@@ -5,7 +5,7 @@ class imagoContact extends Directive
     return {
 
       restrict: 'E'
-      scope: {}
+      scope: true
       controller: 'imagoContactController as contact'
       templateUrl: (element, attrs) ->
         return attrs.templateUrl or '/imago/imago-contact.html'
@@ -15,7 +15,6 @@ class imagoContact extends Directive
 class imagoContactController extends Controller
 
   constructor: (imagoSubmit) ->
-
     @data =
       subscribe: true
 
