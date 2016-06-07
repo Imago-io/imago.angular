@@ -134,7 +134,7 @@
             var plainNumber;
             if (value) {
               plainNumber = value.replace(/[^\d|\-+|\.+]/g, "");
-              plainNumber = parseFloat(plainNumber).toFixed(2) * 100;
+              plainNumber = Number((parseFloat(plainNumber) * 100).toFixed(0));
               ctrl.$setViewValue(formatView(plainNumber));
               return plainNumber;
             } else {
