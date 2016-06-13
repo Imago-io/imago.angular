@@ -92,6 +92,7 @@
   StopPropagation = (function() {
     function StopPropagation() {
       return {
+        restrict: 'A',
         link: function(scope, element, attrs) {
           var createBind, i, item, len, options, results;
           options = attrs.stopPropagation;
@@ -137,6 +138,7 @@
   StopScroll = (function() {
     function StopScroll() {
       return {
+        restrict: 'A',
         link: function(scope, element, attrs) {
           return element.on('mousewheel', function(evt) {
             var minus;

@@ -1,9 +1,9 @@
-.imago-not-supported-content(ng-if="supported.invalid" ng-class="::{'mobile': mobile}")
+.imago-not-supported-content(ng-if="$ctrl.invalid" ng-class="::{'mobile': $ctrl.mobile}")
 
-  .inner(ng-if="mobile")
+  .inner(ng-if="$ctrl.mobile")
     h1 Browser not supported!
 
-  .inner(ng-if="!mobile")
+  .inner(ng-if="!$ctrl.mobile")
     h1 Time for change!
     p Please download a new version of your favorite browser.
 
@@ -30,7 +30,7 @@
           h2 Firefox
           span Download
       li
-        a(href="http://windows.microsoft.com/en-us/internet-explorer/download-ie" target="_blank")
+        a(href="https://www.microsoft.com/en-us/windows/microsoft-edge" target="_blank")
           .icon.icon-ie
           h2 IE
           span Download

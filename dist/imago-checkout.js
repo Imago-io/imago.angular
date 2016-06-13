@@ -14,7 +14,7 @@
             return console.log('you need a form to fill. Use the options attribute');
           }
           autocomplete = new google.maps.places.Autocomplete(element[0], {
-            types: ["geocode"]
+            types: ['geocode']
           });
           google.maps.event.addDomListener(element[0], 'keydown', function(e) {
             if (e.keyCode === 13) {
@@ -595,7 +595,7 @@
     };
 
     Calculation.prototype.checkStock = function(cb) {
-      var changed, i, item, len, ref, ref1, ref2, ref3, ref4, ref5, ref6, stock;
+      var changed, i, item, len, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, stock;
       this.cartError = {};
       this.fcenter = _.find(this.fulfillmentcenters, (function(_this) {
         return function(ffc) {
@@ -612,27 +612,29 @@
         return cb();
       }
       changed = false;
-      ref = this.cart.items;
-      for (i = 0, len = ref.length; i < len; i++) {
-        item = ref[i];
-        stock = !_.isUndefined((ref1 = item.fields.stock) != null ? (ref2 = ref1.value) != null ? ref2[this.fcenter._id] : void 0 : void 0) ? (ref3 = item.fields.stock) != null ? (ref4 = ref3.value) != null ? ref4[this.fcenter._id] : void 0 : void 0 : 100000;
-        if (parseInt(stock) < item.qty && !((ref5 = item.fields) != null ? (ref6 = ref5.presale) != null ? ref6.value : void 0 : void 0)) {
-          item.qty = _.max([stock, 0]);
-          changed = true;
-          if (stock !== 0) {
-            this.cartError[item._id] = {
-              'maxStock': true
-            };
-          }
-          if (stock <= 0) {
-            this.cartError[item._id] = {
-              'noStock': true
-            };
+      if ((ref = this.cart.items) != null ? ref.length : void 0) {
+        ref1 = this.cart.items;
+        for (i = 0, len = ref1.length; i < len; i++) {
+          item = ref1[i];
+          stock = !_.isUndefined((ref2 = item.fields.stock) != null ? (ref3 = ref2.value) != null ? ref3[this.fcenter._id] : void 0 : void 0) ? (ref4 = item.fields.stock) != null ? (ref5 = ref4.value) != null ? ref5[this.fcenter._id] : void 0 : void 0 : 100000;
+          if (parseInt(stock) < item.qty && !((ref6 = item.fields) != null ? (ref7 = ref6.presale) != null ? ref7.value : void 0 : void 0)) {
+            item.qty = _.max([stock, 0]);
+            changed = true;
+            if (stock !== 0) {
+              this.cartError[item._id] = {
+                'maxStock': true
+              };
+            }
+            if (stock <= 0) {
+              this.cartError[item._id] = {
+                'noStock': true
+              };
+            }
           }
         }
-      }
-      if (changed) {
-        this.$http.put(this.imagoModel.host + '/api/carts/' + this.cart._id, this.cart);
+        if (changed) {
+          this.$http.put(this.imagoModel.host + '/api/carts/' + this.cart._id, this.cart);
+        }
       }
       return cb();
     };
@@ -640,7 +642,7 @@
     Calculation.prototype.calculate = function() {
       return this.checkStock((function(_this) {
         return function() {
-          var i, item, len, ref;
+          var i, item, len, ref, ref1;
           _this.costs = {
             subtotal: 0,
             shipping: 0,
@@ -648,14 +650,16 @@
             includedTax: 0,
             total: 0
           };
-          ref = _this.cart.items;
-          for (i = 0, len = ref.length; i < len; i++) {
-            item = ref[i];
-            if (item.price[_this.currency] && item.qty) {
-              _this.costs.subtotal += item.qty * item.price[_this.currency];
+          if ((ref = _this.cart.items) != null ? ref.length : void 0) {
+            ref1 = _this.cart.items;
+            for (i = 0, len = ref1.length; i < len; i++) {
+              item = ref1[i];
+              if (item.price[_this.currency] && item.qty) {
+                _this.costs.subtotal += item.qty * item.price[_this.currency];
+              }
             }
+            _this.costs.total = _this.costs.subtotal;
           }
-          _this.costs.total = _this.costs.subtotal;
           return _this.$q.all([_this.calculateTax(), _this.calculateShipping()]).then(function() {
             if (_this.coupon) {
               _this.applyCoupon(_this.coupon, _this.costs);

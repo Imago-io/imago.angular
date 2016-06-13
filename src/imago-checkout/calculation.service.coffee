@@ -305,18 +305,19 @@ class Calculation extends Service
     return cb() if !@fcenter
 
     changed = false
-    for item in @cart.items
-      # stock = item.fields.stock?.value?[@fcenter._id] or 100000
-      stock = if !_.isUndefined(item.fields.stock?.value?[@fcenter._id]) then item.fields.stock?.value?[@fcenter._id] else 100000
-      if parseInt(stock) < item.qty and not item.fields?.presale?.value
-        item.qty = _.max([stock, 0])
-        changed = true
+    if @cart.items?.length
+      for item in @cart.items
+        # stock = item.fields.stock?.value?[@fcenter._id] or 100000
+        stock = if !_.isUndefined(item.fields.stock?.value?[@fcenter._id]) then item.fields.stock?.value?[@fcenter._id] else 100000
+        if parseInt(stock) < item.qty and not item.fields?.presale?.value
+          item.qty = _.max([stock, 0])
+          changed = true
 
-        @cartError[item._id] = {'maxStock': true} if stock != 0
-        @cartError[item._id] = {'noStock': true} if stock <= 0
+          @cartError[item._id] = {'maxStock': true} if stock != 0
+          @cartError[item._id] = {'noStock': true} if stock <= 0
 
-    if changed
-      @$http.put(@imagoModel.host + '/api/carts/' + @cart._id, @cart)
+      if changed
+        @$http.put(@imagoModel.host + '/api/carts/' + @cart._id, @cart)
 
     cb()
 
@@ -331,10 +332,11 @@ class Calculation extends Service
         includedTax : 0
         total       : 0
 
-      for item in @cart.items
-        if item.price[@currency] and item.qty
-          @costs.subtotal += item.qty * item.price[@currency]
-      @costs.total = @costs.subtotal
+      if @cart.items?.length
+        for item in @cart.items
+          if item.price[@currency] and item.qty
+            @costs.subtotal += item.qty * item.price[@currency]
+        @costs.total = @costs.subtotal
 
       @$q.all([@calculateTax(), @calculateShipping()]).then =>
         @applyCoupon(@coupon, @costs) if @coupon

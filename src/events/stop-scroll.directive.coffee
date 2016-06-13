@@ -4,6 +4,7 @@ class StopScroll extends Directive
 
     return {
 
+      restrict: 'A'
       link: (scope, element, attrs) ->
 
         element.on 'mousewheel', (evt) ->

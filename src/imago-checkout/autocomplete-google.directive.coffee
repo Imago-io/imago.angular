@@ -3,12 +3,13 @@ class AutocompleteGoogle extends Directive
   constructor: ($parse, imagoUtils) ->
 
     return {
+
       require: 'ngModel'
       link: (scope, element, attrs, modelCtrl) ->
-        return console.log 'the google library is not loaded' unless google?.maps
-        return console.log 'you need a form to fill. Use the options attribute' unless attrs.autocompleteGoogle
+        return console.log 'the google library is not loaded' if !google?.maps
+        return console.log 'you need a form to fill. Use the options attribute' if !attrs.autocompleteGoogle
 
-        autocomplete = new google.maps.places.Autocomplete(element[0], types: ["geocode"])
+        autocomplete = new google.maps.places.Autocomplete(element[0], types: ['geocode'])
 
         google.maps.event.addDomListener element[0], 'keydown', (e) ->
           e.preventDefault() if e.keyCode is 13
@@ -18,7 +19,7 @@ class AutocompleteGoogle extends Directive
 
         google.maps.event.addListener autocomplete, 'place_changed',  ->
           place = autocomplete.getPlace()
-          return unless place.address_components
+          return if !place.address_components
 
           # element.val(place.name)
           # form['street'] = place.name

@@ -3,6 +3,8 @@ class StopPropagation extends Directive
   constructor: ->
 
     return {
+
+      restrict: 'A'
       link: (scope, element, attrs) ->
         options = attrs.stopPropagation
         if options in ['stop-propagation', '']

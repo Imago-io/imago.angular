@@ -1,20 +1,21 @@
-class NotSupported extends Directive
+class NotSupported extends Component
 
   constructor: ->
 
     return {
 
+      bindings:
+        data: '@'
       templateUrl: '/imago/not-supported.html'
-      bindToController: true
-      controller: 'notSupportedController as supported'
+      controller: 'notSupportedController'
 
     }
 
 class NotSupportedController extends Controller
 
-  constructor: ($scope, $element, $attrs) ->
+  constructor: ($scope) ->
 
-    $scope.mobile = bowser.mobile
+    @mobile = bowser.mobile
 
     options =
       ie      : 9
@@ -24,13 +25,13 @@ class NotSupportedController extends Controller
       opera   : 23
       android : 4.3
 
-    settings = $scope.$eval $attrs.notSupported
+    @data = $scope.$eval @data
 
-    if _.isArray(settings)
-      for option in settings
+    if _.isArray(@data)
+      for option in @data
         version = option.match(/\d+/g)
         version = Number(version)
-        continue unless _.isNaN(version)
+        continue if _.isNaN(version)
         for key of options
           options[key] = version if _.includes(option.toLowerCase(), key)
 

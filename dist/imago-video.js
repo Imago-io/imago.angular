@@ -5,7 +5,9 @@
   imagoVideo = (function() {
     function imagoVideo() {
       return {
-        templateUrl: '/imago/imago-video.html',
+        templateUrl: function($attrs) {
+          return $attrs.templateUrl || '/imago/imago-video.html';
+        },
         controller: 'imagoVideoController as imagovideo',
         bindings: {
           data: '<?',
@@ -19,9 +21,9 @@
   })();
 
   imagoVideoController = (function() {
-    function imagoVideoController($rootScope, $attrs, $scope, $element, $sce, imagoUtils, imagoModel) {
+    function imagoVideoController($rootScope, $attrs1, $scope, $element, $sce, imagoUtils, imagoModel) {
       this.$rootScope = $rootScope;
-      this.$attrs = $attrs;
+      this.$attrs = $attrs1;
       this.$scope = $scope;
       this.$element = $element;
       this.$sce = $sce;

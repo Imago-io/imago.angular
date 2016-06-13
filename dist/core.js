@@ -33,38 +33,6 @@
 }).call(this);
 
 (function() {
-  var ImagoClick;
-
-  ImagoClick = (function() {
-    function ImagoClick($parse) {
-      return {
-        restrict: 'A',
-        link: function(scope, element, attrs) {
-          var clickHandler;
-          clickHandler = angular.isFunction(attrs.imagoClick) ? clickExpr : $parse(attrs.imagoClick);
-          element.on('click', function(evt) {
-            var callback;
-            callback = function() {
-              return clickHandler(scope, {
-                $event: evt
-              });
-            };
-            return scope.$apply(callback);
-          });
-          return element.onclick = angular.noop;
-        }
-      };
-    }
-
-    return ImagoClick;
-
-  })();
-
-  angular.module('imago').directive('imagoClick', ['$parse', ImagoClick]);
-
-}).call(this);
-
-(function() {
   var imagoModel;
 
   imagoModel = (function() {
@@ -997,52 +965,6 @@
   })();
 
   angular.module('imago').provider('imagoModel', [imagoModel]);
-
-}).call(this);
-
-(function() {
-  var imagoPage;
-
-  imagoPage = (function() {
-    function imagoPage($rootScope, $location, $state, imagoModel) {
-      var ref, ref1;
-      $rootScope.fetchingData = true;
-      if ((ref = $state.current.data) != null ? ref.path : void 0) {
-        this.path = {
-          path: $state.current.data.path
-        };
-      } else if ($location.path() === '/') {
-        this.path = {
-          path: '/home'
-        };
-      }
-      if ((ref1 = $state.current.data) != null ? ref1.recursive : void 0) {
-        this.path || (this.path = {});
-        if (!this.path.path) {
-          this.path.path = $location.path();
-        }
-        this.path.recursive = true;
-      }
-      imagoModel.getData(this.path).then((function(_this) {
-        return function(response) {
-          var data, i, len, results;
-          $rootScope.fetchingData = false;
-          results = [];
-          for (i = 0, len = response.length; i < len; i++) {
-            data = response[i];
-            _this.data = data;
-            break;
-          }
-          return results;
-        };
-      })(this));
-    }
-
-    return imagoPage;
-
-  })();
-
-  angular.module('imago').controller('imagoPage', ['$rootScope', '$location', '$state', 'imagoModel', imagoPage]);
 
 }).call(this);
 
@@ -2027,9 +1949,11 @@
   NotSupported = (function() {
     function NotSupported() {
       return {
+        bindings: {
+          data: '@'
+        },
         templateUrl: '/imago/not-supported.html',
-        bindToController: true,
-        controller: 'notSupportedController as supported'
+        controller: 'notSupportedController'
       };
     }
 
@@ -2038,9 +1962,9 @@
   })();
 
   NotSupportedController = (function() {
-    function NotSupportedController($scope, $element, $attrs) {
-      var browser, browserVersion, i, key, len, option, options, settings, version;
-      $scope.mobile = bowser.mobile;
+    function NotSupportedController($scope) {
+      var browser, browserVersion, i, key, len, option, options, ref, version;
+      this.mobile = bowser.mobile;
       options = {
         ie: 9,
         firefox: 32,
@@ -2049,13 +1973,14 @@
         opera: 23,
         android: 4.3
       };
-      settings = $scope.$eval($attrs.notSupported);
-      if (_.isArray(settings)) {
-        for (i = 0, len = settings.length; i < len; i++) {
-          option = settings[i];
+      this.data = $scope.$eval(this.data);
+      if (_.isArray(this.data)) {
+        ref = this.data;
+        for (i = 0, len = ref.length; i < len; i++) {
+          option = ref[i];
           version = option.match(/\d+/g);
           version = Number(version);
-          if (!_.isNaN(version)) {
+          if (_.isNaN(version)) {
             continue;
           }
           for (key in options) {
@@ -2115,7 +2040,7 @@
 
   })();
 
-  angular.module('imago').directive('notSupported', [NotSupported]).controller('notSupportedController', ['$scope', '$element', '$attrs', NotSupportedController]);
+  angular.module('imago').component('notSupported', new NotSupported()).controller('notSupportedController', ['$scope', NotSupportedController]);
 
 }).call(this);
 
@@ -2264,4 +2189,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/not-supported.html","<div ng-if=\"supported.invalid\" ng-class=\"::{\'mobile\': mobile}\" class=\"imago-not-supported-content\"><div ng-if=\"mobile\" class=\"inner\"><h1>Browser not supported!</h1></div><div ng-if=\"!mobile\" class=\"inner\"><h1>Time for change!</h1><p>Please download a new version of your favorite browser.</p><ul><li><a href=\"http://support.apple.com/downloads/#safari\" target=\"_blank\"><div class=\"icon icon-safari\"></div><h2>Safari</h2><span>Download</span></a></li><li><a href=\"http://www.google.com/chrome\" target=\"_blank\"><div class=\"icon icon-chrome\"></div><h2>Chrome</h2><span>Download</span></a></li><li><a href=\"http://www.opera.com/download\" target=\"_blank\"><div class=\"icon icon-opera\"></div><h2>Opera</h2><span>Download</span></a></li><li><a href=\"http://www.mozilla.org/firefox\" target=\"_blank\"><div class=\"icon icon-firefox\"></div><h2>Firefox</h2><span>Download</span></a></li><li><a href=\"http://windows.microsoft.com/en-us/internet-explorer/download-ie\" target=\"_blank\"><div class=\"icon icon-ie\"></div><h2>IE</h2><span>Download</span></a></li></ul></div></div>");}]);
+angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/not-supported.html","<div ng-if=\"$ctrl.invalid\" ng-class=\"::{\'mobile\': $ctrl.mobile}\" class=\"imago-not-supported-content\"><div ng-if=\"$ctrl.mobile\" class=\"inner\"><h1>Browser not supported!</h1></div><div ng-if=\"!$ctrl.mobile\" class=\"inner\"><h1>Time for change!</h1><p>Please download a new version of your favorite browser.</p><ul><li><a href=\"http://support.apple.com/downloads/#safari\" target=\"_blank\"><div class=\"icon icon-safari\"></div><h2>Safari</h2><span>Download</span></a></li><li><a href=\"http://www.google.com/chrome\" target=\"_blank\"><div class=\"icon icon-chrome\"></div><h2>Chrome</h2><span>Download</span></a></li><li><a href=\"http://www.opera.com/download\" target=\"_blank\"><div class=\"icon icon-opera\"></div><h2>Opera</h2><span>Download</span></a></li><li><a href=\"http://www.mozilla.org/firefox\" target=\"_blank\"><div class=\"icon icon-firefox\"></div><h2>Firefox</h2><span>Download</span></a></li><li><a href=\"https://www.microsoft.com/en-us/windows/microsoft-edge\" target=\"_blank\"><div class=\"icon icon-ie\"></div><h2>IE</h2><span>Download</span></a></li></ul></div></div>");}]);

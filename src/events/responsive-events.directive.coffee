@@ -3,6 +3,7 @@ class ResponsiveEvents extends Directive
   constructor: ($window, $rootScope) ->
 
     return {
+
       restrict: 'A'
       link: ($scope) ->
 
@@ -17,7 +18,6 @@ class ResponsiveEvents extends Directive
             resizeStop()
 
         onScrollStart = (e) =>
-          # console.log 'start scrolling', @
           return if @scrolling
           $rootScope.$emit 'scrollstart'
           @scrolling = true
@@ -38,7 +38,6 @@ class ResponsiveEvents extends Directive
         w.on 'resize', onResizeStart
         w.on 'resize', _.debounce ( -> $rootScope.$emit 'resizestop' ),  200
         w.on 'resize', _.throttle ( -> $rootScope.$emit 'resizelimit' ), 150
-
 
         w.on 'scroll', onScrollStart
         w.on 'scroll', _.debounce ( -> $rootScope.$emit 'scrollstop' ),  200

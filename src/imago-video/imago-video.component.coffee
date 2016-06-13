@@ -4,7 +4,8 @@ class imagoVideo extends Component
 
     return {
 
-      templateUrl: '/imago/imago-video.html'
+      templateUrl: ($attrs) ->
+        return $attrs.templateUrl or '/imago/imago-video.html'
       controller: 'imagoVideoController as imagovideo'
       bindings:
         data: '<?'
