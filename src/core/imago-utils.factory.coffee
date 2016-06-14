@@ -835,7 +835,7 @@ class imagoUtils extends Factory
 
         _.deburr(s.
           #remove all punctuation and special characters
-          replace(/[\.,#¡!?¿@$%\^&\*;:{}='`‘’“”„~()\?><\[\]†‡‹›•™¦©®ª«»¬°¹²³µ¶·º℅ⁿ§¨‣‼№♠♣♦♥←→↑↓♀♂♩♪♬♭]/g, '').
+          replace(/[\.,#¡!?¿@$%\^&\*;:{}='`‘’“”„"~()\?><\[\]†‡‹›•™¦©®ª«»¬°¹²³µ¶·º℅ⁿ§¨‣‼№♠♣♦♥←→↑↓♀♂♩♪♬♭]/g, '').
           # replace every slash, underscore, overscore, space and backslash with '-'
           replace(/\/|\_|\‾|\ |\\/g, '-').
           # replace multiple occurences of - with one only -

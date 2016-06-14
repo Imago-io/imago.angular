@@ -19,6 +19,7 @@
       ) {{cart.imagoCart.itemsLength}}
       span(ng-show="cart.imagoCart.itemsLength === 1")  item
       span(ng-show="cart.imagoCart.itemsLength > 1")  items
+
     .noitems(
       ng-show="cart.imagoCart.itemsLength === 0 && !cart.imagoCart.messages.length"
       ) cart empty

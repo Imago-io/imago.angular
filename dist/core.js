@@ -1587,7 +1587,7 @@
             value = specialCharMapping[key];
             s = s.replace(new RegExp(key, 'g'), value);
           }
-          return _.deburr(s.replace(/[\.,#¡!?¿@$%\^&\*;:{}='`‘’“”„~()\?><\[\]†‡‹›•™¦©®ª«»¬°¹²³µ¶·º℅ⁿ§¨‣‼№♠♣♦♥←→↑↓♀♂♩♪♬♭]/g, '').replace(/\/|\_|\‾|\ |\\/g, '-').replace(/\-+/g, '-').replace(/^-|-$/g, ''));
+          return _.deburr(s.replace(/[\.,#¡!?¿@$%\^&\*;:{}='`‘’“”„"~()\?><\[\]†‡‹›•™¦©®ª«»¬°¹²³µ¶·º℅ⁿ§¨‣‼№♠♣♦♥←→↑↓♀♂♩♪♬♭]/g, '').replace(/\/|\_|\‾|\ |\\/g, '-').replace(/\-+/g, '-').replace(/^-|-$/g, ''));
         },
         alphaNumSort: alphanum = function(a, b) {
           var aa, bb, c, chunkify, d, x;
