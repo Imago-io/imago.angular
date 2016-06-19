@@ -346,7 +346,6 @@
       return this.$http.get(this.imagoModel.host + "/api/carts?cartid=" + id).then((function(_this) {
         return function(response) {
           var watcher;
-          console.log('check cart', response.data);
           _.assign(_this.cart, response.data);
           if (!_this.fulfillmentsCenter.loaded) {
             return watcher = _this.$rootScope.$on('fulfillments:loaded', function(evt, data) {

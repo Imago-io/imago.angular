@@ -49,7 +49,7 @@ class imagoCart extends Service
 
   checkStatus: (id) =>
     @$http.get("#{@imagoModel.host}/api/carts?cartid=#{id}").then (response) =>
-      console.log 'check cart', response.data
+      # console.log 'check cart', response.data
       _.assign @cart, response.data
       unless @fulfillmentsCenter.loaded
         watcher = @$rootScope.$on 'fulfillments:loaded', (evt, data) =>
