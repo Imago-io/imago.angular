@@ -22,19 +22,21 @@ class imagoVideoController extends Controller
     @dpr = Math.ceil(window.devicePixelRatio, 1) or 1
 
     @opts =
-      autobuffer        : null
-      autoplay          : false
-      controls          : true
-      preload           : false
-      size              : 'hd'
-      align             : 'center center'
-      sizemode          : 'fit'
-      loop              : false
-      autoplayInview    : false
-      # width             : ''
-      # height            : ''
-      responsive        : true
-      theme             : '//storage.googleapis.com/videoangular-default-theme/videogular.min.css'
+      autobuffer            : null
+      autoplay              : false
+      controls              : true
+      controlsAutohide      : true
+      controlsAutohideTime  : 2000
+      preload               : false
+      size                  : 'hd'
+      align                 : 'center center'
+      sizemode              : 'fit'
+      loop                  : false
+      autoplayInview        : false
+      # width                 : ''
+      # height                : ''
+      responsive            : true
+      theme                 : '//storage.googleapis.com/videoangular-default-theme/videogular.min.css'
 
   $postLink: ->
     for key of @$attrs

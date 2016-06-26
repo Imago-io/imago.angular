@@ -830,6 +830,7 @@ class imagoUtils extends Factory
           "&": "and"
           "ß": "ss"
           "@": "at"
+          "+": "and"
 
         s = s.replace(new RegExp(key, 'g'), value) for key, value of specialCharMapping
 

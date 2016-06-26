@@ -16,7 +16,10 @@
         vg-loop="::imagovideo.opts.loop"
         vg-preload="::imagovideo.opts.preload")
       vg-controls(
-          ng-if="::imagovideo.opts.controls")
+          ng-if="::imagovideo.opts.controls"
+          vg-autohide="true"
+          vg-autohide-time="1000"
+          )
         vg-play-pause-button
         vg-time-display {{ currentTime | date:'mm:ss' }}
         vg-scrub-bar
