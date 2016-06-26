@@ -1582,7 +1582,7 @@
             "&": "and",
             "ß": "ss",
             "@": "at",
-            "/+": "and"
+            "\\+": "and"
           };
           for (key in specialCharMapping) {
             value = specialCharMapping[key];
