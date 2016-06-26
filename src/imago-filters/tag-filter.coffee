@@ -1,4 +1,5 @@
 class TagFilter extends Filter
+
   constructor: (imagoUtils) ->
     return (input, tag) ->
       return unless input
