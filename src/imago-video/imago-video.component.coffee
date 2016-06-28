@@ -33,8 +33,6 @@ class imagoVideoController extends Controller
       sizemode              : 'fit'
       loop                  : false
       autoplayInview        : false
-      # width                 : ''
-      # height                : ''
       responsive            : true
       theme                 : '//storage.googleapis.com/videoangular-default-theme/videogular.min.css'
 

@@ -1580,9 +1580,9 @@
             "ö": "oe",
             "ü": "ue",
             "&": "and",
+            "\\+": "and",
             "ß": "ss",
-            "@": "at",
-            "\\+": "and"
+            "@": "at"
           };
           for (key in specialCharMapping) {
             value = specialCharMapping[key];
