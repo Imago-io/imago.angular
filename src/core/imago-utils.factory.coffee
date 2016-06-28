@@ -828,7 +828,7 @@ class imagoUtils extends Factory
           "ö": "oe"
           "ü": "ue"
           "&": "and"
-          "\\+": "and"
+          "\\+": "plus"
           "ß": "ss"
           "@": "at"
 
