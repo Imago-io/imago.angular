@@ -249,36 +249,43 @@ class Calculation extends Service
     return deferred.promise
 
   findTaxRate: ->
+    # console.log 'findTaxRate', @country, @state, @taxes
     return {'rate': 0} if !@country
 
     if @country in ['United States of America', 'USA']
       @country = 'United States'
 
-    rates_by_country = _.filter(@taxes, (item) =>
-      item.active and @country?.toUpperCase() in (c.toUpperCase() for c in item.countries))
+    rates_by_country = _.filter(@taxes, (rate) =>
+      rate.active and @country?.toUpperCase() in (c.toUpperCase() for c in rate.countries))
 
+    # fallack to taxrate with no countries but active
     if !rates_by_country.length
-      rates_by_country = _.filter(@taxes, (item) => item.active and !item.countries.length)
+      rates_by_country = _.filter(@taxes, (rate) => rate.active and !rate.countries.length)
 
     if @state
-      rate = _.find rates_by_country, (item) =>
-          @state.toUpperCase() in (s.toUpperCase() for s in item.states)
+      # return rate which maches the country state of the order
+      rate = _.find rates_by_country, (rate) =>
+          @state.toUpperCase() in (s.toUpperCase() for s in rate.states)
       return rate if rate
+
       # if we didnt find any rates yet check if there is a less specific rate.
-      rates = _.filter rates_by_country, (item) -> item.states.length is 0
+      rates = _.filter rates_by_country, (rate) -> rate.states.length is 0
       return rates?[0] or {'rate': 0}
+
     else if rates_by_country?[0] and not rates_by_country[0].states?.length
       return rates_by_country?[0]
     else
       return {'rate': 0}
 
   getZipTax: =>
+    # get tax by zipcode for auto tax usa
     deferred = @$q.defer()
     if not (@zip or (@zip?.length > 4))
       deferred.resolve()
     else
-      @$http.get("#{@imagoModel.host}/api/ziptax?zipcode="+@zip)
+      @$http.get("#{@imagoModel.host}/api/ziptax?zipcode=#{@zip}")
         .then (response) =>
+          # console.log 'getZipTax', response, @zip
           @costs.taxRate = response.data.taxUse
           deferred.resolve()
     return deferred.promise

@@ -506,11 +506,11 @@
         this.country = 'United States';
       }
       rates_by_country = _.filter(this.taxes, (function(_this) {
-        return function(item) {
+        return function(rate) {
           var c, ref1, ref2;
-          return item.active && (ref1 = (ref2 = _this.country) != null ? ref2.toUpperCase() : void 0, indexOf.call((function() {
+          return rate.active && (ref1 = (ref2 = _this.country) != null ? ref2.toUpperCase() : void 0, indexOf.call((function() {
             var i, len, ref3, results;
-            ref3 = item.countries;
+            ref3 = rate.countries;
             results = [];
             for (i = 0, len = ref3.length; i < len; i++) {
               c = ref3[i];
@@ -522,18 +522,18 @@
       })(this));
       if (!rates_by_country.length) {
         rates_by_country = _.filter(this.taxes, (function(_this) {
-          return function(item) {
-            return item.active && !item.countries.length;
+          return function(rate) {
+            return rate.active && !rate.countries.length;
           };
         })(this));
       }
       if (this.state) {
         rate = _.find(rates_by_country, (function(_this) {
-          return function(item) {
+          return function(rate) {
             var ref1, s;
             return ref1 = _this.state.toUpperCase(), indexOf.call((function() {
               var i, len, ref2, results;
-              ref2 = item.states;
+              ref2 = rate.states;
               results = [];
               for (i = 0, len = ref2.length; i < len; i++) {
                 s = ref2[i];
@@ -546,8 +546,8 @@
         if (rate) {
           return rate;
         }
-        rates = _.filter(rates_by_country, function(item) {
-          return item.states.length === 0;
+        rates = _.filter(rates_by_country, function(rate) {
+          return rate.states.length === 0;
         });
         return (rates != null ? rates[0] : void 0) || {
           'rate': 0
@@ -567,7 +567,7 @@
       if (!(this.zip || (((ref = this.zip) != null ? ref.length : void 0) > 4))) {
         deferred.resolve();
       } else {
-        this.$http.get((this.imagoModel.host + "/api/ziptax?zipcode=") + this.zip).then((function(_this) {
+        this.$http.get(this.imagoModel.host + "/api/ziptax?zipcode=" + this.zip).then((function(_this) {
           return function(response) {
             _this.costs.taxRate = response.data.taxUse;
             return deferred.resolve();
