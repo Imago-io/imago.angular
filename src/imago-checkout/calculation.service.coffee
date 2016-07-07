@@ -228,14 +228,12 @@ class Calculation extends Service
           deferred.resolve()
       else
         taxableSubtotal = 0
-        # console.log ' @cart.costs.coupon',  @cart.costs.coupon
         for item in @cart.items
           continue unless item.fields.calculateTaxes?.value
           if item.price[@currency]
             taxableSubtotal += Math.round(item.price[@currency] * item.qty )
-
-        if @cart.costs.coupon?.meta.type is 'percent' and @cart.costs.coupon.meta.value
-          taxableSubtotal = taxableSubtotal - (taxableSubtotal * @cart.costs.coupon.meta.value / 100)
+        if @coupon?.meta.type is 'percent' and @coupon.meta.value
+          taxableSubtotal = taxableSubtotal - (taxableSubtotal * @coupon.meta.value / 100)
 
         @costs.tax = taxableSubtotal * @costs.taxRate
 
@@ -257,7 +255,6 @@ class Calculation extends Service
     return deferred.promise
 
   findTaxRate: ->
-    # console.log 'findTaxRate', @country, @state, @taxes
     return {'rate': 0} if !@country
 
     if @country in ['United States of America', 'USA']
@@ -293,7 +290,6 @@ class Calculation extends Service
     else
       @$http.get("#{@imagoModel.host}/api/ziptax?zipcode=#{@zip}")
         .then (response) =>
-          # console.log 'getZipTax', response, @zip
           @costs.taxRate = response.data.taxUse
           deferred.resolve()
     return deferred.promise

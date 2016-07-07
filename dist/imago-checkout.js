@@ -473,8 +473,8 @@
                 taxableSubtotal += Math.round(item.price[_this.currency] * item.qty);
               }
             }
-            if (((ref4 = _this.cart.costs.coupon) != null ? ref4.meta.type : void 0) === 'percent' && _this.cart.costs.coupon.meta.value) {
-              taxableSubtotal = taxableSubtotal - (taxableSubtotal * _this.cart.costs.coupon.meta.value / 100);
+            if (((ref4 = _this.coupon) != null ? ref4.meta.type : void 0) === 'percent' && _this.coupon.meta.value) {
+              taxableSubtotal = taxableSubtotal - (taxableSubtotal * _this.coupon.meta.value / 100);
             }
             _this.costs.tax = taxableSubtotal * _this.costs.taxRate;
             return deferred.resolve();
