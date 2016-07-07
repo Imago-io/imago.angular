@@ -443,7 +443,7 @@
       deferred = this.$q.defer();
       this.getTaxRate().then((function(_this) {
         return function() {
-          var i, item, j, len, len1, onepercent, ref, ref1, ref2, ref3;
+          var i, item, j, len, len1, onepercent, ref, ref1, ref2, ref3, ref4, taxableSubtotal;
           _this.costs.tax = 0;
           if (_this.imagoUtils.includesTax(_this.currency)) {
             _this.costs.includedTax = 0;
@@ -462,6 +462,7 @@
               return deferred.resolve();
             }
           } else {
+            taxableSubtotal = 0;
             ref2 = _this.cart.items;
             for (j = 0, len1 = ref2.length; j < len1; j++) {
               item = ref2[j];
@@ -469,9 +470,13 @@
                 continue;
               }
               if (item.price[_this.currency]) {
-                _this.costs.tax += Math.round(item.price[_this.currency] * item.qty * _this.costs.taxRate);
+                taxableSubtotal += Math.round(item.price[_this.currency] * item.qty);
               }
             }
+            if (((ref4 = _this.cart.costs.coupon) != null ? ref4.meta.type : void 0) === 'percent' && _this.cart.costs.coupon.meta.value) {
+              taxableSubtotal = taxableSubtotal - (taxableSubtotal * _this.cart.costs.coupon.meta.value / 100);
+            }
+            _this.costs.tax = taxableSubtotal * _this.costs.taxRate;
             return deferred.resolve();
           }
         };

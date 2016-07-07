@@ -227,10 +227,18 @@ class Calculation extends Service
         else
           deferred.resolve()
       else
+        taxableSubtotal = 0
+        # console.log ' @cart.costs.coupon',  @cart.costs.coupon
         for item in @cart.items
           continue unless item.fields.calculateTaxes?.value
           if item.price[@currency]
-            @costs.tax += Math.round(item.price[@currency] * item.qty * @costs.taxRate)
+            taxableSubtotal += Math.round(item.price[@currency] * item.qty )
+
+        if @cart.costs.coupon?.meta.type is 'percent' and @cart.costs.coupon.meta.value
+          taxableSubtotal = taxableSubtotal - (taxableSubtotal * @cart.costs.coupon.meta.value / 100)
+
+        @costs.tax = taxableSubtotal * @costs.taxRate
+
         deferred.resolve()
     return deferred.promise
 
@@ -299,7 +307,6 @@ class Calculation extends Service
     @costs.total += @costs.tax if @costs.tax
     @costs.total
 
-
   checkStock: (cb) ->
     @cartError = {}
 
@@ -327,7 +334,6 @@ class Calculation extends Service
         @$http.put(@imagoModel.host + '/api/carts/' + @cart._id, @cart)
 
     cb()
-
 
   calculate: =>
     @checkStock =>
