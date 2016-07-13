@@ -476,7 +476,7 @@
             if (((ref4 = _this.coupon) != null ? ref4.meta.type : void 0) === 'percent' && _this.coupon.meta.value) {
               taxableSubtotal = taxableSubtotal - (taxableSubtotal * _this.coupon.meta.value / 100);
             }
-            _this.costs.tax = taxableSubtotal * _this.costs.taxRate;
+            _this.costs.tax = Math.round(taxableSubtotal * _this.costs.taxRate);
             return deferred.resolve();
           }
         };

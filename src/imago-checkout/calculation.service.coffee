@@ -235,7 +235,7 @@ class Calculation extends Service
         if @coupon?.meta.type is 'percent' and @coupon.meta.value
           taxableSubtotal = taxableSubtotal - (taxableSubtotal * @coupon.meta.value / 100)
 
-        @costs.tax = taxableSubtotal * @costs.taxRate
+        @costs.tax = Math.round(taxableSubtotal * @costs.taxRate)
 
         deferred.resolve()
     return deferred.promise
