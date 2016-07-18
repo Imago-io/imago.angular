@@ -73,6 +73,7 @@ class Calculation extends Service
     unless coupon
       costs.discount = null
       return
+    # @coupon = coupon
     meta = coupon.meta
     @couponState = 'valid'
 
@@ -370,7 +371,7 @@ class Calculation extends Service
   submit: =>
     @form.items    = angular.copy @cart.items
     @form.currency = angular.copy @currency
-    @form.cartId = angular.copy @cart._id
+    @form.cartId   = angular.copy @cart._id
     @form.billing_address.name = angular.copy @form.user?.name
     @form = @formatForm(@form)
 
