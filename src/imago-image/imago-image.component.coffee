@@ -9,7 +9,7 @@ class imagoImage extends Component
       require:
         sliderCtrl: '?^imagoSlider'
       bindings:
-        data: '<?'
+        data: '=?'
 
     }
 
@@ -59,8 +59,10 @@ class imagoImageController extends Controller
           @init(item)
           break
     else
-      return @destroy() if !@data?.serving_url
-      @init(@data)
+      watcher = @$scope.$watch 'this.imagoimage.data', =>
+        watcher() if !@$attrs.watch
+        return @destroy() if !@data?.serving_url
+        @init(@data)
 
   $onDestroy: ->
     watcher() for watcher in @watchers

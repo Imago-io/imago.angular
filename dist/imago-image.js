@@ -11,7 +11,7 @@
           sliderCtrl: '?^imagoSlider'
         },
         bindings: {
-          data: '<?'
+          data: '=?'
         }
       };
     }
@@ -49,7 +49,7 @@
     }
 
     imagoImageController.prototype.$postLink = function() {
-      var key, ref, ref1, watcher;
+      var key, ref, watcher;
       for (key in this.$attrs) {
         if (_.isUndefined(this.opts[key])) {
           continue;
@@ -92,10 +92,18 @@
           };
         })(this));
       } else {
-        if (!((ref1 = this.data) != null ? ref1.serving_url : void 0)) {
-          return this.destroy();
-        }
-        return this.init(this.data);
+        return watcher = this.$scope.$watch('this.imagoimage.data', (function(_this) {
+          return function() {
+            var ref1;
+            if (!_this.$attrs.watch) {
+              watcher();
+            }
+            if (!((ref1 = _this.data) != null ? ref1.serving_url : void 0)) {
+              return _this.destroy();
+            }
+            return _this.init(_this.data);
+          };
+        })(this));
       }
     };
 
