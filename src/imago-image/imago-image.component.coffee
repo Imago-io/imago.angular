@@ -60,8 +60,9 @@ class imagoImageController extends Controller
           break
     else
       watcher = @$scope.$watch 'this.imagoimage.data', =>
-        watcher() if !@$attrs.watch
-        return @destroy() if !@data?.serving_url
+        if !@$attrs.watch
+          watcher()
+          return @destroy() if !@data?.serving_url
         @init(@data)
 
   $onDestroy: ->

@@ -97,9 +97,9 @@
             var ref1;
             if (!_this.$attrs.watch) {
               watcher();
-            }
-            if (!((ref1 = _this.data) != null ? ref1.serving_url : void 0)) {
-              return _this.destroy();
+              if (!((ref1 = _this.data) != null ? ref1.serving_url : void 0)) {
+                return _this.destroy();
+              }
             }
             return _this.init(_this.data);
           };
