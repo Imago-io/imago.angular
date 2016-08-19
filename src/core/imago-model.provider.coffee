@@ -84,7 +84,7 @@ class imagoModel extends Provider
             # abort save and show reloaod modal, if we find an asset without types
             for item in list
               unless item.types?.length
-                $window.trackJs?.track("Tried to save without types - data: #{list}")
+                $window.trackJs?.track("Tried to save without types - data: #{JSON.stringify(item)}")
                 $rootScope.generalError = true
                 return
 

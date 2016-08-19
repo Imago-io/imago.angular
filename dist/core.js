@@ -127,7 +127,7 @@
                 item = list[j];
                 if (!((ref = item.types) != null ? ref.length : void 0)) {
                   if ((ref1 = $window.trackJs) != null) {
-                    ref1.track("Tried to save without types - data: " + list);
+                    ref1.track("Tried to save without types - data: " + (JSON.stringify(item)));
                   }
                   $rootScope.generalError = true;
                   return;
