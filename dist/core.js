@@ -122,11 +122,21 @@
               return $http.post(host + "/api/assets/copy", data);
             },
             batch: function(list) {
-              var j, len, promises, request;
+              var item, j, k, len, len1, promises, ref, ref1, request;
+              for (j = 0, len = list.length; j < len; j++) {
+                item = list[j];
+                if (!((ref = item.types) != null ? ref.length : void 0)) {
+                  if ((ref1 = $window.trackJs) != null) {
+                    ref1.track("Tried to save without types - data: " + list);
+                  }
+                  $rootScope.generalError = true;
+                  return;
+                }
+              }
               promises = [];
               list = _.chunk(list, 100);
-              for (j = 0, len = list.length; j < len; j++) {
-                request = list[j];
+              for (k = 0, len1 = list.length; k < len1; k++) {
+                request = list[k];
                 promises.push($http.put(host + "/api/assets/update", {
                   assets: request
                 }));

@@ -81,6 +81,13 @@ class imagoModel extends Provider
             $http.post "#{host}/api/assets/copy", data
 
           batch: (list) ->
+            # abort save and show reloaod modal, if we find an asset without types
+            for item in list
+              unless item.types?.length
+                $window.trackJs?.track("Tried to save without types - data: #{list}")
+                $rootScope.generalError = true
+                return
+
             promises = []
             list = _.chunk(list, 100)
             for request in list
