@@ -1,6 +1,6 @@
 class imagoPager extends Directive
 
-  constructor: (imagoModel, $state) ->
+  constructor: (imagoModel, $timeout, $state) ->
 
     return {
 
@@ -14,62 +14,74 @@ class imagoPager extends Directive
         tags        : '=?'
         currentPage : '=?'
         opts        : '@'
+        loaded      : '=?'
       restrict: 'E'
       templateUrl: (element, attrs) ->
         return attrs.templateUrl or '/imago/imago-pager.html'
       link: (scope, element, attrs) ->
 
+
+        if !scope.state
+          scope.state = $state.current.data?.state or _.head($state.current.name.split('.'))
+          console.log 'noscope set to', scope.state
+
         scope.fetchPosts = ->
-          scope.loaded = false
-          scope.count += 1
-          scope.posts = []
-          scope.pageSize = $state.current.data?.pageSize or parseInt(scope.pageSize) or 10
-          scope.currentPage = $state.params.page or parseInt(scope.currentPage) or 1
-          if !scope.state
-            scope.state = $state.current.data?.state or _.head($state.current.name.split('.'))
+          $timeout ->
+            scope.loaded = false
+            scope.count += 1
+            scope.posts = []
+            scope.pageSize = $state.current.data?.pageSize or parseInt(scope.pageSize) or 10
+            scope.currentPage = $state.params.page or parseInt(scope.currentPage) or 1
+            if !scope.state
+              scope.state = $state.current.data?.state or _.head($state.current.name.split('.'))
 
-          query = scope.query or attrs.path or $state.current.data?.query
-          if _.includes query, '{'
-            query = scope.$eval query
-          else
-            query = {path: query}
+            query = scope.query or attrs.path or $state.current.data?.query
+            if _.includes query, '{'
+              query = scope.$eval query
+            else
+              query = {path: $state.current.data.query}
 
-          query.page = scope.currentPage
-          query.pagesize = scope.pageSize
+            if scope.path
+              query.path = scope.path
 
-          if scope.opts and _.includes scope.opts, '{'
-            scope.opts = scope.$eval scope.opts
+            query.page = scope.currentPage or 1
+            query.pagesize = scope.pageSize or $state.current.data.pageSize
 
-          scope.opts or= {}
+            if scope.opts and _.includes scope.opts, '{'
+              scope.opts = scope.$eval scope.opts
 
-          if $state.params.tag or scope.tags
-            query['tags'] = $state.params.tag or scope.tags
+            scope.opts or= {}
 
-          if query?.path and _.includes query.path, '/page/'
-            idx = query.path.indexOf '/page/'
-            query.path = query.path.slice 0, idx
+            if $state.params.tag or scope.tags
+              query['tags'] = $state.params.tag or scope.tags
+              delete query.recursive
 
-          imagoModel.getData(query).then (response) =>
-            for collection in response
-              scope.next = collection.next
+            if query?.path and _.includes query.path, '/page/'
+              idx = query.path.indexOf '/page/'
+              query.path = query.path.slice 0, idx
 
-              if scope.opts.shuffle
-                scope.posts = _.shuffle collection.assets
-              else
-                scope.posts = collection.assets
+            return if angular.equals scope.lastQuery, query
+            scope.lastQuery = angular.copy query
 
-              scope.totalPages = collection.count / scope.pageSize
-              break
+            console.log 'query', query
+            imagoModel.getData(query).then (response) =>
+              for collection in response
+                scope.next = collection.next
 
-            scope.loaded = true
+                if scope.opts.shuffle
+                  scope.posts = _.shuffle collection.assets
+                else
+                  scope.posts = collection.assets
 
-        scope.prevState = ->
-          if $state.params.tag
-            $state.go "#{scope.state}.filtered.paged", {'tag': $state.params.tag, 'page': scope.currentPage}
-          else if scope.state
-            $state.go "#{scope.state}.paged", {'page': scope.currentPage}
+                scope.totalPages = Math.ceil(collection.count / scope.pageSize)
+                scope.pages = []
+                for i in [1...scope.totalPages]
+                  scope.pages.push i
+                break
 
-        scope.nextState = ->
+              scope.loaded = true
+
+        scope.changeState = ->
           if $state.params.tag
             $state.go "#{scope.state}.filtered.paged", {'tag': $state.params.tag, 'page': scope.currentPage}
           else if scope.state
@@ -79,21 +91,21 @@ class imagoPager extends Directive
           scope.currentPage--
           if attrs.prev
             scope.prevPage()
-          else if scope.state
-            scope.prevState()
+          else
+            scope.changeState()
 
         scope.onNext = ->
           scope.currentPage++
           if attrs.next
             scope.nextPage()
           else if scope.state
-            scope.nextState()
+            scope.changeState()
 
         scope.$watchGroup ['currentPage', 'tags'], scope.fetchPosts
 
         if scope.state
           scope.$on '$stateChangeSuccess', (evt, current, params) ->
-            scope.currentPage = 1 if scope.state is current.name
+            scope.fetchPosts()
 
     }
 
