@@ -22,4 +22,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-download.html","<a ng-href=\"{{asset.fields[fieldname].download_url}}\" ng-if=\"asset.fields[fieldname].download_url\" analytics-on=\"click\" analytics-event=\"Download {{ asset.fields[fieldname].filename }}\"><i class=\"fa fa-file-pdf-o\"> {{ asset.fields[fieldname].filename }}</i></a>");}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-download.html','<a ng-href="{{asset.fields[fieldname].download_url}}" ng-if="asset.fields[fieldname].download_url" analytics-on="click" analytics-event="Download {{ asset.fields[fieldname].filename }}"><i class="fa fa-file-pdf-o"> {{ asset.fields[fieldname].filename }}</i></a>');}]);

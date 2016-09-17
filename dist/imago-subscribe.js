@@ -47,4 +47,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-subscribe.html","<div class=\"imago-subscribe\"><div ng-transclude=\"ng-transclude\" ng-hide=\"imagosubscribe.submitted &amp;&amp; !imagosubscribe.error\"></div><div ng-show=\"imagosubscribe.submitted &amp;&amp; imagosubscribe.error\" class=\"error\">please try again later</div><div ng-show=\"imagosubscribe.submitted &amp;&amp; !imagosubscribe.error\" class=\"submitted\">subscription created</div></div>");}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-subscribe.html','<div class="imago-subscribe"><div ng-transclude="ng-transclude" ng-hide="imagosubscribe.submitted &amp;&amp; !imagosubscribe.error"></div><div ng-show="imagosubscribe.submitted &amp;&amp; imagosubscribe.error" class="error">please try again later</div><div ng-show="imagosubscribe.submitted &amp;&amp; !imagosubscribe.error" class="submitted">subscription created</div></div>');}]);

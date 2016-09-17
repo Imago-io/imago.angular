@@ -62,4 +62,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-modal.html","<div ng-show=\"modal.active\" ng-click=\"modal.disable()\" class=\"imago-modal\"><div class=\"wrapper\"><div class=\"close icon-thin-close icon\"></div><div class=\"transclude\"></div></div></div>");}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-modal.html','<div ng-show="modal.active" ng-click="modal.disable()" class="imago-modal"><div class="wrapper"><div class="close icon-thin-close icon"></div><div class="transclude"></div></div></div>');}]);
