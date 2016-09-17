@@ -747,6 +747,9 @@ class imagoUtils extends Factory
         'ZMW'
         'ZWL'
       ]
+      ZERODECIMAL_CURRENCIES: ['BIF','CLP','DJF','GNF','JPY','KMF','KRW','MGA','PYG','RWF','VND','VUV','XAF','XOF','XPF','BRL','HUF','MYR','TWD']
+
+
 
       toType: (obj) ->
        ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
