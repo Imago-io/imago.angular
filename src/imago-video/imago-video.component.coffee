@@ -26,7 +26,7 @@ class imagoVideoController extends Controller
       autoplay              : false
       controls              : true
       controlsAutohide      : true
-      controlsAutohideTime  : 2000
+      controlsAutohideTime  : 1000
       preload               : false
       size                  : 'hd'
       align                 : 'center center'

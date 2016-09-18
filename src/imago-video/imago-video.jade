@@ -18,8 +18,8 @@
 
       vg-controls(
           ng-if="imagovideo.opts.controls && imagovideo.state === 'play'"
-          vg-autohide="true"
-          vg-autohide-time="1000"
+          vg-autohide="::imagovideo.opts.controlsAutohide"
+          vg-autohide-time="::imagovideo.opts.controlsAutohide"
           )
         vg-play-pause-button
         vg-time-display {{ currentTime | date:'mm:ss' }}
