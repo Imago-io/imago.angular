@@ -34,7 +34,7 @@ class imagoVideoController extends Controller
       loop                  : false
       autoplayInview        : false
       responsive            : true
-      theme                 : 'https://storage.googleapis.com/videoangular-default-theme/videogular.min.css'
+      theme                 : @$rootScope.videoTheme or 'https://storage.googleapis.com/videoangular-default-theme/videogular.min.css'
 
   $postLink: ->
     for key of @$attrs

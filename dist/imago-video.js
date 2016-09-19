@@ -46,7 +46,7 @@
         loop: false,
         autoplayInview: false,
         responsive: true,
-        theme: 'https://storage.googleapis.com/videoangular-default-theme/videogular.min.css'
+        theme: this.$rootScope.videoTheme || 'https://storage.googleapis.com/videoangular-default-theme/videogular.min.css'
       };
     }
 
