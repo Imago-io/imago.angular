@@ -1,4 +1,4 @@
-class imagoContact extends Directive
+class ImagoContact extends Directive
 
   constructor:->
 
@@ -12,11 +12,11 @@ class imagoContact extends Directive
 
     }
 
-class imagoContactController extends Controller
+class ImagoContactController extends Controller
 
   constructor: (imagoSubmit) ->
     @data =
-      subscribe: true
+      subscribe: false
 
     @submitForm = (isValid) =>
       return unless isValid

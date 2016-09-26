@@ -19,11 +19,11 @@
 }).call(this);
 
 (function() {
-  var imagoShare, imagoShareController,
+  var ImagoShare, ImagoShareController,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  imagoShare = (function() {
-    function imagoShare() {
+  ImagoShare = (function() {
+    function ImagoShare() {
       return {
         bindings: {
           asset: '<',
@@ -36,30 +36,30 @@
       };
     }
 
-    return imagoShare;
+    return ImagoShare;
 
   })();
 
-  imagoShareController = (function() {
-    function imagoShareController($scope, $location) {
+  ImagoShareController = (function() {
+    function ImagoShareController($scope, $location) {
       this.$scope = $scope;
       this.$location = $location;
       this.$onChanges = bind(this.$onChanges, this);
       this.$onInit = bind(this.$onInit, this);
     }
 
-    imagoShareController.prototype.$onInit = function() {
+    ImagoShareController.prototype.$onInit = function() {
       return this.init();
     };
 
-    imagoShareController.prototype.$onChanges = function(changes) {
+    ImagoShareController.prototype.$onChanges = function(changes) {
       if (!changes.asset.currentValue) {
         return;
       }
       return this.init();
     };
 
-    imagoShareController.prototype.init = function() {
+    ImagoShareController.prototype.init = function() {
       var i, item, len, options, ref, results;
       if ((ref = this.asset) != null ? ref.path : void 0) {
         this.location = (this.$location.protocol()) + "://" + (this.$location.host()) + this.asset.path;
@@ -83,11 +83,11 @@
       }
     };
 
-    return imagoShareController;
+    return ImagoShareController;
 
   })();
 
-  angular.module('imago').component('imagoShare', new imagoShare()).controller('imagoShareController', ['$scope', '$location', imagoShareController]);
+  angular.module('imago').component('imagoShare', new ImagoShare()).controller('imagoShareController', ['$scope', '$location', ImagoShareController]);
 
 }).call(this);
 

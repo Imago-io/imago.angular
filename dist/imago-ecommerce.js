@@ -229,13 +229,18 @@
     function imagoCartController(imagoCart1, $location) {
       this.imagoCart = imagoCart1;
       this.$location = $location;
-      this.clickOut = function(evt, className) {
-        if (evt.target.tagName === 'BUTTON' && evt.target.className.indexOf(className) !== -1) {
-          return;
-        }
-        return this.imagoCart.show = false;
-      };
     }
+
+    imagoCartController.prototype.maxQty = function(item) {
+      if (!item) {
+        return;
+      }
+      if (item.presale) {
+        return this.imagoCart.maxQtyPerItem || 100;
+      } else {
+        return Math.min(this.imagoCart.maxQtyPerItem || 100, item.stock);
+      }
+    };
 
     imagoCartController.prototype.goToProduct = function(url) {
       return this.$location.url(url);
@@ -295,8 +300,12 @@
     }
 
     imagoCart.prototype.onSettings = function() {
-      var local;
+      var local, ref, ref1;
       this.currencies = this.$rootScope.tenantSettings.currencies;
+      if ((ref = this.$rootScope.tenantSettings.maxQtyPerItem) != null ? ref.active : void 0) {
+        this.maxQtyPerItem = (ref1 = this.$rootScope.tenantSettings.maxQtyPerItem) != null ? ref1.value : void 0;
+      }
+      console.log('@maxQtyPerItem', this.maxQtyPerItem);
       this.checkGeoIp();
       local = this.imagoUtils.cookie('imagoCart');
       if (local) {
@@ -478,9 +487,8 @@
         if (!filter.name) {
           filter.name = copy.name;
         }
-        if (filter.qty !== filter.stock) {
-          filter.qty += copy.qty;
-        }
+        filter.qty += copy.qty;
+        filter.qty = Math.min(filter.stock, this.maxQtyPerItem || filter.qty, filter.qty);
         _.assign(filter.options, copy.options);
         _.assign(filter.fields, copy.fields);
       } else {

@@ -29,8 +29,12 @@ class ImagoFieldNumber extends Directive
           parseFloat value
 
         checkValidity = ->
-          valid = !(scope.isLimitMin(true) || scope.isLimitMax(true))
+          valid = !(scope.isLimitMin() || scope.isLimitMax())
           ngModelController.$setValidity('outOfBounds', valid)
+          if scope.isLimitMax()
+            scope.update(scope.max)
+          if scope.isLimitMin()
+            scope.update(scope.min)
 
         change = (offset) ->
           value = ngModelController.$viewValue + offset
@@ -50,11 +54,11 @@ class ImagoFieldNumber extends Directive
         scope.isLimitMax = ->
           return true if ngModelController.$viewValue > scope.max
 
-        scope.isOverMin = ->
-          return true if ngModelController.$viewValue < scope.min + 1
+        # scope.isOverMin = ->
+        #   return true if ngModelController.$viewValue < scope.min + 1
 
-        scope.isOverMax = ->
-          return true if ngModelController.$viewValue > scope.max - 1
+        # scope.isOverMax = ->
+        #   return true if ngModelController.$viewValue > scope.max - 1
 
         scope.decrement = ->
           change(-1)

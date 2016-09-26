@@ -16,10 +16,17 @@ class imagoCartController extends Controller
 
   constructor: (@imagoCart, @$location) ->
 
-    @clickOut = (evt, className) ->
-      return if evt.target.tagName is 'BUTTON' and evt.target.className.indexOf(className) isnt -1
-      @imagoCart.show = false
+  maxQty: (item) ->
+    return unless item
+    if item.presale
+      @imagoCart.maxQtyPerItem or 100
+    else
+      Math.min @imagoCart.maxQtyPerItem or 100, item.stock
+
+
 
   goToProduct: (url) ->
     @$location.url(url)
+
+
 

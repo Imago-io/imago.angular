@@ -186,6 +186,62 @@
 }).call(this);
 
 (function() {
+  var ImagoFieldFile;
+
+  ImagoFieldFile = (function() {
+    function ImagoFieldFile() {
+      return {
+        replace: true,
+        require: 'ngModel',
+        scope: {
+          ngModel: '=',
+          sizeerror: '=?',
+          label: '<?',
+          maxFileSize: '<?',
+          allowedFileTypes: '<?'
+        },
+        transclude: true,
+        templateUrl: '/imago/imago-field-file.html',
+        link: function(scope, element, attrs, ngModelController) {
+          var input, label;
+          scope.maxFileSize || (scope.maxFileSize = 5);
+          scope.sizeerror = false;
+          scope.label || (scope.label = 'Select Files');
+          label = element.find('label');
+          input = element.find('input');
+          input.bind('change', function(changeEvent) {
+            var reader;
+            scope.filename = changeEvent.target.value.split('\\').pop();
+            reader = new FileReader;
+            reader.onload = function(loadEvent) {
+              if (loadEvent.total > 1024 * 1024 * scope.maxFileSize) {
+                scope.$apply(function() {
+                  return scope.sizeerror = true;
+                });
+                return;
+              }
+              return scope.$apply(function() {
+                return scope.fileread = loadEvent.target.result;
+              });
+            };
+            return reader.readAsDataURL(changeEvent.target.files[0]);
+          });
+          return scope.update = function(value) {
+            return console.log('scope-update');
+          };
+        }
+      };
+    }
+
+    return ImagoFieldFile;
+
+  })();
+
+  angular.module('imago').directive('imagoFieldFile', [ImagoFieldFile]);
+
+}).call(this);
+
+(function() {
   var ImagoFieldNumber;
 
   ImagoFieldNumber = (function() {
@@ -219,8 +275,14 @@
           });
           checkValidity = function() {
             var valid;
-            valid = !(scope.isLimitMin(true) || scope.isLimitMax(true));
-            return ngModelController.$setValidity('outOfBounds', valid);
+            valid = !(scope.isLimitMin() || scope.isLimitMax());
+            ngModelController.$setValidity('outOfBounds', valid);
+            if (scope.isLimitMax()) {
+              scope.update(scope.max);
+            }
+            if (scope.isLimitMin()) {
+              return scope.update(scope.min);
+            }
           };
           change = function(offset) {
             var value;
@@ -245,16 +307,6 @@
           };
           scope.isLimitMax = function() {
             if (ngModelController.$viewValue > scope.max) {
-              return true;
-            }
-          };
-          scope.isOverMin = function() {
-            if (ngModelController.$viewValue < scope.min + 1) {
-              return true;
-            }
-          };
-          scope.isOverMax = function() {
-            if (ngModelController.$viewValue > scope.max - 1) {
               return true;
             }
           };
@@ -283,4 +335,5 @@
 angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-field-checkbox.html","<div class=\"imago-checkbox\"><label ng-class=\"{active: ngModel, disabled: disabled}\" ng-click=\"update(ngModel)\" class=\"topcoat-checkbox\"><div class=\"topcoat-checkbox__checkmark\"></div><span ng-transclude=\"ng-transclude\"></span></label></div>");
 $templateCache.put("/imago/imago-field-currency.html","<div class=\"imago-field-content-currency imago-field currency\"><div ng-class=\"{expanded: fieldcurrency.expanded}\"><button ng-click=\"fieldcurrency.expanded = !fieldcurrency.expanded\" class=\"ii ii-caret-left\"></button><div ng-class=\"{expanded: fieldcurrency.expanded}\" class=\"fields\"><div ng-if=\"!fieldcurrency.expanded\" ng-class=\"{focus:onfocus}\" class=\"wrapper compact\"><label><span ng-repeat=\"cur in fieldcurrency.currencies\" ng-click=\"fieldcurrency.currency = cur\" ng-class=\"{active: fieldcurrency.currency === cur, invalid: fieldcurrency.notComplete[cur]}\">{{cur}}</span></label><input type=\"text\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"fieldcurrency.ngModel[fieldcurrency.currency]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-change=\"update(fieldcurrency.ngModel); onfocus = false\" ng-disabled=\"!fieldcurrency.currency\" ng-focus=\"onfocus = true\"/></div><div ng-repeat=\"cur in fieldcurrency.currencies\" ng-if=\"fieldcurrency.expanded\" ng-class=\"{invalid: fieldcurrency.notComplete[cur]}\" class=\"wrapper expanded\"><div class=\"imago-field\"><label>{{cur}}</label><input type=\"text\" currency=\"{{cur}}\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"fieldcurrency.ngModel[cur]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-blur=\"update(fieldcurrency.ngModel)\"/></div></div></div></div></div>");
 $templateCache.put("/imago/imago-field-date.html","<div class=\"imago-field-date-content imago-field date\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" date-time=\"date-time\" dismiss=\"true\" ng-model=\"ngModel\" ng-blur=\"update(ngModel)\" view=\"date\" min-view=\"date\" partial=\"true\"/></div>");
+$templateCache.put("/imago/imago-field-file.html","<div class=\"imago-field\"><input type=\"file\" name=\"receipt\" id=\"receipt\" sizeerror=\"sizeerror\" required=\"required\"/><label for=\"receipt\" ng-if=\"!filename\">{{label}} (max {{maxFileSize}}mb)</label><label for=\"receipt\" ng-if=\"filename\">Selected File: {{filename}}</label><div ng-show=\"sizeerror\" class=\"error\">Image File to large</div></div>");
 $templateCache.put("/imago/imago-field-number.html","<div class=\"imago-field-number-content imago-field\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" ng-model=\"ngModel\" ng-model-options=\"{\'updateOn\': \'blur\'}\" ng-change=\"update(ngModel)\" ng-disabled=\"disabled\"/><button type=\"button\" ng-disabled=\"isOverMin() || disabled\" ng-click=\"decrement()\" class=\"decrement\"></button><button type=\"button\" ng-disabled=\"isOverMax() || disabled\" ng-click=\"increment()\" class=\"increment\"></button></div>");}]);

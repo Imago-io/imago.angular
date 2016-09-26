@@ -1,4 +1,4 @@
-class imagoShare extends Component
+class ImagoShare extends Component
 
   constructor: ->
 
@@ -13,7 +13,7 @@ class imagoShare extends Component
 
     }
 
-class imagoShareController extends Controller
+class ImagoShareController extends Controller
 
   constructor: (@$scope, @$location) ->
 

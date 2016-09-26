@@ -1,8 +1,8 @@
 (function() {
-  var imagoContact, imagoContactController;
+  var ImagoContact, ImagoContactController;
 
-  imagoContact = (function() {
-    function imagoContact() {
+  ImagoContact = (function() {
+    function ImagoContact() {
       return {
         restrict: 'E',
         scope: true,
@@ -13,14 +13,14 @@
       };
     }
 
-    return imagoContact;
+    return ImagoContact;
 
   })();
 
-  imagoContactController = (function() {
-    function imagoContactController(imagoSubmit) {
+  ImagoContactController = (function() {
+    function ImagoContactController(imagoSubmit) {
       this.data = {
-        subscribe: true
+        subscribe: false
       };
       this.submitForm = (function(_this) {
         return function(isValid) {
@@ -35,11 +35,11 @@
       })(this);
     }
 
-    return imagoContactController;
+    return ImagoContactController;
 
   })();
 
-  angular.module('imago').directive('imagoContact', [imagoContact]).controller('imagoContactController', ['imagoSubmit', imagoContactController]);
+  angular.module('imago').directive('imagoContact', [ImagoContact]).controller('imagoContactController', ['imagoSubmit', ImagoContactController]);
 
 }).call(this);
 

@@ -5,6 +5,7 @@ class imagoCart extends Service
   settings: []
   messages: []
 
+
   constructor: (@$q, @$rootScope, @$timeout, @$location, @$window, @$http, @imagoUtils, @imagoModel, @fulfillmentsCenter, @geoIp, @tenantSettings, @imagoCartUtils) ->
 
     @cart =
@@ -17,9 +18,13 @@ class imagoCart extends Service
 
   onSettings: ->
     @currencies = @$rootScope.tenantSettings.currencies
+    if @$rootScope.tenantSettings.maxQtyPerItem?.active
+      @maxQtyPerItem = @$rootScope.tenantSettings.maxQtyPerItem?.value
+    console.log '@maxQtyPerItem', @maxQtyPerItem
     @checkGeoIp()
     local = @imagoUtils.cookie('imagoCart')
     @checkStatus(local) if local
+
 
   checkGeoIp: ->
     unless @geoIp.loaded
@@ -137,7 +142,8 @@ class imagoCart extends Service
 
     if filter
       filter.name = copy.name unless filter.name
-      filter.qty += copy.qty if filter.qty isnt filter.stock
+      filter.qty += copy.qty
+      filter.qty = Math.min(filter.stock, @maxQtyPerItem or filter.qty, filter.qty)
       _.assign filter.options, copy.options
       _.assign filter.fields, copy.fields
     else
