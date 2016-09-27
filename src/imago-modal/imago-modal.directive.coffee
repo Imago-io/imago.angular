@@ -20,7 +20,7 @@ class ImagoModal extends Directive
           scope.$watch 'modal.active', (value) ->
             if value
               return document.body.style.overflow = 'hidden'
-            return document.body.style.overflow = 'auto'
+            return document.body.style.overflow = ''
 
           disableOnEsc = (evt) ->
             return unless scope.modal.active
@@ -30,7 +30,7 @@ class ImagoModal extends Directive
           $document.on 'keydown', disableOnEsc
 
           scope.$on '$destroy', ->
-            document.body.style.overflow = 'auto'
+            document.body.style.overflow = ''
             $document.off 'keydown', disableOnEsc
         else
           element.css({position: 'relative'})

@@ -21,7 +21,7 @@
               if (value) {
                 return document.body.style.overflow = 'hidden';
               }
-              return document.body.style.overflow = 'auto';
+              return document.body.style.overflow = '';
             });
             disableOnEsc = function(evt) {
               if (!scope.modal.active) {
@@ -34,7 +34,7 @@
             };
             $document.on('keydown', disableOnEsc);
             return scope.$on('$destroy', function() {
-              document.body.style.overflow = 'auto';
+              document.body.style.overflow = '';
               return $document.off('keydown', disableOnEsc);
             });
           } else {
