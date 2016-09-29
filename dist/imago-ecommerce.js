@@ -226,9 +226,14 @@
   })();
 
   imagoCartController = (function() {
-    function imagoCartController(imagoCart1, $location) {
+    function imagoCartController($rootScope, imagoCart1, $location) {
       this.imagoCart = imagoCart1;
       this.$location = $location;
+      $rootScope.$on('scrollstart', (function(_this) {
+        return function() {
+          return _this.imagoCart.show = false;
+        };
+      })(this));
     }
 
     imagoCartController.prototype.maxQty = function(item) {
@@ -250,7 +255,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoCart', [imagoCart]).controller('imagoCartController', ['imagoCart', '$location', imagoCartController]);
+  angular.module('imago').directive('imagoCart', [imagoCart]).controller('imagoCartController', ['$rootScope', 'imagoCart', '$location', imagoCartController]);
 
 }).call(this);
 

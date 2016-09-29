@@ -14,7 +14,9 @@ class imagoCart extends Directive
 
 class imagoCartController extends Controller
 
-  constructor: (@imagoCart, @$location) ->
+  constructor: ($rootScope, @imagoCart, @$location) ->
+
+    $rootScope.$on 'scrollstart', => @imagoCart.show = false
 
   maxQty: (item) ->
     return unless item
