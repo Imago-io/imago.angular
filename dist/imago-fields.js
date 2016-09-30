@@ -42,7 +42,8 @@
 }).call(this);
 
 (function() {
-  var ImagoFieldCurrency, ImagoFieldCurrencyController, imagoFilterCurrency;
+  var ImagoFieldCurrency, ImagoFieldCurrencyController, imagoFilterCurrency,
+    indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   ImagoFieldCurrency = (function() {
     function ImagoFieldCurrency() {
@@ -110,8 +111,11 @@
   })();
 
   imagoFilterCurrency = (function() {
-    function imagoFilterCurrency() {
+    function imagoFilterCurrency(imagoUtils) {
       return {
+        scope: {
+          currency: '=?'
+        },
         require: 'ngModel',
         link: function(scope, element, attrs, ctrl) {
           var formatView;
@@ -119,8 +123,13 @@
             return ctrl.$render();
           });
           formatView = function(value) {
+            var ref;
             if (angular.isDefined(value) && !_.isNull(value)) {
-              value = (value / 100).toFixed(2);
+              if (ref = scope.currency, indexOf.call(imagoUtils.ZERODECIMAL_CURRENCIES, ref) >= 0) {
+                value = (value / 100).toFixed(0);
+              } else {
+                value = (value / 100).toFixed(2);
+              }
             }
             if (isNaN(value)) {
               value = void 0;
@@ -149,7 +158,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoFieldCurrency', [ImagoFieldCurrency]).controller('imagoFieldCurrencyController', [ImagoFieldCurrencyController]).directive('imagoFilterCurrency', [imagoFilterCurrency]);
+  angular.module('imago').directive('imagoFieldCurrency', [ImagoFieldCurrency]).controller('imagoFieldCurrencyController', [ImagoFieldCurrencyController]).directive('imagoFilterCurrency', ['imagoUtils', imagoFilterCurrency]);
 
 }).call(this);
 
@@ -332,8 +341,8 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-field-checkbox.html","<div class=\"imago-checkbox\"><label ng-class=\"{active: ngModel, disabled: disabled}\" ng-click=\"update(ngModel)\" class=\"topcoat-checkbox\"><div class=\"topcoat-checkbox__checkmark\"></div><span ng-transclude=\"ng-transclude\"></span></label></div>");
-$templateCache.put("/imago/imago-field-currency.html","<div class=\"imago-field-content-currency imago-field currency\"><div ng-class=\"{expanded: fieldcurrency.expanded}\"><button ng-click=\"fieldcurrency.expanded = !fieldcurrency.expanded\" class=\"ii ii-caret-left\"></button><div ng-class=\"{expanded: fieldcurrency.expanded}\" class=\"fields\"><div ng-if=\"!fieldcurrency.expanded\" ng-class=\"{focus:onfocus}\" class=\"wrapper compact\"><label><span ng-repeat=\"cur in fieldcurrency.currencies\" ng-click=\"fieldcurrency.currency = cur\" ng-class=\"{active: fieldcurrency.currency === cur, invalid: fieldcurrency.notComplete[cur]}\">{{cur}}</span></label><input type=\"text\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"fieldcurrency.ngModel[fieldcurrency.currency]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-change=\"update(fieldcurrency.ngModel); onfocus = false\" ng-disabled=\"!fieldcurrency.currency\" ng-focus=\"onfocus = true\"/></div><div ng-repeat=\"cur in fieldcurrency.currencies\" ng-if=\"fieldcurrency.expanded\" ng-class=\"{invalid: fieldcurrency.notComplete[cur]}\" class=\"wrapper expanded\"><div class=\"imago-field\"><label>{{cur}}</label><input type=\"text\" currency=\"{{cur}}\" imago-filter-currency=\"imago-filter-currency\" ng-model=\"fieldcurrency.ngModel[cur]\" ng-model-options=\"{updateOn: \'blur\'}\" ng-blur=\"update(fieldcurrency.ngModel)\"/></div></div></div></div></div>");
-$templateCache.put("/imago/imago-field-date.html","<div class=\"imago-field-date-content imago-field date\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" date-time=\"date-time\" dismiss=\"true\" ng-model=\"ngModel\" ng-blur=\"update(ngModel)\" view=\"date\" min-view=\"date\" partial=\"true\"/></div>");
-$templateCache.put("/imago/imago-field-file.html","<div class=\"imago-field\"><input type=\"file\" name=\"receipt\" id=\"receipt\" sizeerror=\"sizeerror\" required=\"required\"/><label for=\"receipt\" ng-if=\"!filename\">{{label}} (max {{maxFileSize}}mb)</label><label for=\"receipt\" ng-if=\"filename\">Selected File: {{filename}}</label><div ng-show=\"sizeerror\" class=\"error\">Image File to large</div></div>");
-$templateCache.put("/imago/imago-field-number.html","<div class=\"imago-field-number-content imago-field\"><div ng-transclude=\"ng-transclude\"></div><input type=\"text\" ng-model=\"ngModel\" ng-model-options=\"{\'updateOn\': \'blur\'}\" ng-change=\"update(ngModel)\" ng-disabled=\"disabled\"/><button type=\"button\" ng-disabled=\"isOverMin() || disabled\" ng-click=\"decrement()\" class=\"decrement\"></button><button type=\"button\" ng-disabled=\"isOverMax() || disabled\" ng-click=\"increment()\" class=\"increment\"></button></div>");}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-field-checkbox.html','<div class="imago-checkbox"><label ng-class="{active: ngModel, disabled: disabled}" ng-click="update(ngModel)" class="topcoat-checkbox"><div class="topcoat-checkbox__checkmark"></div><span ng-transclude="ng-transclude"></span></label></div>');
+$templateCache.put('/imago/imago-field-currency.html','<div class="imago-field-content-currency imago-field currency"><div ng-class="{expanded: fieldcurrency.expanded}"><button ng-click="fieldcurrency.expanded = !fieldcurrency.expanded" class="ii ii-caret-left"></button><div ng-class="{expanded: fieldcurrency.expanded}" class="fields"><div ng-if="!fieldcurrency.expanded" ng-class="{focus:onfocus}" class="wrapper compact"><label><span ng-repeat="cur in fieldcurrency.currencies" ng-click="fieldcurrency.currency = cur" ng-class="{active: fieldcurrency.currency === cur, invalid: fieldcurrency.notComplete[cur]}">{{cur}}</span></label><input type="text" imago-filter-currency="imago-filter-currency" ng-model="fieldcurrency.ngModel[fieldcurrency.currency]" ng-model-options="{updateOn: \'blur\'}" ng-change="update(fieldcurrency.ngModel); onfocus = false" ng-disabled="!fieldcurrency.currency" ng-focus="onfocus = true"/></div><div ng-repeat="cur in fieldcurrency.currencies" ng-if="fieldcurrency.expanded" ng-class="{invalid: fieldcurrency.notComplete[cur]}" class="wrapper expanded"><div class="imago-field"><label>{{cur}}</label><input type="text" currency="{{cur}}" imago-filter-currency="imago-filter-currency" ng-model="fieldcurrency.ngModel[cur]" ng-model-options="{updateOn: \'blur\'}" ng-blur="update(fieldcurrency.ngModel)"/></div></div></div></div></div>');
+$templateCache.put('/imago/imago-field-date.html','<div class="imago-field-date-content imago-field date"><div ng-transclude="ng-transclude"></div><input type="text" date-time="date-time" dismiss="true" ng-model="ngModel" ng-blur="update(ngModel)" view="date" min-view="date" partial="true"/></div>');
+$templateCache.put('/imago/imago-field-file.html','<div class="imago-field"><input type="file" name="receipt" id="receipt" sizeerror="sizeerror" required="required"/><label for="receipt" ng-if="!filename">{{label}} (max {{maxFileSize}}mb)</label><label for="receipt" ng-if="filename">Selected File: {{filename}}</label><div ng-show="sizeerror" class="error">Image File to large</div></div>');
+$templateCache.put('/imago/imago-field-number.html','<div class="imago-field-number-content imago-field"><div ng-transclude="ng-transclude"></div><input type="text" ng-model="ngModel" ng-model-options="{\'updateOn\': \'blur\'}" ng-change="update(ngModel)" ng-disabled="disabled"/><button type="button" ng-disabled="isOverMin() || disabled" ng-click="decrement()" class="decrement"></button><button type="button" ng-disabled="isOverMax() || disabled" ng-click="increment()" class="increment"></button></div>');}]);
