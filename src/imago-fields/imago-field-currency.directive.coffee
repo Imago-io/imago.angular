@@ -42,10 +42,12 @@ class ImagoFieldCurrencyController extends Controller
 
 class imagoFilterCurrency extends Directive
 
-  constructor: ->
+  constructor: (imagoUtils) ->
 
     return {
 
+      scope:
+        currency: '=?'
       require: 'ngModel'
       link: (scope, element, attrs, ctrl) ->
 
@@ -54,7 +56,10 @@ class imagoFilterCurrency extends Directive
 
         formatView = (value) ->
           if angular.isDefined(value) and not _.isNull(value)
-            value = (value / 100).toFixed(2)
+            if scope.currency in imagoUtils.ZERODECIMAL_CURRENCIES
+              value = (value / 100).toFixed(0)
+            else
+              value = (value / 100).toFixed(2)
           if isNaN(value)
             value = undefined
           return value
