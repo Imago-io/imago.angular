@@ -5,7 +5,10 @@
     ng-model='ngModel'
     ng-model-options="{'updateOn': 'blur'}"
     ng-change="update(ngModel)"
-    ng-disabled="disabled")
+    ng-disabled="disabled"
+    autocomplete="off"
+    readonly
+    )
 
   button.decrement(
     type='button'
