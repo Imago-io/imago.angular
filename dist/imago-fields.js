@@ -42,7 +42,8 @@
 }).call(this);
 
 (function() {
-  var ImagoFieldCurrency, ImagoFieldCurrencyController, imagoFilterCurrency;
+  var ImagoFieldCurrency, ImagoFieldCurrencyController, imagoFilterCurrency,
+    indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   ImagoFieldCurrency = (function() {
     function ImagoFieldCurrency() {
@@ -110,8 +111,11 @@
   })();
 
   imagoFilterCurrency = (function() {
-    function imagoFilterCurrency() {
+    function imagoFilterCurrency(imagoUtils) {
       return {
+        scope: {
+          currency: '=?'
+        },
         require: 'ngModel',
         link: function(scope, element, attrs, ctrl) {
           var formatView;
@@ -119,8 +123,13 @@
             return ctrl.$render();
           });
           formatView = function(value) {
+            var ref;
             if (angular.isDefined(value) && !_.isNull(value)) {
-              value = (value / 100).toFixed(2);
+              if (ref = scope.currency, indexOf.call(imagoUtils.ZERODECIMAL_CURRENCIES, ref) >= 0) {
+                value = (value / 100).toFixed(0);
+              } else {
+                value = (value / 100).toFixed(2);
+              }
             }
             if (isNaN(value)) {
               value = void 0;
@@ -149,7 +158,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoFieldCurrency', [ImagoFieldCurrency]).controller('imagoFieldCurrencyController', [ImagoFieldCurrencyController]).directive('imagoFilterCurrency', [imagoFilterCurrency]);
+  angular.module('imago').directive('imagoFieldCurrency', [ImagoFieldCurrency]).controller('imagoFieldCurrencyController', [ImagoFieldCurrencyController]).directive('imagoFilterCurrency', ['imagoUtils', imagoFilterCurrency]);
 
 }).call(this);
 

@@ -250,7 +250,8 @@
         rates = _.isPlainObject(rates) ? [rates] : rates;
         rates = rates.sort((function(_this) {
           return function(a, b) {
-            return a.ranges[0].price[_this.currency] - b.ranges[0].price[_this.currency];
+            var ref, ref1;
+            return ((ref = a.ranges[0].price) != null ? ref[_this.currency] : void 0) - ((ref1 = b.ranges[0].price) != null ? ref1[_this.currency] : void 0);
           };
         })(this));
         this.shippingRates = rates;
@@ -394,7 +395,7 @@
     Calculation.prototype.calcShipping = function(rate) {
       return this.$q((function(_this) {
         return function(resolve, reject) {
-          var count, i, item, j, len, len1, range, ref, ref1, ref2, ref3, ref4, ref5, ref6, shipping, with_shippingcost;
+          var count, i, item, j, len, len1, range, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, shipping, with_shippingcost;
           count = 0;
           with_shippingcost = [];
           shipping = 0;
@@ -424,11 +425,11 @@
             range = _.last(rate.ranges);
           }
           if (count) {
-            shipping = range.price[_this.currency];
+            shipping = (ref5 = range.price) != null ? ref5[_this.currency] : void 0;
           }
           for (j = 0, len1 = with_shippingcost.length; j < len1; j++) {
             item = with_shippingcost[j];
-            shipping += (((ref5 = item.fields.overwriteShippingCosts) != null ? (ref6 = ref5.value) != null ? ref6[_this.currency] : void 0 : void 0) || 0) * item.qty;
+            shipping += (((ref6 = item.fields.overwriteShippingCosts) != null ? (ref7 = ref6.value) != null ? ref7[_this.currency] : void 0 : void 0) || 0) * item.qty;
           }
           return resolve({
             'shipping': shipping,

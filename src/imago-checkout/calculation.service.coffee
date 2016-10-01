@@ -109,7 +109,7 @@ class Calculation extends Service
     if rates?.length
       rates = if _.isPlainObject(rates) then [rates] else rates
       rates = rates.sort (a, b) =>
-        a.ranges[0].price[@currency] - b.ranges[0].price[@currency]
+        a.ranges[0].price?[@currency] - b.ranges[0].price?[@currency]
       @shippingRates = rates
     else
       @shippingRates = []
@@ -205,7 +205,7 @@ class Calculation extends Service
       range = _.find rate.ranges, (range) -> count <= range.to_unit and count >= range.from_unit
       range = _.last(rate.ranges) if not range
 
-      shipping = range.price[@currency] if count
+      shipping = range.price?[@currency] if count
 
       for item in with_shippingcost
         shipping += (item.fields.overwriteShippingCosts?.value?[@currency] or 0) * item.qty
