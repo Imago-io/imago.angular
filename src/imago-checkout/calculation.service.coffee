@@ -27,17 +27,21 @@ class Calculation extends Service
       @setCurrency(null, @form['shipping_address'].country)
     else if type is 'country'
       @setCurrency(null, @form[section].country)
-    @[section] or= {}
-    if @form[section].country in ['United States of America', 'United States', 'USA', 'Canada', 'Australia']
-      @[section].disablestates = false
-      if @form[section].country in ['United States of America', 'United States', 'USA']
-        @[section].states = @imagoUtils.STATES['USA']
+
+    for sec in ['billing_address', 'shipping_address']
+      @[sec] or= {}
+      @form[sec] or= {}
+
+      if @form[sec].country in ['United States of America', 'United States', 'USA', 'Canada', 'Australia']
+        @[sec].disablestates = false
+        if @form[sec].country in ['United States of America', 'United States', 'USA']
+          @[sec].states = @imagoUtils.STATES['USA']
+        else
+          @[sec].states = @imagoUtils.STATES[@form[sec].country.toUpperCase()]
       else
-        @[section].states = @imagoUtils.STATES[@form[section].country.toUpperCase()]
-    else
-      @[section].disablestates = true
-      @[section].states = []
-    @form[section].country_code = @imagoUtils.CODES[@form[section].country]
+        @[sec].disablestates = true
+        @[sec].states = []
+      @form[sec].country_code = @imagoUtils.CODES[@form[sec].country]
 
     if @form['shipping_address']?.country and @differentshipping
       @country = @form['shipping_address'].country

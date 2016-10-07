@@ -149,26 +149,31 @@
     };
 
     Calculation.prototype.changeAddress = function(section, type) {
-      var ref, ref1, ref2, ref3;
+      var base, i, len, ref, ref1, ref2, ref3, ref4, sec;
       if (((ref = this.form['shipping_address']) != null ? ref.country : void 0) && this.differentshipping && type === 'country') {
         this.setCurrency(null, this.form['shipping_address'].country);
       } else if (type === 'country') {
         this.setCurrency(null, this.form[section].country);
       }
-      this[section] || (this[section] = {});
-      if ((ref1 = this.form[section].country) === 'United States of America' || ref1 === 'United States' || ref1 === 'USA' || ref1 === 'Canada' || ref1 === 'Australia') {
-        this[section].disablestates = false;
-        if ((ref2 = this.form[section].country) === 'United States of America' || ref2 === 'United States' || ref2 === 'USA') {
-          this[section].states = this.imagoUtils.STATES['USA'];
+      ref1 = ['billing_address', 'shipping_address'];
+      for (i = 0, len = ref1.length; i < len; i++) {
+        sec = ref1[i];
+        this[sec] || (this[sec] = {});
+        (base = this.form)[sec] || (base[sec] = {});
+        if ((ref2 = this.form[sec].country) === 'United States of America' || ref2 === 'United States' || ref2 === 'USA' || ref2 === 'Canada' || ref2 === 'Australia') {
+          this[sec].disablestates = false;
+          if ((ref3 = this.form[sec].country) === 'United States of America' || ref3 === 'United States' || ref3 === 'USA') {
+            this[sec].states = this.imagoUtils.STATES['USA'];
+          } else {
+            this[sec].states = this.imagoUtils.STATES[this.form[sec].country.toUpperCase()];
+          }
         } else {
-          this[section].states = this.imagoUtils.STATES[this.form[section].country.toUpperCase()];
+          this[sec].disablestates = true;
+          this[sec].states = [];
         }
-      } else {
-        this[section].disablestates = true;
-        this[section].states = [];
+        this.form[sec].country_code = this.imagoUtils.CODES[this.form[sec].country];
       }
-      this.form[section].country_code = this.imagoUtils.CODES[this.form[section].country];
-      if (((ref3 = this.form['shipping_address']) != null ? ref3.country : void 0) && this.differentshipping) {
+      if (((ref4 = this.form['shipping_address']) != null ? ref4.country : void 0) && this.differentshipping) {
         this.country = this.form['shipping_address'].country;
         this.state = this.form['shipping_address'].state;
         this.zip = this.form['shipping_address'].zip;
