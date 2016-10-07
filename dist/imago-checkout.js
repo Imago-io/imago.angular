@@ -440,9 +440,7 @@
     };
 
     Calculation.prototype.calculateTax = function() {
-      var deferred;
-      deferred = this.$q.defer();
-      this.getTaxRate().then((function(_this) {
+      return this.getTaxRate().then((function(_this) {
         return function() {
           var i, item, j, len, len1, onepercent, ref, ref1, ref2, ref3, ref4, taxableSubtotal;
           _this.costs.tax = 0;
@@ -458,9 +456,9 @@
                 onepercent = item.price[_this.currency] / (100 + (_this.costs.taxRate * 100)) * item.qty;
                 _this.costs.includedTax += onepercent * _this.costs.taxRate * 100;
               }
-              return deferred.resolve();
+              return;
             } else {
-              return deferred.resolve();
+              return;
             }
           } else {
             taxableSubtotal = 0;
@@ -478,27 +476,31 @@
               taxableSubtotal = taxableSubtotal - (taxableSubtotal * _this.coupon.meta.value / 100);
             }
             _this.costs.tax = Math.round(taxableSubtotal * _this.costs.taxRate);
-            return deferred.resolve();
           }
+          return _this.costs.tax;
         };
       })(this));
-      return deferred.promise;
     };
 
     Calculation.prototype.getTaxRate = function() {
-      var deferred, tRate;
-      deferred = this.$q.defer();
-      this.costs.taxRate = 0;
-      if (!this.country) {
-        deferred.resolve();
-      }
-      tRate = this.findTaxRate();
-      if (tRate.autotax && this.imagoUtils.inUsa(this.country)) {
-        return this.getZipTax();
-      }
-      this.costs.taxRate = tRate.rate / 100;
-      deferred.resolve();
-      return deferred.promise;
+      return this.$q((function(_this) {
+        return function(resolve) {
+          var tRate;
+          _this.costs.taxRate = 0;
+          if (!_this.country) {
+            return resolve();
+          }
+          tRate = _this.findTaxRate();
+          if (tRate.autotax && _this.imagoUtils.inUsa(_this.country)) {
+            _this.getZipTax().then(function() {
+              return resolve();
+            });
+            return;
+          }
+          _this.costs.taxRate = tRate.rate / 100;
+          return resolve();
+        };
+      })(this));
     };
 
     Calculation.prototype.findTaxRate = function() {
@@ -568,19 +570,19 @@
     };
 
     Calculation.prototype.getZipTax = function() {
-      var deferred, ref;
-      deferred = this.$q.defer();
-      if (!(this.zip || (((ref = this.zip) != null ? ref.length : void 0) > 4))) {
-        deferred.resolve();
-      } else {
-        this.$http.get(this.imagoModel.host + "/api/ziptax?zipcode=" + this.zip).then((function(_this) {
-          return function(response) {
-            _this.costs.taxRate = response.data.taxUse;
-            return deferred.resolve();
-          };
-        })(this));
-      }
-      return deferred.promise;
+      return this.$q((function(_this) {
+        return function(resolve) {
+          var ref;
+          if (!(_this.zip || (((ref = _this.zip) != null ? ref.length : void 0) > 4))) {
+            return resolve();
+          } else {
+            return _this.$http.get(_this.imagoModel.host + "/api/ziptax?zipcode=" + _this.zip).then(function(response) {
+              _this.costs.taxRate = response.data.taxUse;
+              return resolve();
+            });
+          }
+        };
+      })(this));
     };
 
     Calculation.prototype.calculateTotal = function() {
@@ -772,4 +774,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/costs.html","<table><tbody><tr><th>Subtotal</th><td><span ng-bind-html=\"currency | currencySymbol\" class=\"currency\"></span>{{ costs.subtotal | price }}</td></tr><tr ng-show=\"costs.discount\"><th>Discount</th><td><span ng-bind-html=\"currency | currencySymbol\" class=\"currency\"></span>- {{ costs.discount | price }}</td></tr><tr ng-show=\"!hideIfNotCountry &amp;&amp; hideCountryDefined\"><th>Shipping</th><td ng-show=\"costs.shipping\"><span ng-bind-html=\"currency | currencySymbol\" class=\"currency\"></span>{{ costs.shipping | price }}</td><td ng-hide=\"costs.shipping\">free</td></tr><tr ng-show=\"costs.includedTax &amp;&amp; !hideIfNotCountry &amp;&amp; hideCountryDefined\"><th>Included Tax</th><td><span ng-bind-html=\"currency | currencySymbol\" class=\"currency\"></span>{{ costs.includedTax | price }}</td></tr><tr ng-show=\"!costs.includedTax &amp;&amp; !hideIfNotCountry &amp;&amp; hideCountryDefined\"><th>Tax</th><td><span ng-bind-html=\"currency | currencySymbol\" class=\"currency\"></span>{{ costs.tax | price }}</td></tr><tr class=\"total\"><th>Total</th><td><span ng-bind-html=\"currency | currencySymbol\" class=\"currency\"></span>{{ costs.total | price }}</td></tr></tbody></table>");}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/costs.html','<table><tbody><tr><th>Subtotal</th><td><span ng-bind-html="currency | currencySymbol" class="currency"></span>{{ costs.subtotal | price }}</td></tr><tr ng-show="costs.discount"><th>Discount</th><td><span ng-bind-html="currency | currencySymbol" class="currency"></span>- {{ costs.discount | price }}</td></tr><tr ng-show="!hideIfNotCountry &amp;&amp; hideCountryDefined"><th>Shipping</th><td ng-show="costs.shipping"><span ng-bind-html="currency | currencySymbol" class="currency"></span>{{ costs.shipping | price }}</td><td ng-hide="costs.shipping">free</td></tr><tr ng-show="costs.includedTax &amp;&amp; !hideIfNotCountry &amp;&amp; hideCountryDefined"><th>Included Tax</th><td><span ng-bind-html="currency | currencySymbol" class="currency"></span>{{ costs.includedTax | price }}</td></tr><tr ng-show="!costs.includedTax &amp;&amp; !hideIfNotCountry &amp;&amp; hideCountryDefined"><th>Tax</th><td><span ng-bind-html="currency | currencySymbol" class="currency"></span>{{ costs.tax | price }}</td></tr><tr class="total"><th>Total</th><td><span ng-bind-html="currency | currencySymbol" class="currency"></span>{{ costs.total | price }}</td></tr></tbody></table>');}]);
