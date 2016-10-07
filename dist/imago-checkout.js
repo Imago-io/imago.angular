@@ -143,7 +143,7 @@
 
     Calculation.prototype.deleteItem = function(item) {
       _.remove(this.cart.items, {
-        id: item.id
+        _id: item._id
       });
       return this.updateCart();
     };

@@ -19,7 +19,7 @@ class Calculation extends Service
     @calculate()
 
   deleteItem: (item) =>
-    _.remove @cart.items, {id: item.id}
+    _.remove @cart.items, {_id: item._id}
     @updateCart()
 
   changeAddress: (section, type) =>
