@@ -143,32 +143,37 @@
 
     Calculation.prototype.deleteItem = function(item) {
       _.remove(this.cart.items, {
-        id: item.id
+        _id: item._id
       });
       return this.updateCart();
     };
 
     Calculation.prototype.changeAddress = function(section, type) {
-      var ref, ref1, ref2, ref3;
+      var base, i, len, ref, ref1, ref2, ref3, ref4, sec;
       if (((ref = this.form['shipping_address']) != null ? ref.country : void 0) && this.differentshipping && type === 'country') {
         this.setCurrency(null, this.form['shipping_address'].country);
       } else if (type === 'country') {
         this.setCurrency(null, this.form[section].country);
       }
-      this[section] || (this[section] = {});
-      if ((ref1 = this.form[section].country) === 'United States of America' || ref1 === 'United States' || ref1 === 'USA' || ref1 === 'Canada' || ref1 === 'Australia') {
-        this[section].disablestates = false;
-        if ((ref2 = this.form[section].country) === 'United States of America' || ref2 === 'United States' || ref2 === 'USA') {
-          this[section].states = this.imagoUtils.STATES['USA'];
+      ref1 = ['billing_address', 'shipping_address'];
+      for (i = 0, len = ref1.length; i < len; i++) {
+        sec = ref1[i];
+        this[sec] || (this[sec] = {});
+        (base = this.form)[sec] || (base[sec] = {});
+        if ((ref2 = this.form[sec].country) === 'United States of America' || ref2 === 'United States' || ref2 === 'USA' || ref2 === 'Canada' || ref2 === 'Australia') {
+          this[sec].disablestates = false;
+          if ((ref3 = this.form[sec].country) === 'United States of America' || ref3 === 'United States' || ref3 === 'USA') {
+            this[sec].states = this.imagoUtils.STATES['USA'];
+          } else {
+            this[sec].states = this.imagoUtils.STATES[this.form[sec].country.toUpperCase()];
+          }
         } else {
-          this[section].states = this.imagoUtils.STATES[this.form[section].country.toUpperCase()];
+          this[sec].disablestates = true;
+          this[sec].states = [];
         }
-      } else {
-        this[section].disablestates = true;
-        this[section].states = [];
+        this.form[sec].country_code = this.imagoUtils.CODES[this.form[sec].country];
       }
-      this.form[section].country_code = this.imagoUtils.CODES[this.form[section].country];
-      if (((ref3 = this.form['shipping_address']) != null ? ref3.country : void 0) && this.differentshipping) {
+      if (((ref4 = this.form['shipping_address']) != null ? ref4.country : void 0) && this.differentshipping) {
         this.country = this.form['shipping_address'].country;
         this.state = this.form['shipping_address'].state;
         this.zip = this.form['shipping_address'].zip;
@@ -440,9 +445,7 @@
     };
 
     Calculation.prototype.calculateTax = function() {
-      var deferred;
-      deferred = this.$q.defer();
-      this.getTaxRate().then((function(_this) {
+      return this.getTaxRate().then((function(_this) {
         return function() {
           var i, item, j, len, len1, onepercent, ref, ref1, ref2, ref3, ref4, taxableSubtotal;
           _this.costs.tax = 0;
@@ -458,9 +461,9 @@
                 onepercent = item.price[_this.currency] / (100 + (_this.costs.taxRate * 100)) * item.qty;
                 _this.costs.includedTax += onepercent * _this.costs.taxRate * 100;
               }
-              return deferred.resolve();
+              return;
             } else {
-              return deferred.resolve();
+              return;
             }
           } else {
             taxableSubtotal = 0;
@@ -478,27 +481,31 @@
               taxableSubtotal = taxableSubtotal - (taxableSubtotal * _this.coupon.meta.value / 100);
             }
             _this.costs.tax = Math.round(taxableSubtotal * _this.costs.taxRate);
-            return deferred.resolve();
           }
+          return _this.costs.tax;
         };
       })(this));
-      return deferred.promise;
     };
 
     Calculation.prototype.getTaxRate = function() {
-      var deferred, tRate;
-      deferred = this.$q.defer();
-      this.costs.taxRate = 0;
-      if (!this.country) {
-        deferred.resolve();
-      }
-      tRate = this.findTaxRate();
-      if (tRate.autotax && this.imagoUtils.inUsa(this.country)) {
-        return this.getZipTax();
-      }
-      this.costs.taxRate = tRate.rate / 100;
-      deferred.resolve();
-      return deferred.promise;
+      return this.$q((function(_this) {
+        return function(resolve) {
+          var tRate;
+          _this.costs.taxRate = 0;
+          if (!_this.country) {
+            return resolve();
+          }
+          tRate = _this.findTaxRate();
+          if (tRate.autotax && _this.imagoUtils.inUsa(_this.country)) {
+            _this.getZipTax().then(function() {
+              return resolve();
+            });
+            return;
+          }
+          _this.costs.taxRate = tRate.rate / 100;
+          return resolve();
+        };
+      })(this));
     };
 
     Calculation.prototype.findTaxRate = function() {
@@ -568,19 +575,19 @@
     };
 
     Calculation.prototype.getZipTax = function() {
-      var deferred, ref;
-      deferred = this.$q.defer();
-      if (!(this.zip || (((ref = this.zip) != null ? ref.length : void 0) > 4))) {
-        deferred.resolve();
-      } else {
-        this.$http.get(this.imagoModel.host + "/api/ziptax?zipcode=" + this.zip).then((function(_this) {
-          return function(response) {
-            _this.costs.taxRate = response.data.taxUse;
-            return deferred.resolve();
-          };
-        })(this));
-      }
-      return deferred.promise;
+      return this.$q((function(_this) {
+        return function(resolve) {
+          var ref;
+          if (!(_this.zip || (((ref = _this.zip) != null ? ref.length : void 0) > 4))) {
+            return resolve();
+          } else {
+            return _this.$http.get(_this.imagoModel.host + "/api/ziptax?zipcode=" + _this.zip).then(function(response) {
+              _this.costs.taxRate = response.data.taxUse;
+              return resolve();
+            });
+          }
+        };
+      })(this));
     };
 
     Calculation.prototype.calculateTotal = function() {

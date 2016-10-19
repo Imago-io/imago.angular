@@ -20,5 +20,4 @@ class ImagoCartUtils extends Factory
           item.updates.push('price') unless 'price' in item.updates
 
         return item
-
     }

@@ -19,7 +19,7 @@ class Calculation extends Service
     @calculate()
 
   deleteItem: (item) =>
-    _.remove @cart.items, {id: item.id}
+    _.remove @cart.items, {_id: item._id}
     @updateCart()
 
   changeAddress: (section, type) =>
@@ -27,17 +27,21 @@ class Calculation extends Service
       @setCurrency(null, @form['shipping_address'].country)
     else if type is 'country'
       @setCurrency(null, @form[section].country)
-    @[section] or= {}
-    if @form[section].country in ['United States of America', 'United States', 'USA', 'Canada', 'Australia']
-      @[section].disablestates = false
-      if @form[section].country in ['United States of America', 'United States', 'USA']
-        @[section].states = @imagoUtils.STATES['USA']
+
+    for sec in ['billing_address', 'shipping_address']
+      @[sec] or= {}
+      @form[sec] or= {}
+
+      if @form[sec].country in ['United States of America', 'United States', 'USA', 'Canada', 'Australia']
+        @[sec].disablestates = false
+        if @form[sec].country in ['United States of America', 'United States', 'USA']
+          @[sec].states = @imagoUtils.STATES['USA']
+        else
+          @[sec].states = @imagoUtils.STATES[@form[sec].country.toUpperCase()]
       else
-        @[section].states = @imagoUtils.STATES[@form[section].country.toUpperCase()]
-    else
-      @[section].disablestates = true
-      @[section].states = []
-    @form[section].country_code = @imagoUtils.CODES[@form[section].country]
+        @[sec].disablestates = true
+        @[sec].states = []
+      @form[sec].country_code = @imagoUtils.CODES[@form[sec].country]
 
     if @form['shipping_address']?.country and @differentshipping
       @country = @form['shipping_address'].country
@@ -212,8 +216,6 @@ class Calculation extends Service
       return resolve({'shipping': shipping, 'rate': rate})
 
   calculateTax: ->
-    deferred = @$q.defer()
-
     @getTaxRate().then =>
       @costs.tax = 0
 
@@ -224,9 +226,9 @@ class Calculation extends Service
             continue unless item.fields.calculateTaxes?.value
             onepercent = item.price[@currency]/(100+(@costs.taxRate*100)) * item.qty
             @costs.includedTax += onepercent*@costs.taxRate*100
-          deferred.resolve()
+          return
         else
-          deferred.resolve()
+          return
       else
         taxableSubtotal = 0
         for item in @cart.items
@@ -237,23 +239,23 @@ class Calculation extends Service
           taxableSubtotal = taxableSubtotal - (taxableSubtotal * @coupon.meta.value / 100)
 
         @costs.tax = Math.round(taxableSubtotal * @costs.taxRate)
-
-        deferred.resolve()
-    return deferred.promise
+      return @costs.tax
 
   getTaxRate: =>
-    deferred = @$q.defer()
+    @$q (resolve) =>
 
-    @costs.taxRate = 0
-    # deferred.resolve() if @taxincluded
-    deferred.resolve() if not @country
+      @costs.taxRate = 0
+      # deferred.resolve() if @taxincluded
+      return resolve() if not @country
 
-    tRate = @findTaxRate()
-    return @getZipTax() if tRate.autotax and @imagoUtils.inUsa(@country)
-    @costs.taxRate = tRate.rate / 100
+      tRate = @findTaxRate()
+      if tRate.autotax and @imagoUtils.inUsa(@country)
+        @getZipTax().then ->
+          resolve()
+        return
+      @costs.taxRate = tRate.rate / 100
 
-    deferred.resolve()
-    return deferred.promise
+      resolve()
 
   findTaxRate: ->
     return {'rate': 0} if !@country
@@ -284,16 +286,15 @@ class Calculation extends Service
       return {'rate': 0}
 
   getZipTax: =>
-    # get tax by zipcode for auto tax usa
-    deferred = @$q.defer()
-    if not (@zip or (@zip?.length > 4))
-      deferred.resolve()
-    else
-      @$http.get("#{@imagoModel.host}/api/ziptax?zipcode=#{@zip}")
-        .then (response) =>
-          @costs.taxRate = response.data.taxUse
-          deferred.resolve()
-    return deferred.promise
+    @$q (resolve) =>
+      # get tax by zipcode for auto tax usa
+      if not (@zip or (@zip?.length > 4))
+        resolve()
+      else
+        @$http.get("#{@imagoModel.host}/api/ziptax?zipcode=#{@zip}")
+          .then (response) =>
+            @costs.taxRate = response.data.taxUse
+            resolve()
 
   calculateTotal: =>
     @costs.total = 0
