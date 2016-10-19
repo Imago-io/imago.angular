@@ -15,7 +15,7 @@ class imagoImage extends Component
 
 class imagoImageController extends Controller
 
-  constructor: (@$rootScope, @$attrs, @$scope, @$element, @imagoModel) ->
+  constructor: (@$rootScope, @$timeout, @$attrs, @$scope, @$element, @imagoModel) ->
 
     @loaded     = false
     @imageStyle = {}
@@ -29,7 +29,7 @@ class imagoImageController extends Controller
       scale       : 1
       lazy        : true
       maxsize     : 4000
-      placeholder : false
+      placeholder : @$rootScope.imagePlaceholder or false
       allowDrag   : true
       width       : undefined
       height      : undefined
@@ -153,6 +153,12 @@ class imagoImageController extends Controller
     return if !@sliderCtrl
     @sliderCtrl.setServingSize(servingSize)
 
+  inview: (inview) ->
+    @visible = inview
+    @getSize()
+    @resize()
+    @getServingUrl()
+
   resize: ->
     # console.log "resize #{@width}x#{@height}"
     if @mainSide not in ['autoheight', 'autowidth']
@@ -164,7 +170,7 @@ class imagoImageController extends Controller
       # console.log "resize INNER #{@width}x#{@height}"
 
   getServingUrl: ->
-    @visible = true
+    # @visible = true
 
     # console.log "before: #{@width}x#{@height}"
 

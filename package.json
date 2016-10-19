@@ -1,6 +1,6 @@
 {
   "name": "imago.angular",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Imago Package for Angular.js",
   "main": "gulpfile.js",
   "scripts": {

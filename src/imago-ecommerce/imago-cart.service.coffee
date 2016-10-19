@@ -20,7 +20,7 @@ class imagoCart extends Service
     @currencies = @$rootScope.tenantSettings.currencies
     if @$rootScope.tenantSettings.maxQtyPerItem?.active
       @maxQtyPerItem = @$rootScope.tenantSettings.maxQtyPerItem?.value
-    console.log '@maxQtyPerItem', @maxQtyPerItem
+    # console.log '@maxQtyPerItem', @maxQtyPerItem
     @checkGeoIp()
     local = @imagoUtils.cookie('imagoCart')
     @checkStatus(local) if local

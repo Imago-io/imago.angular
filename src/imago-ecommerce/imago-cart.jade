@@ -1,37 +1,37 @@
-.imago-cart-content
-  .icon(
-    ng-class="{'message': cart.imagoCart.newmessages}"
-    ng-mouseenter="cart.imagoCart.show = true"
-    ng-click="cart.imagoCart.show = !cart.imagoCart.show"
-    analytics-on="click" analytics-event="Show Cart {{cart.imagoCart.show}}"
-    )
-    .counter(ng-bind="cart.imagoCart.itemsLength")
 
-  .box(ng-show="cart.imagoCart.show" stop-scroll)
-    div(ng-transclude)
+.imago-cart-icon(
+  ng-class="{'message': cart.imagoCart.newmessages}"
+  ng-mouseenter="cart.imagoCart.show = true"
+  ng-click="cart.imagoCart.show = !cart.imagoCart.show"
+  analytics-on="click" analytics-event="Show Cart {{cart.imagoCart.show}}"
+  )
+  .counter(ng-bind="cart.imagoCart.itemsLength")
 
-    .imago-cart-messages
-      .message(ng-repeat="message in cart.imagoCart.messages" ng-switch="message.type")
-        p(ng-switch-when="nostock") Item {{message.item.name}} is not in stock anymore
+.imago-cart-modal(ng-show="cart.imagoCart.show" stop-scroll)
+  div(ng-transclude)
 
-    .itemnumber(
-      ng-show="cart.imagoCart.itemsLength"
-      ) {{cart.imagoCart.itemsLength}}
-      span(ng-show="cart.imagoCart.itemsLength === 1")  item
-      span(ng-show="cart.imagoCart.itemsLength > 1")  items
+  .imago-cart-messages
+    .message(ng-repeat="message in cart.imagoCart.messages" ng-switch="message.type")
+      p(ng-switch-when="nostock") Item {{message.item.name}} is not in stock anymore
 
-    .noitems(
-      ng-show="cart.imagoCart.itemsLength === 0 && !cart.imagoCart.messages.length"
-      ) cart empty
+  .itemnumber(
+    ng-show="cart.imagoCart.itemsLength"
+    ) {{cart.imagoCart.itemsLength}}
+    span(ng-show="cart.imagoCart.itemsLength === 1")  item
+    span(ng-show="cart.imagoCart.itemsLength > 1")  items
 
-    .subtotal(ng-show="cart.imagoCart.itemsLength")
-      | subtotal:
-      span.currency(ng-bind-html="cart.imagoCart.currency | currencySymbol")
-      span.amount {{cart.imagoCart.subtotal | price:0}}
+  .noitems(
+    ng-show="cart.imagoCart.itemsLength === 0 && !cart.imagoCart.messages.length"
+    ) cart empty
 
-    button.checkout(
-      ng-show="cart.imagoCart.cart.items.length"
-      type="button"
-      ng-click="cart.imagoCart.checkout()"
-      analytics-on="click" analytics-event="Go to Checkout"
-      ) checkout
+  .subtotal(ng-show="cart.imagoCart.itemsLength")
+    | subtotal:
+    span.currency(ng-bind-html="cart.imagoCart.currency | currencySymbol")
+    span.amount {{cart.imagoCart.subtotal | price:0}}
+
+  button.checkout(
+    ng-show="cart.imagoCart.cart.items.length"
+    type="button"
+    ng-click="cart.imagoCart.checkout()"
+    analytics-on="click" analytics-event="Go to Checkout"
+    ) checkout
