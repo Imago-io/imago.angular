@@ -15,7 +15,7 @@
     "gulp-coffee": "*",
     "gulp-coffeelint": "*",
     "gulp-concat": "*",
-    "gulp-if": "^1.2.5",
+    "gulp-if": "^2.0.1",
     "gulp-jade": "*",
     "gulp-load-plugins": "^1.0.0",
     "gulp-ng-classify": "Imago-io/gulp-ng-classify#master",
