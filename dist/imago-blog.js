@@ -81,7 +81,6 @@
           var ref;
           if (!scope.state) {
             scope.state = ((ref = $state.current.data) != null ? ref.state : void 0) || _.head($state.current.name.split('.'));
-            console.log('noscope set to', scope.state);
           }
           scope.fetchPosts = function() {
             return $timeout(function() {
@@ -123,7 +122,6 @@
                 return;
               }
               scope.lastQuery = angular.copy(query);
-              console.log('query', query);
               return imagoModel.getData(query).then((function(_this) {
                 return function(response) {
                   var collection, i, j, k, len, ref4;
@@ -193,5 +191,5 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-pager-test.html","<b>imago-pager-template 2</b><ng-outlet></ng-outlet><div class=\"imago-pager-content\"><button ng-disabled=\"currentPage &lt;= 1\" ng-click=\"onPrev()\" class=\"prev\">Previous</button><button ng-disabled=\"(currentPage &gt;= totalPages &amp;&amp; !next) || (posts.length &lt; pageSize &amp;&amp; !next) || !next\" ng-click=\"onNext()\" class=\"next\">Next</button></div>");
-$templateCache.put("/imago/imago-pager.html","<div ng-show=\"loaded\" class=\"imago-pager-content\"><button ng-disabled=\"currentPage &lt;= 1\" ng-click=\"onPrev()\" class=\"prev\">Previous</button><button ng-disabled=\"(currentPage &gt;= totalPages &amp;&amp; !next) || (posts.length &lt; pageSize &amp;&amp; !next) || !next\" ng-click=\"onNext()\" class=\"next\">Next</button></div>");}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-pager-test.html','<b>imago-pager-template 2</b><ng-outlet></ng-outlet><div class="imago-pager-content"><button ng-disabled="currentPage &lt;= 1" ng-click="onPrev()" class="prev">Previous</button><button ng-disabled="(currentPage &gt;= totalPages &amp;&amp; !next) || (posts.length &lt; pageSize &amp;&amp; !next) || !next" ng-click="onNext()" class="next">Next</button></div>');
+$templateCache.put('/imago/imago-pager.html','<div ng-show="loaded" class="imago-pager-content"><button ng-disabled="currentPage &lt;= 1" ng-click="onPrev()" class="prev">Previous</button><button ng-disabled="(currentPage &gt;= totalPages &amp;&amp; !next) || (posts.length &lt; pageSize &amp;&amp; !next) || !next" ng-click="onNext()" class="next">Next</button></div>');}]);

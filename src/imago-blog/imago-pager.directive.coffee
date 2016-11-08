@@ -23,7 +23,7 @@ class imagoPager extends Directive
 
         if !scope.state
           scope.state = $state.current.data?.state or _.head($state.current.name.split('.'))
-          console.log 'noscope set to', scope.state
+          # console.log 'noscope set to', scope.state
 
         scope.fetchPosts = ->
           $timeout ->
@@ -63,7 +63,7 @@ class imagoPager extends Directive
             return if angular.equals scope.lastQuery, query
             scope.lastQuery = angular.copy query
 
-            console.log 'query', query
+            # console.log 'query', query
             imagoModel.getData(query).then (response) =>
               for collection in response
                 scope.next = collection.next

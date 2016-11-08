@@ -43,4 +43,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-instagram.html","<div class=\"imago-instagram-content\"><a ng-href=\"{{item.link}}\" target=\"_blank\" ng-repeat=\"item in instagram.data track by item.id\" class=\"item\"><div ng-style=\"{\'background-image\': \'url({{ item.images.standard_resolution.url }})\'}\" class=\"img\"></div><div class=\"caption\"><div ng-bind-html=\"::item.caption.text | imagoLinkify: \'instagram\'\" class=\"text\"></div><div class=\"likes\">{{::item.likes.count}}</div></div></a></div>");}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-instagram.html','<div class="imago-instagram-content"><a ng-href="{{item.link}}" target="_blank" ng-repeat="item in instagram.data track by item.id" class="item"><div ng-style="{\'background-image\': \'url({{ item.images.standard_resolution.url }})\'}" class="img"></div><div class="caption"><div ng-bind-html="::item.caption.text | imagoLinkify: \'instagram\'" class="text"></div><div class="likes">{{::item.likes.count}}</div></div></a></div>');}]);

@@ -39,4 +39,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-form.html","<div class=\"imago-form-content\"></div>");}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-form.html','<div class="imago-form-content"></div>');}]);

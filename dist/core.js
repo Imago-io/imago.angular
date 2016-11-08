@@ -1849,7 +1849,7 @@
     }
 
     imagoWorker.prototype.test = function() {
-      var blob, e, error, error1, scriptText;
+      var blob, e, scriptText;
       scriptText = 'this.onmessage=function(e){postMessage(e.data)}';
       try {
         blob = new Blob([scriptText], {
@@ -1864,8 +1864,8 @@
       }
       try {
         return this.create(this.windowURL.createObjectURL(blob), 'imago');
-      } catch (error1) {
-        e = error1;
+      } catch (error) {
+        e = error;
         return this.supported = false;
       }
     };
@@ -2138,7 +2138,7 @@
     WebStorage.prototype.store = {};
 
     function WebStorage($window) {
-      var e, error, test;
+      var e, test;
       this.$window = $window;
       this.valid = true;
       test = 'imagoTestLocal';
@@ -2152,7 +2152,7 @@
     }
 
     WebStorage.prototype.get = function(key) {
-      var e, error, value;
+      var e, value;
       if (this.valid) {
         value = this.$window.localStorage.getItem(key);
         try {
@@ -2167,7 +2167,7 @@
     };
 
     WebStorage.prototype.set = function(key, value) {
-      var err, error;
+      var err;
       if (this.valid) {
         try {
           return this.$window.localStorage.setItem(key, angular.toJson(value));
@@ -2201,4 +2201,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/not-supported.html","<div ng-if=\"$ctrl.invalid\" ng-class=\"::{\'mobile\': $ctrl.mobile}\" class=\"imago-not-supported-content\"><div ng-if=\"$ctrl.mobile\" class=\"inner\"><h1>Browser not supported!</h1></div><div ng-if=\"!$ctrl.mobile\" class=\"inner\"><h1>Time for change!</h1><p>Please download a new version of your favorite browser.</p><ul><li><a href=\"http://support.apple.com/downloads/#safari\" target=\"_blank\"><div class=\"icon icon-safari\"></div><h2>Safari</h2><span>Download</span></a></li><li><a href=\"http://www.google.com/chrome\" target=\"_blank\"><div class=\"icon icon-chrome\"></div><h2>Chrome</h2><span>Download</span></a></li><li><a href=\"http://www.opera.com/download\" target=\"_blank\"><div class=\"icon icon-opera\"></div><h2>Opera</h2><span>Download</span></a></li><li><a href=\"http://www.mozilla.org/firefox\" target=\"_blank\"><div class=\"icon icon-firefox\"></div><h2>Firefox</h2><span>Download</span></a></li><li><a href=\"https://www.microsoft.com/en-us/windows/microsoft-edge\" target=\"_blank\"><div class=\"icon icon-ie\"></div><h2>IE</h2><span>Download</span></a></li></ul></div></div>");}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/not-supported.html','<div ng-if="$ctrl.invalid" ng-class="::{\'mobile\': $ctrl.mobile}" class="imago-not-supported-content"><div ng-if="$ctrl.mobile" class="inner"><h1>Browser not supported!</h1></div><div ng-if="!$ctrl.mobile" class="inner"><h1>Time for change!</h1><p>Please download a new version of your favorite browser.</p><ul><li><a href="http://support.apple.com/downloads/#safari" target="_blank"><div class="icon icon-safari"></div><h2>Safari</h2><span>Download</span></a></li><li><a href="http://www.google.com/chrome" target="_blank"><div class="icon icon-chrome"></div><h2>Chrome</h2><span>Download</span></a></li><li><a href="http://www.opera.com/download" target="_blank"><div class="icon icon-opera"></div><h2>Opera</h2><span>Download</span></a></li><li><a href="http://www.mozilla.org/firefox" target="_blank"><div class="icon icon-firefox"></div><h2>Firefox</h2><span>Download</span></a></li><li><a href="https://www.microsoft.com/en-us/windows/microsoft-edge" target="_blank"><div class="icon icon-ie"></div><h2>IE</h2><span>Download</span></a></li></ul></div></div>');}]);

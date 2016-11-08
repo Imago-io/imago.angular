@@ -64,4 +64,4 @@
 
 }).call(this);
 
-angular.module("imago").run(["$templateCache", function($templateCache) {$templateCache.put("/imago/imago-fetch.html","<div class=\"imago-fetch-content\"></div>");}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-fetch.html','<div class="imago-fetch-content"></div>');}]);
