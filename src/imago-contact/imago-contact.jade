@@ -43,7 +43,7 @@
       label(for="subscribe") Subscribe
 
     .imago-actions
-      button.send(type="submit" ng-disabled="imagoContact.$invalid") Send
+      button.btn.send(type="submit" ng-disabled="imagoContact.$invalid") Send
 
   .messages(ng-switch="contact.status")
     .success(ng-switch-when="true")
