@@ -528,6 +528,12 @@
       return this.update();
     };
 
+    imagoCart.prototype.clear = function() {
+      this.cart.items = [];
+      this.calculate();
+      return this.update();
+    };
+
     imagoCart.prototype.calculate = function() {
       var i, item, len, ref, ref1, results;
       this.itemsLength = 0;

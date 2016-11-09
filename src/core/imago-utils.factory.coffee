@@ -849,6 +849,14 @@ class imagoUtils extends Factory
           replace(/^-|-$/g, '')
         )
 
+      deNormalize: (s) ->
+        words = s.split '-'
+        text = ''
+        for w in words
+          text += ' ' + w[0].toUpperCase() + w.slice(1)
+
+        text.slice(1)
+
       alphaNumSort: alphanum = (a, b) ->
         chunkify = (t) ->
           tz = []

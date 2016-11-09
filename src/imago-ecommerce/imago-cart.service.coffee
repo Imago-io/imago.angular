@@ -166,6 +166,11 @@ class imagoCart extends Service
     @calculate()
     @update()
 
+  clear: ->
+    @cart.items = []
+    @calculate()
+    @update()
+
   calculate: ->
     @itemsLength = 0
     @subtotal = 0

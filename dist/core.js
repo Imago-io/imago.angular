@@ -1601,6 +1601,16 @@
           }
           return _.deburr(s.replace(/[\.,#¡!?¿@$%\^&\*;:{}='`‘’“”„"~()\?><\[\]†‡‹›•™¦©®ª«»¬°¹²³µ¶·º℅ⁿ§¨‣‼№♠♣♦♥←→↑↓♀♂♩♪♬♭]/g, '').replace(/\/|\_|\‾|\ |\\/g, '-').replace(/\-+/g, '-').replace(/^-|-$/g, ''));
         },
+        deNormalize: function(s) {
+          var k, len, text, w, words;
+          words = s.split('-');
+          text = '';
+          for (k = 0, len = words.length; k < len; k++) {
+            w = words[k];
+            text += ' ' + w[0].toUpperCase() + w.slice(1);
+          }
+          return text.slice(1);
+        },
         alphaNumSort: alphanum = function(a, b) {
           var aa, bb, c, chunkify, d, x;
           chunkify = function(t) {
