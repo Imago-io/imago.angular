@@ -695,8 +695,8 @@
             checkAsset = (function(_this) {
               return function(asset) {
                 var exists, i, original_name;
-                if (!options.checkdups || _.filter(assetsChildren, {
-                  name: asset.name
+                if (!options.checkdups || _.filter(assetsChildren, function(item) {
+                  return imagoUtils.normalize(asset.name) === imagoUtils.normalize(item.name);
                 }).length === 0) {
                   return $q.resolve(asset);
                 } else {
@@ -706,8 +706,8 @@
                   while (exists) {
                     asset.name = original_name + "_" + i;
                     i++;
-                    exists = (_.filter(assetsChildren, {
-                      name: asset.name
+                    exists = (_.filter(assetsChildren, function(item) {
+                      return imagoUtils.normalize(asset.name) === imagoUtils.normalize(item.name);
                     }).length ? true : false);
                   }
                   return $q.resolve(asset);
@@ -881,14 +881,14 @@
               if (!asset.name) {
                 return reject(asset.name);
               }
-              name = _.kebabCase(asset.name);
+              name = imagoUtils.normalize(asset.name);
               result = void 0;
               assetsChildren = _.filter(assets, (function(_this) {
                 return function(chr) {
                   if (!chr.name) {
                     return false;
                   }
-                  return name === _.kebabCase(chr.name);
+                  return name === imagoUtils.normalize(chr.name);
                 };
               })(this));
               if (assetsChildren.length) {

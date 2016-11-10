@@ -59,11 +59,12 @@
   var imagoPager;
 
   imagoPager = (function() {
-    function imagoPager(imagoModel, $timeout, $state) {
+    function imagoPager(imagoUtils, imagoModel, $timeout, $state) {
       return {
         scope: {
           query: '@',
           posts: '=',
+          data: '=',
           state: '@',
           prevPage: '&prev',
           nextPage: '&next',
@@ -124,16 +125,18 @@
               scope.lastQuery = angular.copy(query);
               return imagoModel.getData(query).then((function(_this) {
                 return function(response) {
-                  var collection, i, j, k, len, ref4;
+                  var collection, data, i, j, k, len, ref4;
                   for (j = 0, len = response.length; j < len; j++) {
                     collection = response[j];
                     scope.next = collection.next;
                     if (scope.opts.shuffle) {
-                      collection.assets = _.shuffle(collection.assets);
-                      scope.posts = _.shuffle(collection);
+                      scope.posts = _.shuffle(collection.assets);
                     } else {
-                      scope.posts = collection;
+                      scope.posts = collection.assets;
                     }
+                    data = angular.copy(collection);
+                    delete data.assets;
+                    scope.data = data;
                     scope.totalPages = Math.ceil(collection.count / scope.pageSize);
                     scope.pages = [];
                     for (i = k = 1, ref4 = scope.totalPages; 1 <= ref4 ? k < ref4 : k > ref4; i = 1 <= ref4 ? ++k : --k) {
@@ -188,7 +191,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoPager', ['imagoModel', '$timeout', '$state', imagoPager]);
+  angular.module('imago').directive('imagoPager', ['imagoUtils', 'imagoModel', '$timeout', '$state', imagoPager]);
 
 }).call(this);
 

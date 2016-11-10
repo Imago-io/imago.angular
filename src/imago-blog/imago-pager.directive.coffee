@@ -1,12 +1,13 @@
 class imagoPager extends Directive
 
-  constructor: (imagoModel, $timeout, $state) ->
+  constructor: (imagoUtils, imagoModel, $timeout, $state) ->
 
     return {
 
       scope:
         query       : '@'
         posts       : '='
+        data        : '='
         state       : '@'
         prevPage    : '&prev'
         nextPage    : '&next'
@@ -69,10 +70,13 @@ class imagoPager extends Directive
                 scope.next = collection.next
 
                 if scope.opts.shuffle
-                  collection.assets = _.shuffle collection.assets
-                  scope.posts = _.shuffle collection
+                  scope.posts = _.shuffle collection.assets
                 else
-                  scope.posts = collection
+                  scope.posts = collection.assets
+
+                data = angular.copy collection
+                delete data.assets
+                scope.data = data
 
                 scope.totalPages = Math.ceil(collection.count / scope.pageSize)
                 scope.pages = []

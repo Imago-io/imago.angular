@@ -465,7 +465,8 @@ class imagoModel extends Provider
           assetsChildren = @findChildren(@currentCollection)
 
           checkAsset = (asset) =>
-            if not options.checkdups or _.filter(assetsChildren, {name: asset.name}).length is 0
+            if not options.checkdups or _.filter(assetsChildren, (item) ->
+                  imagoUtils.normalize(asset.name) is imagoUtils.normalize(item.name)).length is 0
               return $q.resolve asset
 
             else
@@ -475,7 +476,8 @@ class imagoModel extends Provider
               while exists
                 asset.name = "#{original_name}_#{i}"
                 i++
-                exists = (if _.filter(assetsChildren, {name: asset.name}).length then true else false)
+                exists = (if _.filter(assetsChildren, (item) ->
+                  imagoUtils.normalize(asset.name) is imagoUtils.normalize(item.name)).length then true else false)
 
               return $q.resolve asset
 
@@ -602,12 +604,12 @@ class imagoModel extends Provider
 
             return reject(asset.name) unless asset.name
 
-            name = _.kebabCase(asset.name)
+            name = imagoUtils.normalize(asset.name)
             result = undefined
 
             assetsChildren = _.filter assets, (chr) =>
               return false unless chr.name
-              return name is _.kebabCase(chr.name)
+              return name is imagoUtils.normalize(chr.name)
 
             if assetsChildren.length
 
