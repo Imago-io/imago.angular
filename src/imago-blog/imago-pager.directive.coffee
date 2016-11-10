@@ -69,9 +69,10 @@ class imagoPager extends Directive
                 scope.next = collection.next
 
                 if scope.opts.shuffle
-                  scope.posts = _.shuffle collection.assets
+                  collection.assets = _.shuffle collection.assets
+                  scope.posts = _.shuffle collection
                 else
-                  scope.posts = collection.assets
+                  scope.posts = collection
 
                 scope.totalPages = Math.ceil(collection.count / scope.pageSize)
                 scope.pages = []
