@@ -31,7 +31,7 @@ class ImagoFieldFile extends Directive
           reader.onload = (loadEvent) ->
             if loadEvent.total > 1024 * 1024 * scope.maxFileSize
               scope.$apply ->
-                ngModelController.$setViewValue('')
+                ngModelController.$setViewValue(null)
                 scope.sizeerror = true
               return
 

@@ -18,7 +18,10 @@
             obj[key] = value || '';
           }
           originalMsg = imagoUtils.replaceNewLines(obj.message || '');
-          obj.message = _message + ("<b>Message</b>:<br><br> " + originalMsg + "<br><br>");
+          if (originalMsg) {
+            _message += "<b>Message</b>:<br><br> " + originalMsg + "<br><br>";
+          }
+          obj.message = _message;
           return obj;
         },
         send: function(data) {

@@ -13,7 +13,9 @@ class imagoSubmit extends Service
             _message += "<b>#{_.startCase(key)}</b>: #{value}<br><br>"
           obj[key] = value or ''
         originalMsg =  imagoUtils.replaceNewLines(obj.message or '')
-        obj.message = _message + "<b>Message</b>:<br><br> #{originalMsg}<br><br>"
+        if originalMsg
+          _message += "<b>Message</b>:<br><br> #{originalMsg}<br><br>"
+        obj.message = _message
 
         return obj
 

@@ -224,7 +224,7 @@
             reader.onload = function(loadEvent) {
               if (loadEvent.total > 1024 * 1024 * scope.maxFileSize) {
                 scope.$apply(function() {
-                  ngModelController.$setViewValue('');
+                  ngModelController.$setViewValue(null);
                   return scope.sizeerror = true;
                 });
                 return;
