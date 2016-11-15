@@ -36,7 +36,11 @@ class ImagoFieldFile extends Directive
               return
 
             scope.$apply ->
-              ngModelController.$setViewValue loadEvent.target.result
+              fileInfo =
+                filename : scope.filename
+                data     : loadEvent.target.result
+                type     : 'file'
+              ngModelController.$setViewValue fileInfo
               scope.sizeerror = false
 
           reader.readAsDataURL changeEvent.target.files[0]

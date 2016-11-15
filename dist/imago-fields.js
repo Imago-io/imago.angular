@@ -230,7 +230,13 @@
                 return;
               }
               return scope.$apply(function() {
-                ngModelController.$setViewValue(loadEvent.target.result);
+                var fileInfo;
+                fileInfo = {
+                  filename: scope.filename,
+                  data: loadEvent.target.result,
+                  type: 'file'
+                };
+                ngModelController.$setViewValue(fileInfo);
                 return scope.sizeerror = false;
               });
             };

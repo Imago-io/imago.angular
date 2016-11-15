@@ -9,7 +9,7 @@ class imagoSubmit extends Service
         obj = {}
         _message = ''
         for key, value of form
-          unless key in defaultFields or value.match? /data:/
+          unless key in defaultFields or _.isPlainObject(value) or value.match? /data:/
             _message += "<b>#{_.startCase(key)}</b>: #{value}<br><br>"
           obj[key] = value or ''
         originalMsg =  imagoUtils.replaceNewLines(obj.message or '')

@@ -12,7 +12,7 @@
           _message = '';
           for (key in form) {
             value = form[key];
-            if (!(indexOf.call(defaultFields, key) >= 0 || (typeof value.match === "function" ? value.match(/data:/) : void 0))) {
+            if (!(indexOf.call(defaultFields, key) >= 0 || _.isPlainObject(value) || (typeof value.match === "function" ? value.match(/data:/) : void 0))) {
               _message += "<b>" + (_.startCase(key)) + "</b>: " + value + "<br><br>";
             }
             obj[key] = value || '';
