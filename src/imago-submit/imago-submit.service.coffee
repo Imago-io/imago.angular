@@ -4,10 +4,6 @@ class imagoSubmit extends Service
 
     return {
 
-      getxsrf: ->
-        url = imagoModel.host + "/getxsrf"
-        $http.get(url)
-
       formatForm: (form) ->
         defaultFields = ['message', 'subscribe']
         obj = {}

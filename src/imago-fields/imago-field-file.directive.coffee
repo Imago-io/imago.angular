@@ -7,7 +7,6 @@ class ImagoFieldFile extends Directive
       replace: true
       require: 'ngModel'
       scope:
-        ngModel: '='
         sizeerror: '=?'
         label: '<?'
         maxFileSize: '<?'
@@ -32,23 +31,15 @@ class ImagoFieldFile extends Directive
           reader.onload = (loadEvent) ->
             if loadEvent.total > 1024 * 1024 * scope.maxFileSize
               scope.$apply ->
+                ngModelController.$setViewValue('')
                 scope.sizeerror = true
               return
 
             scope.$apply ->
-              scope.fileread = loadEvent.target.result
+              ngModelController.$setViewValue loadEvent.target.result
+              scope.sizeerror = false
 
           reader.readAsDataURL changeEvent.target.files[0]
-
-
-        scope.update = (value) ->
-          console.log 'scope-update'
-          # return if scope.disabled
-          # value = !value
-          # ngModelController.$setViewValue(value)
-          # ngModelController.$render()
-          # ngModelController.$setValidity('required', value) if attrs.required
-
     }
 
 

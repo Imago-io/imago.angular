@@ -203,7 +203,6 @@
         replace: true,
         require: 'ngModel',
         scope: {
-          ngModel: '=',
           sizeerror: '=?',
           label: '<?',
           maxFileSize: '<?',
@@ -218,26 +217,25 @@
           scope.label || (scope.label = 'Select Files');
           label = element.find('label');
           input = element.find('input');
-          input.bind('change', function(changeEvent) {
+          return input.bind('change', function(changeEvent) {
             var reader;
             scope.filename = changeEvent.target.value.split('\\').pop();
             reader = new FileReader;
             reader.onload = function(loadEvent) {
               if (loadEvent.total > 1024 * 1024 * scope.maxFileSize) {
                 scope.$apply(function() {
+                  ngModelController.$setViewValue('');
                   return scope.sizeerror = true;
                 });
                 return;
               }
               return scope.$apply(function() {
-                return scope.fileread = loadEvent.target.result;
+                ngModelController.$setViewValue(loadEvent.target.result);
+                return scope.sizeerror = false;
               });
             };
             return reader.readAsDataURL(changeEvent.target.files[0]);
           });
-          return scope.update = function(value) {
-            return console.log('scope-update');
-          };
         }
       };
     }

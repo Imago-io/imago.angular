@@ -5,11 +5,6 @@
   imagoSubmit = (function() {
     function imagoSubmit($http, imagoUtils, imagoModel) {
       return {
-        getxsrf: function() {
-          var url;
-          url = imagoModel.host + "/getxsrf";
-          return $http.get(url);
-        },
         formatForm: function(form) {
           var _message, defaultFields, key, obj, originalMsg, value;
           defaultFields = ['message', 'subscribe'];
