@@ -1,12 +1,10 @@
-.imago-field
-  input(
-    type="file"
-    name="receipt"
-    id="receipt"
-    sizeerror="sizeerror"
-    required
-    )
-  label(for="receipt" ng-if="!filename") {{label}} (max {{maxFileSize}}mb)
-  label(for="receipt" ng-if="filename") Selected File: {{filename}}
+input(
+  type="file"
+  name="receipt"
+  id="receipt"
+  sizeerror="sizeerror"
+  )
+label(for="receipt" ng-if="!filename") {{label}} (max {{maxFileSize}}mb)
+label(for="receipt" ng-if="filename") File: {{filename}}
 
-  .error(ng-show="sizeerror") Image File to large
+.error(ng-show="sizeerror") Image File to large

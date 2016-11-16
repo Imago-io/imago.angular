@@ -4,7 +4,6 @@ class ImagoFieldFile extends Directive
 
     return {
 
-      replace: true
       require: 'ngModel'
       scope:
         sizeerror: '=?'
