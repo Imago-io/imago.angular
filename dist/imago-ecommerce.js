@@ -538,6 +538,7 @@
 
     imagoCart.prototype.checkout = function() {
       var decorated, url;
+      this.$rootScope.$emit('imago:checkout', this.cart);
       url = "https://" + this.tenantSettings.tenant + ".imago.io/account/checkout/" + this.cart._id;
       decorated = '';
       if (typeof ga === "function") {

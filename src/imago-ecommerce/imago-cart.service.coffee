@@ -176,6 +176,8 @@ class imagoCart extends Service
       @subtotal += item.qty * item.price[@currency]
 
   checkout: ->
+    @$rootScope.$emit 'imago:checkout', @cart
+
     url = "https://#{@tenantSettings.tenant}.imago.io/account/checkout/#{@cart._id}"
 
     decorated = ''
