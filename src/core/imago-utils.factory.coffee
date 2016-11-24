@@ -1027,4 +1027,7 @@ class imagoUtils extends Factory
         delete object[oldName]
         return object
 
+      parentPath: (path) ->
+        path.split('/')[...if path.substr(-1) is '/' then -2 else -1].join('/')
+
     }

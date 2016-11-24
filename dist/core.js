@@ -1828,6 +1828,9 @@
           object[newName] = object[oldName];
           delete object[oldName];
           return object;
+        },
+        parentPath: function(path) {
+          return path.split('/').slice(0, path.substr(-1) === '/' ? -2 : -1).join('/');
         }
       };
     }
