@@ -424,7 +424,7 @@
       return this.$http.post(this.imagoModel.host + "/api/carts", cart);
     };
 
-    imagoCart.prototype.add = function(item, options, fields) {
+    imagoCart.prototype.add = function(item, options, fields, cartOptions) {
       var copy, field, filter, i, j, len, len1, option, parent, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9;
       if (!item) {
         return console.log('item required');
@@ -498,11 +498,13 @@
       } else {
         this.cart.items.push(copy);
       }
-      this.$timeout((function(_this) {
-        return function() {
-          return _this.show = true;
-        };
-      })(this));
+      if (!cartOptions.silent) {
+        this.$timeout((function(_this) {
+          return function() {
+            return _this.show = true;
+          };
+        })(this));
+      }
       this.calculate();
       return this.checkCart().then((function(_this) {
         return function(response) {
