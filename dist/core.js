@@ -33,6 +33,28 @@
 }).call(this);
 
 (function() {
+  var CheckTarget;
+
+  CheckTarget = (function() {
+    function CheckTarget() {
+      return {
+        link: function(scope, element, attrs) {
+          if (_.first(attrs.ngHref) !== '/') {
+            return element.attr('target', '_blank');
+          }
+        }
+      };
+    }
+
+    return CheckTarget;
+
+  })();
+
+  angular.module('imago').directive('checkTarget', [CheckTarget]);
+
+}).call(this);
+
+(function() {
   var imagoModel;
 
   imagoModel = (function() {
