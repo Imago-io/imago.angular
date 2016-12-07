@@ -241,7 +241,10 @@
     };
 
     imagoImageController.prototype.getServingUrl = function() {
-      var servingSize;
+      var ref, servingSize;
+      if (!((ref = this.asset) != null ? ref.serving_url : void 0)) {
+        return this.destroy();
+      }
       if (this.mainSide === "autoheight") {
         servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
       } else if (this.opts.sizemode === 'crop' && this.height) {

@@ -3,7 +3,6 @@ class imagoCart extends Directive
   constructor: ->
 
     return {
-
       restrict: 'E'
       transclude: true
       templateUrl: (element, attrs) ->
@@ -14,9 +13,19 @@ class imagoCart extends Directive
 
 class imagoCartController extends Controller
 
-  constructor: ($rootScope, @imagoCart, @$location) ->
+  constructor: ($rootScope, $scope, @imagoCart, @$location, $attrs) ->
 
-    $rootScope.$on 'scrollstart', => @imagoCart.show = false
+    @opts =
+      hideOnScroll: true
+
+    for key in Object.keys(@opts)
+      continue unless $attrs[key]
+      # make bool values
+      @opts[key] = JSON.parse $attrs[key] if $attrs[key] in ['true', 'false']
+
+    if @opts.hideOnScroll
+      console.log 'hide scroll'
+      $rootScope.$on 'scrollstart', => @imagoCart.show = false
 
   maxQty: (item) ->
     return unless item

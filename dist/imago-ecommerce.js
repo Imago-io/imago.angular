@@ -226,14 +226,31 @@
   })();
 
   imagoCartController = (function() {
-    function imagoCartController($rootScope, imagoCart1, $location) {
+    function imagoCartController($rootScope, $scope, imagoCart1, $location, $attrs) {
+      var i, key, len, ref, ref1;
       this.imagoCart = imagoCart1;
       this.$location = $location;
-      $rootScope.$on('scrollstart', (function(_this) {
-        return function() {
-          return _this.imagoCart.show = false;
-        };
-      })(this));
+      this.opts = {
+        hideOnScroll: true
+      };
+      ref = Object.keys(this.opts);
+      for (i = 0, len = ref.length; i < len; i++) {
+        key = ref[i];
+        if (!$attrs[key]) {
+          continue;
+        }
+        if ((ref1 = $attrs[key]) === 'true' || ref1 === 'false') {
+          this.opts[key] = JSON.parse($attrs[key]);
+        }
+      }
+      if (this.opts.hideOnScroll) {
+        console.log('hide scroll');
+        $rootScope.$on('scrollstart', (function(_this) {
+          return function() {
+            return _this.imagoCart.show = false;
+          };
+        })(this));
+      }
     }
 
     imagoCartController.prototype.maxQty = function(item) {
@@ -255,7 +272,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoCart', [imagoCart]).controller('imagoCartController', ['$rootScope', 'imagoCart', '$location', imagoCartController]);
+  angular.module('imago').directive('imagoCart', [imagoCart]).controller('imagoCartController', ['$rootScope', '$scope', 'imagoCart', '$location', '$attrs', imagoCartController]);
 
 }).call(this);
 

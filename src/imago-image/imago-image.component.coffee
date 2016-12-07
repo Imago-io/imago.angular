@@ -172,6 +172,8 @@ class imagoImageController extends Controller
   getServingUrl: ->
     # @visible = true
 
+    return @destroy() unless @asset?.serving_url
+
     # console.log "before: #{@width}x#{@height}"
 
     if @mainSide is "autoheight"
