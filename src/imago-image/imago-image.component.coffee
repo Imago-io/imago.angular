@@ -16,7 +16,6 @@ class imagoImage extends Component
 class imagoImageController extends Controller
 
   constructor: (@$rootScope, @$timeout, @$attrs, @$scope, @$element, @imagoModel) ->
-
     @loaded     = false
     @imageStyle = {}
     @watchers   = []
@@ -74,6 +73,7 @@ class imagoImageController extends Controller
       @$element.remove()
 
   init: (asset) ->
+    return if !asset?.serving_url
     @asset = asset
     @placeholderUrl = @asset.b64 or "#{@asset.serving_url}=s3"
     # @placeholderUrl = "#{@asset.serving_url}=s30"
@@ -154,6 +154,7 @@ class imagoImageController extends Controller
     @sliderCtrl.setServingSize(servingSize)
 
   inview: (inview) ->
+    return if !@asset?.serving_url
     @visible = inview
     @getSize()
     @resize()
@@ -171,9 +172,6 @@ class imagoImageController extends Controller
 
   getServingUrl: ->
     # @visible = true
-
-    return @destroy() unless @asset?.serving_url
-
     # console.log "before: #{@width}x#{@height}"
 
     if @mainSide is "autoheight"

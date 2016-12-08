@@ -130,6 +130,9 @@
 
     imagoImageController.prototype.init = function(asset) {
       var ref, ref1, ref2, ref3;
+      if (!(asset != null ? asset.serving_url : void 0)) {
+        return;
+      }
       this.asset = asset;
       this.placeholderUrl = this.asset.b64 || (this.asset.serving_url + "=s3");
       this.resolution = this.asset.resolution.split('x');
@@ -222,6 +225,10 @@
     };
 
     imagoImageController.prototype.inview = function(inview) {
+      var ref;
+      if (!((ref = this.asset) != null ? ref.serving_url : void 0)) {
+        return;
+      }
       this.visible = inview;
       this.getSize();
       this.resize();
@@ -241,10 +248,7 @@
     };
 
     imagoImageController.prototype.getServingUrl = function() {
-      var ref, servingSize;
-      if (!((ref = this.asset) != null ? ref.serving_url : void 0)) {
-        return this.destroy();
-      }
+      var servingSize;
       if (this.mainSide === "autoheight") {
         servingSize = Math.round(Math.max(this.height, this.height * this.assetRatio));
       } else if (this.opts.sizemode === 'crop' && this.height) {
