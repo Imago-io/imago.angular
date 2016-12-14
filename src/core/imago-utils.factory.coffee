@@ -748,6 +748,7 @@ class imagoUtils extends Factory
         'ZWL'
       ]
       ZERODECIMAL_CURRENCIES: ['BIF','CLP','DJF','GNF','JPY','KMF','KRW','MGA','PYG','RWF','VND','VUV','XAF','XOF','XPF','BRL','HUF','MYR','TWD']
+      PAYPAL_SUPPORTED_CURRENCIES: ['AUD','BRL','CAD','CZK','DKK','EUR','HKD','HUF','ILS','JPY','MYR','MXN','TWD','NZD','NOK','PHP','PLN','GBP','RUB','SGD','SEK','CHF','THB','USD']
 
 
 
