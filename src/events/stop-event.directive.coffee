@@ -6,6 +6,8 @@ class StopEvent extends Directive
       restrict: 'A'
       link: (scope, element, attrs) ->
         if attrs && attrs.stopEvent
-          element.bind attrs.stopEvent, (e) ->
-            e.stopPropagation()
+          events = attrs.stopEvent.split ' '
+          for event in events
+            element.bind event, (e) ->
+              e.stopPropagation()
     }

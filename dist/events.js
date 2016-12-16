@@ -94,10 +94,17 @@
       return {
         restrict: 'A',
         link: function(scope, element, attrs) {
+          var event, events, i, len, results;
           if (attrs && attrs.stopEvent) {
-            return element.bind(attrs.stopEvent, function(e) {
-              return e.stopPropagation();
-            });
+            events = attrs.stopEvent.split(' ');
+            results = [];
+            for (i = 0, len = events.length; i < len; i++) {
+              event = events[i];
+              results.push(element.bind(event, function(e) {
+                return e.stopPropagation();
+              }));
+            }
+            return results;
           }
         }
       };
