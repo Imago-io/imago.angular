@@ -87,6 +87,31 @@
 }).call(this);
 
 (function() {
+  var StopEvent;
+
+  StopEvent = (function() {
+    function StopEvent() {
+      return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+          if (attrs && attrs.stopEvent) {
+            return element.bind(attrs.stopEvent, function(e) {
+              return e.stopPropagation();
+            });
+          }
+        }
+      };
+    }
+
+    return StopEvent;
+
+  })();
+
+  angular.module('imago').directive('stopEvent', [StopEvent]);
+
+}).call(this);
+
+(function() {
   var StopPropagation;
 
   StopPropagation = (function() {
@@ -96,6 +121,9 @@
         link: function(scope, element, attrs) {
           var createBind, i, item, len, options, results;
           options = attrs.stopPropagation;
+          if (typeof console.warn === "function") {
+            console.warn('stop-propagation is deprecated, use stop-event="click" instead');
+          }
           if (options === 'stop-propagation' || options === '') {
             element.bind('click', function(evt) {
               return evt.stopPropagation();

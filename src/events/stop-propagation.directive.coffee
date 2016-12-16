@@ -3,10 +3,10 @@ class StopPropagation extends Directive
   constructor: ->
 
     return {
-
       restrict: 'A'
       link: (scope, element, attrs) ->
         options = attrs.stopPropagation
+        console.warn? 'stop-propagation is deprecated, use stop-event="click" instead'
         if options in ['stop-propagation', '']
           element.bind 'click', (evt) ->
             evt.stopPropagation()
