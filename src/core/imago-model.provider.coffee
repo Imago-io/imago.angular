@@ -191,55 +191,50 @@ class imagoModel extends Provider
             query = imagoUtils.toArray query
 
             promises = []
-            fetches = []
-            data = []
-            rejected = []
 
-            fetch = =>
-              fetches.push @search(rejected).then (response) =>
-                # console.log('not in the model. fetching...', rejected) if rejected?.length
-                return unless response?.data
-                for res in response.data
-                  data.push @create res
+            makeQueryPromise = (value) =>
+              return $q (resolveQueryPromise, rejectQueryPromise) =>
+                @getLocalData(value, options).then (result) =>
 
-              , (err) ->
-                if err.status is 401
-                  console.warn 'Imago API warning:', err.data
+                  if result.assets
+                    worker =
+                      assets :  result.assets
+                      order  :  result.sortorder
+                      path   :  sortWorker
 
-              $q.all(fetches).then =>
+                    imagoWorker.work(worker).then (response) =>
+                        result.assets = response.assets
+                        resolveQueryPromise(result)
 
-                if options.updatePageTitle or (config.updatePageTitle and _.isUndefined(options.updatePageTitle))
-                  if options.title
-                    $document.prop 'title', options.title
-                  else if data.length is 1 and data[0].fields?.title?.value
-                    $document.prop 'title', data[0].fields.title.value
-                  else if data.length is 1 and data[0].name
-                    $document.prop 'title', data[0].name
+                  else
+                    resolveQueryPromise(result)
 
-                return resolve data
+                , (rejection) =>
+                  @search([rejection]).then (response) =>
+                    # console.log('not in the model. fetching...', rejected) if rejected?.length
+                    return unless response?.data
+                    for res in response.data
+                      resolveQueryPromise(@create(res))
+
+                  , (err) ->
+                    rejectQueryPromise()
+                    if err.status is 401
+                      console.warn 'Imago API warning:', err.data
 
             _.forEach query, (value) =>
-              promises.push @getLocalData(value, options).then (result) =>
+              promises.push makeQueryPromise(value)
 
-                if result.assets
-                  worker =
-                    assets :  result.assets
-                    order  :  result.sortorder
-                    path   :  sortWorker
+            $q.all(promises).then (response) ->
+              response = _.flatten response
+              if options.updatePageTitle or (config.updatePageTitle and _.isUndefined(options.updatePageTitle))
+                if options.title
+                  $document.prop 'title', options.title
+                else if response.length is 1 and response[0].fields?.title?.value
+                  $document.prop 'title', response[0].fields.title.value
+                else if response.length is 1 and response[0].name
+                  $document.prop 'title', response[0].name
 
-                  fetches.push imagoWorker.work(worker).then (response) =>
-                      result.assets = response.assets
-                      data.push result
-                      data = _.flatten data
-
-                else
-                  data.push result
-                  data = _.flatten data
-
-              , (rejection) =>
-                rejected.push rejection
-
-            $q.all(promises).then fetch
+              return resolve response
 
         formatQuery: (query) ->
           querydict = {}
