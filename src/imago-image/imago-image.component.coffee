@@ -135,10 +135,9 @@ class imagoImageController extends Controller
       if @opts.lazy and not @visible
         watcher = @$scope.$watch 'imagoimage.visible', (value) =>
           return unless value
-          @$timeout =>
-            watcher()
-            @resize()
-            @getServingUrl()
+          watcher()
+          @resize()
+          @getServingUrl()
 
       else
         @getSize()
@@ -146,22 +145,20 @@ class imagoImageController extends Controller
         @getServingUrl()
 
   getSize: ->
-    @$timeout =>
-      @width  = @$element.children()[0].clientWidth
-      @height = @$element.children()[0].clientHeight
-      # console.log "getSize #{@width}x#{@height}"
+    @width  = @$element.children()[0].clientWidth
+    @height = @$element.children()[0].clientHeight
+    # console.log "getSize #{@width}x#{@height}"
 
   setServingSize: (servingSize) =>
     return if !@sliderCtrl
     @sliderCtrl.setServingSize(servingSize)
 
   inview: (inview) ->
-    # return if !@asset?.serving_url
-    @$scope.$applyAsync =>
-      @visible = inview
-      @getSize()
-      @resize()
-      @getServingUrl()
+    return if !@asset?.serving_url
+    @visible = inview
+    @getSize()
+    @resize()
+    @getServingUrl()
 
   resize: ->
     # console.log "resize #{@width}x#{@height}"

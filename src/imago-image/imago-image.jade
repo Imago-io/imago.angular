@@ -1,7 +1,7 @@
 .imago-image-content(
   ng-class="[{'loaded': imagoimage.loaded}, imagoimage.opts.align, imagoimage.opts.sizemode, imagoimage.mainSide, {'noplaceholder': !imagoimage.opts.placeholder}]"
   in-view="imagoimage.inview($inview, $inviewpart)"
-  in-view-options="{debounce: 10, offsetTop: -100, offsetBottom: 100}"
+  in-view-options="{debounce: 300, offsetTop: -100, offsetBottom: 100}"
   )
   .spacer(ng-style="::imagoimage.spacerStyle")
 

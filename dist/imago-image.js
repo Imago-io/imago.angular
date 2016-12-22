@@ -199,11 +199,9 @@
               if (!value) {
                 return;
               }
-              return _this.$timeout(function() {
-                watcher();
-                _this.resize();
-                return _this.getServingUrl();
-              });
+              watcher();
+              _this.resize();
+              return _this.getServingUrl();
             });
           } else {
             _this.getSize();
@@ -215,12 +213,8 @@
     };
 
     imagoImageController.prototype.getSize = function() {
-      return this.$timeout((function(_this) {
-        return function() {
-          _this.width = _this.$element.children()[0].clientWidth;
-          return _this.height = _this.$element.children()[0].clientHeight;
-        };
-      })(this));
+      this.width = this.$element.children()[0].clientWidth;
+      return this.height = this.$element.children()[0].clientHeight;
     };
 
     imagoImageController.prototype.setServingSize = function(servingSize) {
@@ -231,14 +225,14 @@
     };
 
     imagoImageController.prototype.inview = function(inview) {
-      return this.$scope.$applyAsync((function(_this) {
-        return function() {
-          _this.visible = inview;
-          _this.getSize();
-          _this.resize();
-          return _this.getServingUrl();
-        };
-      })(this));
+      var ref;
+      if (!((ref = this.asset) != null ? ref.serving_url : void 0)) {
+        return;
+      }
+      this.visible = inview;
+      this.getSize();
+      this.resize();
+      return this.getServingUrl();
     };
 
     imagoImageController.prototype.resize = function() {
@@ -303,4 +297,4 @@
 
 }).call(this);
 
-angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-image.html','<div ng-class="[{\'loaded\': imagoimage.loaded}, imagoimage.opts.align, imagoimage.opts.sizemode, imagoimage.mainSide, {\'noplaceholder\': !imagoimage.opts.placeholder}]" in-view="imagoimage.inview($inview, $inviewpart)" in-view-options="{debounce: 10, offsetTop: -100, offsetBottom: 100}" class="imago-image-content"><div ng-style="::imagoimage.spacerStyle" class="spacer"></div><img ng-src="{{::imagoimage.placeholderUrl}}" class="small"/><img ng-src="{{imagoimage.imgUrl}}" class="large"/><div ng-if="!imagoimage.opts.allowDrag" class="prevent-drag"></div></div>');}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-image.html','<div ng-class="[{\'loaded\': imagoimage.loaded}, imagoimage.opts.align, imagoimage.opts.sizemode, imagoimage.mainSide, {\'noplaceholder\': !imagoimage.opts.placeholder}]" in-view="imagoimage.inview($inview, $inviewpart)" in-view-options="{debounce: 300, offsetTop: -100, offsetBottom: 100}" class="imago-image-content"><div ng-style="::imagoimage.spacerStyle" class="spacer"></div><img ng-src="{{::imagoimage.placeholderUrl}}" class="small"/><img ng-src="{{imagoimage.imgUrl}}" class="large"/><div ng-if="!imagoimage.opts.allowDrag" class="prevent-drag"></div></div>');}]);
