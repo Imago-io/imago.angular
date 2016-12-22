@@ -199,9 +199,11 @@
               if (!value) {
                 return;
               }
-              watcher();
-              _this.resize();
-              return _this.getServingUrl();
+              return _this.$timeout(function() {
+                watcher();
+                _this.resize();
+                return _this.getServingUrl();
+              });
             });
           } else {
             _this.getSize();
@@ -213,8 +215,12 @@
     };
 
     imagoImageController.prototype.getSize = function() {
-      this.width = this.$element.children()[0].clientWidth;
-      return this.height = this.$element.children()[0].clientHeight;
+      return this.$timeout((function(_this) {
+        return function() {
+          _this.width = _this.$element.children()[0].clientWidth;
+          return _this.height = _this.$element.children()[0].clientHeight;
+        };
+      })(this));
     };
 
     imagoImageController.prototype.setServingSize = function(servingSize) {
@@ -225,14 +231,14 @@
     };
 
     imagoImageController.prototype.inview = function(inview) {
-      var ref;
-      if (!((ref = this.asset) != null ? ref.serving_url : void 0)) {
-        return;
-      }
-      this.visible = inview;
-      this.getSize();
-      this.resize();
-      return this.getServingUrl();
+      return this.$scope.$applyAsync((function(_this) {
+        return function() {
+          _this.visible = inview;
+          _this.getSize();
+          _this.resize();
+          return _this.getServingUrl();
+        };
+      })(this));
     };
 
     imagoImageController.prototype.resize = function() {
