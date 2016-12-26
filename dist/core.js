@@ -1624,6 +1624,9 @@
         },
         deNormalize: function(s) {
           var k, len, text, w, words;
+          if (typeof s !== 'string') {
+            return;
+          }
           words = s.split('-');
           text = '';
           for (k = 0, len = words.length; k < len; k++) {

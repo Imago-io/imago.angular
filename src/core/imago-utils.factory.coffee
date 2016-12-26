@@ -851,6 +851,8 @@ class imagoUtils extends Factory
         )
 
       deNormalize: (s) ->
+        return if typeof s isnt 'string'
+
         words = s.split '-'
         text = ''
         for w in words
