@@ -244,7 +244,6 @@
         }
       }
       if (this.opts.hideOnScroll) {
-        console.log('hide scroll');
         $rootScope.$on('scrollstart', (function(_this) {
           return function() {
             return _this.imagoCart.show = false;

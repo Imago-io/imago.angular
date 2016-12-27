@@ -9,7 +9,7 @@ class imagoImage extends Component
       require:
         sliderCtrl: '?^imagoSlider'
       bindings:
-        data: '=?'
+        data: '<?'
 
     }
 

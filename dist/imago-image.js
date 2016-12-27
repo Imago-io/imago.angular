@@ -11,7 +11,7 @@
           sliderCtrl: '?^imagoSlider'
         },
         bindings: {
-          data: '=?'
+          data: '<?'
         }
       };
     }

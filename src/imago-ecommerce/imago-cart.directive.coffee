@@ -24,7 +24,6 @@ class imagoCartController extends Controller
       @opts[key] = JSON.parse $attrs[key] if $attrs[key] in ['true', 'false']
 
     if @opts.hideOnScroll
-      console.log 'hide scroll'
       $rootScope.$on 'scrollstart', => @imagoCart.show = false
 
   maxQty: (item) ->
