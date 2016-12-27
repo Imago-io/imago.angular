@@ -265,83 +265,83 @@
             })(this));
           },
           getData: function(query, options) {
+            var makeQueryPromise, promises;
             if (options == null) {
               options = {};
             }
-            return $q((function(_this) {
-              return function(resolve, reject) {
-                var makeQueryPromise, promises;
-                query = angular.copy(query);
-                if (!query) {
-                  query = $location.path();
+            query = angular.copy(query);
+            if (!query) {
+              query = $location.path();
+            }
+            if (_.isString(query)) {
+              query = [
+                {
+                  path: query
                 }
-                if (_.isString(query)) {
-                  query = [
-                    {
-                      path: query
-                    }
-                  ];
-                }
-                query = imagoUtils.toArray(query);
-                promises = [];
-                makeQueryPromise = function(value) {
-                  return $q(function(resolveQueryPromise, rejectQueryPromise) {
-                    return _this.getLocalData(value, options).then(function(result) {
-                      var worker;
-                      if (result.assets) {
-                        worker = {
-                          assets: result.assets,
-                          order: result.sortorder,
-                          path: sortWorker
-                        };
-                        return imagoWorker.work(worker).then(function(response) {
-                          result.assets = response.assets;
-                          return resolveQueryPromise(result);
-                        });
-                      } else {
-                        return resolveQueryPromise(result);
-                      }
-                    }, function(rejection) {
-                      return _this.search([rejection]).then(function(response) {
-                        var j, len, ref, res, results1;
-                        if (!(response != null ? response.data : void 0)) {
-                          return;
-                        }
-                        ref = response.data;
-                        results1 = [];
-                        for (j = 0, len = ref.length; j < len; j++) {
-                          res = ref[j];
-                          results1.push(resolveQueryPromise(_this.create(res)));
-                        }
-                        return results1;
-                      }, function(err) {
-                        rejectQueryPromise();
-                        if (err.status === 401) {
-                          return console.warn('Imago API warning:', err.data);
-                        }
+              ];
+            }
+            query = imagoUtils.toArray(query);
+            promises = [];
+            makeQueryPromise = (function(_this) {
+              return function(value) {
+                return $q(function(resolve, reject) {
+                  return _this.getLocalData(value, options).then(function(result) {
+                    var worker;
+                    if (result.assets) {
+                      worker = {
+                        assets: result.assets,
+                        order: result.sortorder,
+                        path: sortWorker
+                      };
+                      return imagoWorker.work(worker).then(function(response) {
+                        result.assets = response.assets;
+                        return resolve(result);
                       });
+                    } else {
+                      return resolve(result);
+                    }
+                  }, function(rejection) {
+                    return _this.search([rejection]).then(function(response) {
+                      var j, len, ref, res, results1;
+                      if (!(response != null ? response.data : void 0)) {
+                        return;
+                      }
+                      ref = response.data;
+                      results1 = [];
+                      for (j = 0, len = ref.length; j < len; j++) {
+                        res = ref[j];
+                        results1.push(resolve(_this.create(res)));
+                      }
+                      return results1;
+                    }, function(err) {
+                      reject();
+                      if (err.status === 401) {
+                        return console.warn('Imago API warning:', err.data);
+                      }
                     });
                   });
-                };
-                _.forEach(query, function(value) {
-                  return promises.push(makeQueryPromise(value));
-                });
-                return $q.all(promises).then(function(response) {
-                  var ref, ref1;
-                  response = _.flatten(response);
-                  if (options.updatePageTitle || (config.updatePageTitle && _.isUndefined(options.updatePageTitle))) {
-                    if (options.title) {
-                      $document.prop('title', options.title);
-                    } else if (response.length === 1 && ((ref = response[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {
-                      $document.prop('title', response[0].fields.title.value);
-                    } else if (response.length === 1 && response[0].name) {
-                      $document.prop('title', response[0].name);
-                    }
-                  }
-                  return resolve(response);
                 });
               };
+            })(this);
+            _.forEach(query, (function(_this) {
+              return function(value) {
+                return promises.push(makeQueryPromise(value));
+              };
             })(this));
+            return $q.all(promises).then(function(response) {
+              var ref, ref1;
+              response = _.flatten(response);
+              if (options.updatePageTitle || (config.updatePageTitle && _.isUndefined(options.updatePageTitle))) {
+                if (options.title) {
+                  $document.prop('title', options.title);
+                } else if (response.length === 1 && ((ref = response[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {
+                  $document.prop('title', response[0].fields.title.value);
+                } else if (response.length === 1 && response[0].name) {
+                  $document.prop('title', response[0].name);
+                }
+              }
+              return response;
+            });
           },
           formatQuery: function(query) {
             var elem, j, k, key, len, len1, querydict, ref, value;
@@ -417,7 +417,7 @@
               }
               this.data.push(collection);
             }
-            return data;
+            return _.cloneDeep(data);
           },
           findChildren: function(asset) {
             return _.filter(this.data, {
@@ -479,6 +479,11 @@
                     value = asset[key];
                     if (_.isString(value)) {
                       if (value.match(new RegExp(params, 'i'))) {
+                        return true;
+                      }
+                    }
+                    if (_.isString(value)) {
+                      if (imagoUtils.normalize(value).match(new RegExp(params, 'i'))) {
                         return true;
                       }
                     }

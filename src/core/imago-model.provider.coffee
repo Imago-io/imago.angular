@@ -180,61 +180,60 @@ class imagoModel extends Provider
               return resolve asset
 
         getData: (query, options = {}) ->
-          return $q (resolve, reject) =>
-            query = angular.copy query
+          query = angular.copy query
 
-            query = $location.path() unless query
-            if _.isString query
-              query =
-                [path: query]
+          query = $location.path() unless query
+          if _.isString query
+            query =
+              [path: query]
 
-            query = imagoUtils.toArray query
+          query = imagoUtils.toArray query
 
-            promises = []
+          promises = []
 
-            makeQueryPromise = (value) =>
-              return $q (resolveQueryPromise, rejectQueryPromise) =>
-                @getLocalData(value, options).then (result) =>
+          makeQueryPromise = (value) =>
+            return $q (resolve, reject) =>
+              @getLocalData(value, options).then (result) =>
 
-                  if result.assets
-                    worker =
-                      assets :  result.assets
-                      order  :  result.sortorder
-                      path   :  sortWorker
+                if result.assets
+                  worker =
+                    assets :  result.assets
+                    order  :  result.sortorder
+                    path   :  sortWorker
 
-                    imagoWorker.work(worker).then (response) =>
-                        result.assets = response.assets
-                        resolveQueryPromise(result)
+                  imagoWorker.work(worker).then (response) =>
+                      result.assets = response.assets
+                      resolve(result)
 
-                  else
-                    resolveQueryPromise(result)
+                else
+                  resolve(result)
 
-                , (rejection) =>
-                  @search([rejection]).then (response) =>
-                    # console.log('not in the model. fetching...', rejected) if rejected?.length
-                    return unless response?.data
-                    for res in response.data
-                      resolveQueryPromise(@create(res))
+              , (rejection) =>
+                @search([rejection]).then (response) =>
+                  # console.log('not in the model. fetching...', rejected) if rejected?.length
+                  return unless response?.data
+                  for res in response.data
+                    resolve(@create(res))
 
-                  , (err) ->
-                    rejectQueryPromise()
-                    if err.status is 401
-                      console.warn 'Imago API warning:', err.data
+                , (err) ->
+                  reject()
+                  if err.status is 401
+                    console.warn 'Imago API warning:', err.data
 
-            _.forEach query, (value) =>
-              promises.push makeQueryPromise(value)
+          _.forEach query, (value) =>
+            promises.push makeQueryPromise(value)
 
-            $q.all(promises).then (response) ->
-              response = _.flatten response
-              if options.updatePageTitle or (config.updatePageTitle and _.isUndefined(options.updatePageTitle))
-                if options.title
-                  $document.prop 'title', options.title
-                else if response.length is 1 and response[0].fields?.title?.value
-                  $document.prop 'title', response[0].fields.title.value
-                else if response.length is 1 and response[0].name
-                  $document.prop 'title', response[0].name
+          return $q.all(promises).then (response) ->
+            response = _.flatten response
+            if options.updatePageTitle or (config.updatePageTitle and _.isUndefined(options.updatePageTitle))
+              if options.title
+                $document.prop 'title', options.title
+              else if response.length is 1 and response[0].fields?.title?.value
+                $document.prop 'title', response[0].fields.title.value
+              else if response.length is 1 and response[0].name
+                $document.prop 'title', response[0].name
 
-              return resolve response
+            return response
 
         formatQuery: (query) ->
           querydict = {}
@@ -281,7 +280,7 @@ class imagoModel extends Provider
             collection = _.omit collection, 'assets' if collection.type is 'collection'
             @data.push collection
 
-          return data
+          return _.cloneDeep data
 
         findChildren: (asset) ->
           _.filter @data, {parent: asset._id}
@@ -316,6 +315,7 @@ class imagoModel extends Provider
                 else if asset[key]
                   value = asset[key]
                   return true if value.match new RegExp params, 'i' if _.isString value
+                  return true if imagoUtils.normalize(value).match new RegExp params, 'i' if _.isString value
                   return true if ParseFloat value == ParseFloat params if _.isNumber value
                   return false
 
