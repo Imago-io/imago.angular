@@ -1,5 +1,5 @@
 .imago-modal-content(
   ng-if="modal.active"
   ng-class="[{'fullwindow': fullwindow, 'not-fullwindow': !fullwindow}, modal.position]"
-  stop-propagation)
+  stop-event="click")
   .wrapper(ng-transclude)

@@ -72,4 +72,4 @@
 
 }).call(this);
 
-angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-modal.html','<div ng-if="modal.active" ng-class="[{\'fullwindow\': fullwindow, \'not-fullwindow\': !fullwindow}, modal.position]" stop-propagation="stop-propagation" class="imago-modal-content"><div ng-transclude="ng-transclude" class="wrapper"></div></div>');}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-modal.html','<div ng-if="modal.active" ng-class="[{\'fullwindow\': fullwindow, \'not-fullwindow\': !fullwindow}, modal.position]" stop-event="click" class="imago-modal-content"><div ng-transclude="ng-transclude" class="wrapper"></div></div>');}]);

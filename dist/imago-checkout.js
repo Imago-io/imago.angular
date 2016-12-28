@@ -278,6 +278,7 @@
 
     Calculation.prototype.findShippingRate = function() {
       var rates, rates_by_country;
+      console.log('@country', this.country);
       if (!this.country) {
         return;
       }

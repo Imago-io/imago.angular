@@ -130,6 +130,7 @@ class Calculation extends Service
     return deferred.promise
 
   findShippingRate: =>
+    console.log '@country', @country
     return unless @country
 
     if @imagoUtils.inUsa @country
