@@ -1,11 +1,11 @@
-class CheckTarget extends Directive
+class ImagoChecktarget extends Directive
 
   constructor: ->
 
     return {
 
       link: (scope, element, attrs) ->
-        unless _.first(attrs.ngHref) is '/'
+        unless attrs.ngHref?.match('^/')
           element.attr('target', '_blank')
 
     }

@@ -66,6 +66,59 @@
 }).call(this);
 
 (function() {
+  var ImagoMakeurl;
+
+  ImagoMakeurl = (function() {
+    function ImagoMakeurl() {
+      return function(link) {
+        if (link.match('^https?://|^/')) {
+          return link;
+        } else {
+          return 'http://' + link;
+        }
+      };
+    }
+
+    return ImagoMakeurl;
+
+  })();
+
+  angular.module('imago').filter('imagoMakeurl', [ImagoMakeurl]);
+
+}).call(this);
+
+(function() {
+  var Meta;
+
+  Meta = (function() {
+    function Meta() {
+      if (typeof console.info === "function") {
+        console.info('Depricated: use asset.fields.<filedname>.value instead');
+      }
+      return function(input, value) {
+        var ref;
+        if (!(input && value && ((ref = input.fields) != null ? ref[value] : void 0))) {
+          return;
+        }
+        if (input.fields[value].kind === 'file') {
+          return input.fields[value].download_url;
+        } else if (input.fields[value].kind === 'markup') {
+          return input.fields[value].value.value;
+        } else {
+          return input.fields[value].value;
+        }
+      };
+    }
+
+    return Meta;
+
+  })();
+
+  angular.module('imago').filter('meta', [Meta]);
+
+}).call(this);
+
+(function() {
   var Normalize;
 
   Normalize = (function() {

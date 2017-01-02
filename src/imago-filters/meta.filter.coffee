@@ -1,6 +1,7 @@
 class Meta extends Filter
 
   constructor: ->
+    console.info? 'Depricated: use asset.fields.<filedname>.value instead'
     return (input, value) ->
       return unless input and value and input.fields?[value]
 

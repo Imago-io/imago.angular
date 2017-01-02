@@ -6,7 +6,7 @@
     function imagoImage() {
       return {
         templateUrl: '/imago/imago-image.html',
-        controller: 'imagoImageController as imagoimage',
+        controller: 'imagoImageController',
         require: {
           sliderCtrl: '?^imagoSlider'
         },
@@ -181,7 +181,7 @@
             _this.getSize();
           }
           if (_this.height === 0 && _this.width === 0) {
-            return console.log('need width or/and height for static or relative positioning');
+            return console.warn('need width or/and height for static or relative positioning');
           }
           if (_this.height > 0 && _this.width === 0) {
             _this.mainSide = 'autoheight';
@@ -214,7 +214,10 @@
 
     imagoImageController.prototype.getSize = function() {
       this.width = this.$element.children()[0].clientWidth;
-      return this.height = this.$element.children()[0].clientHeight;
+      this.height = this.$element.children()[0].clientHeight;
+      if (window.debug) {
+        return console.debug("imago-image: getSize " + this.width + "x" + this.height);
+      }
     };
 
     imagoImageController.prototype.setServingSize = function(servingSize) {
@@ -237,6 +240,9 @@
 
     imagoImageController.prototype.resize = function() {
       var ref;
+      if (window.debug) {
+        console.debug("imago-image: resize " + this.width + "x" + this.height);
+      }
       if ((ref = this.mainSide) !== 'autoheight' && ref !== 'autowidth') {
         this.wrapperRatio = this.width / this.height;
         if (this.opts.sizemode === 'crop') {
@@ -272,15 +278,26 @@
       this.servingSize = Math.max(servingSize, 60);
       this.opts.servingUrl = this.asset.serving_url + "=s" + (this.servingSize * this.opts.scale);
       this.setServingSize("=s" + (servingSize * this.opts.scale));
+      if (window.debug) {
+        console.debug("imago-image: getServingUrl servingSize: " + (servingSize * this.opts.scale));
+      }
       return this.render();
     };
 
     imagoImageController.prototype.render = function() {
       var img;
+      if (window.debug) {
+        console.time(this.asset.uuid);
+        console.debug("imago-image: render", this.asset.uuid);
+      }
       img = angular.element('<img>');
       img.on('load', (function(_this) {
         return function() {
           return _this.$scope.$applyAsync(function() {
+            if (window.debug) {
+              console.debug("imago-image: render loaded", _this.asset.uuid);
+              console.timeEnd(_this.asset.uuid);
+            }
             _this.imgUrl = _this.opts.servingUrl;
             return _this.loaded = true;
           });
@@ -297,4 +314,4 @@
 
 }).call(this);
 
-angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-image.html','<div ng-class="[{\'loaded\': imagoimage.loaded}, imagoimage.opts.align, imagoimage.opts.sizemode, imagoimage.mainSide, {\'noplaceholder\': !imagoimage.opts.placeholder}]" in-view="imagoimage.inview($inview, $inviewpart)" in-view-options="{debounce: 300, offsetTop: -100, offsetBottom: 100}" class="imago-image-content"><div ng-style="::imagoimage.spacerStyle" class="spacer"></div><img ng-src="{{::imagoimage.placeholderUrl}}" class="small"/><img ng-src="{{imagoimage.imgUrl}}" class="large"/><div ng-if="!imagoimage.opts.allowDrag" class="prevent-drag"></div></div>');}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-image.html','<div ng-class="[{\'loaded\': $ctrl.loaded}, $ctrl.opts.align, $ctrl.opts.sizemode, $ctrl.mainSide, {\'noplaceholder\': !$ctrl.opts.placeholder}]" in-view="$ctrl.inview($inview, $inviewpart)" in-view-options="{debounce: 300, offsetTop: -100, offsetBottom: 100}" class="imago-image-content"><div ng-style="::$ctrl.spacerStyle" class="spacer"></div><img ng-src="{{::$ctrl.placeholderUrl}}" class="small"/><img ng-src="{{$ctrl.imgUrl}}" class="large"/><div ng-if="!$ctrl.opts.allowDrag" class="prevent-drag"></div></div>');}]);

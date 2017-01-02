@@ -210,7 +210,10 @@
 
     imagoVideoController.prototype.getSize = function() {
       this.width = this.$element.children()[0].clientWidth;
-      return this.height = this.$element.children()[0].clientHeight;
+      this.height = this.$element.children()[0].clientHeight;
+      if (window.debug) {
+        return console.debug("imago-video: getSize " + this.width + "x" + this.height);
+      }
     };
 
     imagoVideoController.prototype.onPlayerReady = function(api) {
@@ -234,6 +237,9 @@
 
     imagoVideoController.prototype.resize = function() {
       var ref;
+      if (window.debug) {
+        console.debug("imago-video: resize " + this.width + "x" + this.height);
+      }
       if ((ref = this.mainSide) !== 'autoheight' && ref !== 'autowidth') {
         this.wrapperRatio = this.width / this.height;
         if (this.opts.sizemode === 'crop') {

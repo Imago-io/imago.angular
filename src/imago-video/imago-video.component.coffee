@@ -94,13 +94,12 @@ class imagoVideoController extends Controller
 
     if @opts.responsive
       @watchers.push @$rootScope.$on 'resize', =>
-        # @$scope.$applyAsync =>
         @getSize()
         @resize()
         old = @mainSide
         @$scope.$digest() if old isnt @mainSide
 
-    @$scope.$applyAsync => # we need this if vide in fullsize directive
+    @$scope.$applyAsync => # we need this if video in fullsize directive
       @getSize()
 
       if @height is 0 and @width is 0
@@ -140,8 +139,7 @@ class imagoVideoController extends Controller
   getSize: ->
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
-    # console.log "getSize: #{@width}x#{@height}"
-    # debugger
+    console.debug "imago-video: getSize #{@width}x#{@height}" if window.debug
 
   onPlayerReady: (api) =>
     if @onReady
@@ -154,17 +152,12 @@ class imagoVideoController extends Controller
           api.pause()
 
   resize: ->
-    # @spacerStyle.width = "#{@height * @assetRatio}px"
+    console.debug "imago-video: resize #{@width}x#{@height}" if window.debug
     if @mainSide not in ['autoheight', 'autowidth']
       @wrapperRatio = @width / @height
       if @opts.sizemode is 'crop'
         @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
       else
         @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
-      # console.log "resize #{@mainSide}"
 
-
-
-  # render: =>
-  #   console.log 'render'
 

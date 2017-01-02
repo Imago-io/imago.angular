@@ -1,19 +1,19 @@
 .imago-image-content(
-  ng-class="[{'loaded': imagoimage.loaded}, imagoimage.opts.align, imagoimage.opts.sizemode, imagoimage.mainSide, {'noplaceholder': !imagoimage.opts.placeholder}]"
-  in-view="imagoimage.inview($inview, $inviewpart)"
+  ng-class="[{'loaded': $ctrl.loaded}, $ctrl.opts.align, $ctrl.opts.sizemode, $ctrl.mainSide, {'noplaceholder': !$ctrl.opts.placeholder}]"
+  in-view="$ctrl.inview($inview, $inviewpart)"
   in-view-options="{debounce: 300, offsetTop: -100, offsetBottom: 100}"
   )
-  .spacer(ng-style="::imagoimage.spacerStyle")
+  .spacer(ng-style="::$ctrl.spacerStyle")
 
-  img.small(ng-src="{{::imagoimage.placeholderUrl}}")
-  img.large(ng-src="{{imagoimage.imgUrl}}")
+  img.small(ng-src="{{::$ctrl.placeholderUrl}}")
+  img.large(ng-src="{{$ctrl.imgUrl}}")
 
-  .prevent-drag(ng-if="!imagoimage.opts.allowDrag")
+  .prevent-drag(ng-if="!$ctrl.opts.allowDrag")
 
-  //- pre {{imagoimage.visible|json}}
+  //- pre {{$ctrl.visible|json}}
   //- pre
-  //-   | {{imagoimage.opts.sizemode}} {{imagoimage.opts.align}}
+  //-   | {{$ctrl.opts.sizemode}} {{$ctrl.opts.align}}
   //-   br
-  //-   | {{imagoimage.loaded}} {{imagoimage.width}} x {{imagoimage.height}} {{imagoimage.servingSize}}
+  //-   | {{$ctrl.loaded}} {{$ctrl.width}} x {{$ctrl.height}} {{$ctrl.servingSize}}
   //-   br
-  //-   | mainSide {{imagoimage.mainSide}}
+  //-   | mainSide {{$ctrl.mainSide}}

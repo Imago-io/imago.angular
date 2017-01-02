@@ -33,24 +33,25 @@
 }).call(this);
 
 (function() {
-  var CheckTarget;
+  var ImagoChecktarget;
 
-  CheckTarget = (function() {
-    function CheckTarget() {
+  ImagoChecktarget = (function() {
+    function ImagoChecktarget() {
       return {
         link: function(scope, element, attrs) {
-          if (_.first(attrs.ngHref) !== '/') {
+          var ref;
+          if (!((ref = attrs.ngHref) != null ? ref.match('^/') : void 0)) {
             return element.attr('target', '_blank');
           }
         }
       };
     }
 
-    return CheckTarget;
+    return ImagoChecktarget;
 
   })();
 
-  angular.module('imago').directive('checkTarget', [CheckTarget]);
+  angular.module('imago').directive('imagoChecktarget', [ImagoChecktarget]);
 
 }).call(this);
 
@@ -1966,34 +1967,6 @@
   })();
 
   angular.module('imago').service('imagoWorker', ['$q', '$http', imagoWorker]);
-
-}).call(this);
-
-(function() {
-  var Meta;
-
-  Meta = (function() {
-    function Meta() {
-      return function(input, value) {
-        var ref;
-        if (!(input && value && ((ref = input.fields) != null ? ref[value] : void 0))) {
-          return;
-        }
-        if (input.fields[value].kind === 'file') {
-          return input.fields[value].download_url;
-        } else if (input.fields[value].kind === 'markup') {
-          return input.fields[value].value.value;
-        } else {
-          return input.fields[value].value;
-        }
-      };
-    }
-
-    return Meta;
-
-  })();
-
-  angular.module('imago').filter('meta', [Meta]);
 
 }).call(this);
 

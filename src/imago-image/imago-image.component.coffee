@@ -5,7 +5,7 @@ class imagoImage extends Component
     return {
 
       templateUrl: '/imago/imago-image.html'
-      controller: 'imagoImageController as imagoimage'
+      controller: 'imagoImageController'
       require:
         sliderCtrl: '?^imagoSlider'
       bindings:
@@ -116,7 +116,7 @@ class imagoImageController extends Controller
         @getSize()
 
       if @height is 0 and @width is 0
-        return console.log 'need width or/and height for static or relative positioning'
+        return console.warn 'need width or/and height for static or relative positioning'
 
       if @height > 0 and @width is 0
         @mainSide = 'autoheight'
@@ -147,7 +147,7 @@ class imagoImageController extends Controller
   getSize: ->
     @width  = @$element.children()[0].clientWidth
     @height = @$element.children()[0].clientHeight
-    # console.log "getSize #{@width}x#{@height}"
+    console.debug "imago-image: getSize #{@width}x#{@height}" if window.debug
 
   setServingSize: (servingSize) =>
     return if !@sliderCtrl
@@ -161,7 +161,7 @@ class imagoImageController extends Controller
     @getServingUrl()
 
   resize: ->
-    # console.log "resize #{@width}x#{@height}"
+    console.debug "imago-image: resize #{@width}x#{@height}" if window.debug
     if @mainSide not in ['autoheight', 'autowidth']
       @wrapperRatio = @width / @height
       if @opts.sizemode is 'crop'
@@ -172,7 +172,6 @@ class imagoImageController extends Controller
 
   getServingUrl: ->
     # @visible = true
-    # console.log "before: #{@width}x#{@height}"
 
     if @mainSide is "autoheight"
       servingSize = Math.round(Math.max(@height, @height * @assetRatio))
@@ -211,12 +210,20 @@ class imagoImageController extends Controller
 
     @setServingSize("=s#{ servingSize * @opts.scale }")
 
+    console.debug "imago-image: getServingUrl servingSize: #{servingSize * @opts.scale}" if window.debug
+
     @render()
 
   render: =>
+    if window.debug
+      console.time @asset.uuid
+      console.debug "imago-image: render", @asset.uuid
     img = angular.element('<img>')
     img.on 'load', =>
       @$scope.$applyAsync =>
+        if window.debug
+          console.debug "imago-image: render loaded", @asset.uuid
+          console.timeEnd @asset.uuid
         @imgUrl = @opts.servingUrl
         @loaded = true
 
