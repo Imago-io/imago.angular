@@ -1,6 +1,9 @@
 class Page extends Controller
 
   constructor: (promiseData) ->
-    for asset in promiseData
-      @data = asset
-      break
+    if promiseData.length == 1
+      for asset in promiseData
+        @data = asset
+    else
+      @data = promiseData
+

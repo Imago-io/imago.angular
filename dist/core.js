@@ -2077,10 +2077,13 @@
   Page = (function() {
     function Page(promiseData) {
       var asset, i, len;
-      for (i = 0, len = promiseData.length; i < len; i++) {
-        asset = promiseData[i];
-        this.data = asset;
-        break;
+      if (promiseData.length === 1) {
+        for (i = 0, len = promiseData.length; i < len; i++) {
+          asset = promiseData[i];
+          this.data = asset;
+        }
+      } else {
+        this.data = promiseData;
       }
     }
 
