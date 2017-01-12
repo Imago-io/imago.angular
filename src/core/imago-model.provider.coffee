@@ -163,7 +163,7 @@ class imagoModel extends Provider
             if (asset.count or asset.assets.length) or !asset.count
 
               if asset.assets.length isnt asset.count or !asset.count
-                # console.log "count not same as assets.length - go to server", asset.count, asset.assets.length
+                # console.log "count not same as assets.length - fetching", asset.count, asset.assets.length
                 return reject query
 
               else
@@ -173,10 +173,11 @@ class imagoModel extends Provider
                     return reject query if item.assets.length isnt item.count
 
                 asset.assets = @filterAssets(asset.assets, query)
+                return reject query if asset.assets.length isnt asset.count
                 return resolve asset
 
             else
-              # console.log 'asset found asset has no children', asset
+              console.log 'asset found asset has no children', asset
               return resolve asset
 
         getData: (query, options = {}) ->
@@ -191,9 +192,9 @@ class imagoModel extends Provider
 
           promises = []
 
-          makeQueryPromise = (value) =>
+          makeQueryPromise = (request) =>
             return $q (resolve, reject) =>
-              @getLocalData(value, options).then (result) =>
+              @getLocalData(request, options).then (result) =>
 
                 if result.assets
                   worker =
@@ -220,8 +221,8 @@ class imagoModel extends Provider
                   if err.status is 401
                     console.warn 'Imago API warning:', err.data
 
-          _.forEach query, (value) =>
-            promises.push makeQueryPromise(value)
+          for request in query
+            promises.push makeQueryPromise(request)
 
           return $q.all(promises).then (response) ->
             response = _.flatten response

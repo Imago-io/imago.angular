@@ -257,16 +257,20 @@
                       }
                     }
                     asset.assets = _this.filterAssets(asset.assets, query);
+                    if (asset.assets.length !== asset.count) {
+                      return reject(query);
+                    }
                     return resolve(asset);
                   }
                 } else {
+                  console.log('asset found asset has no children', asset);
                   return resolve(asset);
                 }
               };
             })(this));
           },
           getData: function(query, options) {
-            var makeQueryPromise, promises;
+            var j, len, makeQueryPromise, promises, request;
             if (options == null) {
               options = {};
             }
@@ -284,9 +288,9 @@
             query = imagoUtils.toArray(query);
             promises = [];
             makeQueryPromise = (function(_this) {
-              return function(value) {
+              return function(request) {
                 return $q(function(resolve, reject) {
-                  return _this.getLocalData(value, options).then(function(result) {
+                  return _this.getLocalData(request, options).then(function(result) {
                     var worker;
                     if (result.assets) {
                       worker = {
@@ -324,11 +328,10 @@
                 });
               };
             })(this);
-            _.forEach(query, (function(_this) {
-              return function(value) {
-                return promises.push(makeQueryPromise(value));
-              };
-            })(this));
+            for (j = 0, len = query.length; j < len; j++) {
+              request = query[j];
+              promises.push(makeQueryPromise(request));
+            }
             return $q.all(promises).then(function(response) {
               var ref, ref1;
               response = _.flatten(response);
