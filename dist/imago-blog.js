@@ -63,8 +63,8 @@
       return {
         scope: {
           query: '@',
-          posts: '=',
-          data: '=',
+          posts: '=?',
+          data: '=?',
           state: '@',
           prevPage: '&prev',
           nextPage: '&next',
