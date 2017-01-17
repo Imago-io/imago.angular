@@ -25,9 +25,8 @@ class AutocompleteGoogle extends Directive
           # form['street'] = place.name
           form = $parse(attrs.autocompleteGoogle)(scope)
 
-          viewValue = place.name or modelCtrl.$viewValue;
-
           componentConf =
+            route: {label: 'street', value: 'short_name'}
             locality: {label: 'city', value: 'long_name'}
             administrative_area_level_1: {label: 'state', value: 'short_name'}
             country: {label: 'country', value: 'long_name'}
@@ -42,6 +41,8 @@ class AutocompleteGoogle extends Directive
 
           for label, value of data
             form[label] = value
+
+          viewValue = form.street or place.name or modelCtrl.$viewValue;
 
           $parse(attrs.autocompleteOnsuccess)(scope) if attrs.autocompleteOnsuccess
           scope.$apply ->
