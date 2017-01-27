@@ -30,11 +30,8 @@
               return;
             }
             form = $parse(attrs.autocompleteGoogle)(scope);
+            viewValue = place.name || modelCtrl.$viewValue;
             componentConf = {
-              route: {
-                label: 'street',
-                value: 'short_name'
-              },
               locality: {
                 label: 'city',
                 value: 'long_name'
@@ -66,7 +63,6 @@
               value = data[label];
               form[label] = value;
             }
-            viewValue = form.street || place.name || modelCtrl.$viewValue;
             if (attrs.autocompleteOnsuccess) {
               $parse(attrs.autocompleteOnsuccess)(scope);
             }
