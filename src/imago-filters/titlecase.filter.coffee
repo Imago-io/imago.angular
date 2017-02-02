@@ -1,6 +1,6 @@
-class Titlecase extends Filter
+class Normalize extends Filter
 
   constructor: (imagoUtils) ->
     return (string) ->
       return false unless string
-      return imagoUtils.titleCase(string)
+      return imagoUtils.normalize(string)

@@ -15,6 +15,7 @@ class imagoProduct extends Factory
         @getOptions()
 
       getOptions: ->
+        # build an object with all values from the variants which are in the option white list
         @options = {}
 
         if @variants.length is 1
@@ -27,7 +28,10 @@ class imagoProduct extends Factory
 
         else
           for variant in @variants
+            # onmit variants with no price in current currency
             continue unless angular.isDefined(variant.fields.price?.value?[imagoCart.currency])
+
+            # build options
             for item in @optionsWhitelist
               continue unless variant.fields[item.name]?.value
               obj = {}
@@ -42,15 +46,21 @@ class imagoProduct extends Factory
             variant.presale = variant.fields?.presale?.value
             variant.lowstock = if variant.stock <= @lowStock and variant.stock then true else false
 
-          if @options.size?.length > 1
-            order = ['xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl']
-            @options.size.sort (a, b) -> order.indexOf(a.normname) - order.indexOf(b.normname)
-
-          # uniqify options
+          # option massage
           for key of @options
+            # uniqify options
             @options[key] = _.uniqBy @options[key], 'name'
+
+            # if an option has only value select it
             if @options[key]?.length is 1
               @[key] = _.head(@options[key]).name
+
+          # order values if custom order provided
+          for item in @optionsWhitelist
+            continue unless item.sortorder
+            continue unless @options[item.name]
+            @options[item.name].sort (a, b) ->
+              item.sortorder.indexOf(a.name) - item.sortorder.indexOf(b.name)
 
           @selectVariant()
 
