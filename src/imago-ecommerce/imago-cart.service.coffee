@@ -161,6 +161,7 @@ class imagoCart extends Service
 
   update: =>
     return unless @cart._id
+    @$rootScope.$emit 'imagocart:update'
     @$http.put("#{@imagoModel.host}/api/carts/#{@cart._id}", @cart)
 
   remove: (item) =>

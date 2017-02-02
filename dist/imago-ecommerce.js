@@ -535,6 +535,7 @@
       if (!this.cart._id) {
         return;
       }
+      this.$rootScope.$emit('imagocart:update');
       return this.$http.put(this.imagoModel.host + "/api/carts/" + this.cart._id, this.cart);
     };
 
