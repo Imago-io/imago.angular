@@ -99,7 +99,7 @@ class imagoCart extends Service
     return @$http.post("#{@imagoModel.host}/api/carts", cart)
 
   add: (item, options, fields, cartOptions) ->
-    console.log 'cartOptions', cartOptions
+    # console.log 'cartOptions', cartOptions
     return console.log 'item required' unless item
     return console.log 'no stock' if (item.stock <= 0 or !item.stock) and !item.presale
 

@@ -442,7 +442,6 @@
 
     imagoCart.prototype.add = function(item, options, fields, cartOptions) {
       var copy, field, filter, i, j, len, len1, option, parent, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9;
-      console.log('cartOptions', cartOptions);
       if (!item) {
         return console.log('item required');
       }
@@ -735,7 +734,7 @@
         }
 
         ProductInstance.prototype.getOptions = function() {
-          var base, i, item, j, k, key, len, len1, len2, name, obj, order, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, variant;
+          var base, i, item, j, k, key, l, len, len1, len2, len3, name, obj, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, variant;
           this.options = {};
           if (this.variants.length === 1) {
             ref = this.variants;
@@ -771,17 +770,24 @@
               variant.presale = (ref16 = variant.fields) != null ? (ref17 = ref16.presale) != null ? ref17.value : void 0 : void 0;
               variant.lowstock = variant.stock <= this.lowStock && variant.stock ? true : false;
             }
-            if (((ref18 = this.options.size) != null ? ref18.length : void 0) > 1) {
-              order = ['xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl'];
-              this.options.size.sort(function(a, b) {
-                return order.indexOf(a.normname) - order.indexOf(b.normname);
-              });
-            }
             for (key in this.options) {
               this.options[key] = _.uniqBy(this.options[key], 'name');
-              if (((ref19 = this.options[key]) != null ? ref19.length : void 0) === 1) {
+              if (((ref18 = this.options[key]) != null ? ref18.length : void 0) === 1) {
                 this[key] = _.head(this.options[key]).name;
               }
+            }
+            ref19 = this.optionsWhitelist;
+            for (l = 0, len3 = ref19.length; l < len3; l++) {
+              item = ref19[l];
+              if (!item.sortorder) {
+                continue;
+              }
+              if (!this.options[item.name]) {
+                continue;
+              }
+              this.options[item.name].sort(function(a, b) {
+                return item.sortorder.indexOf(a.name) - item.sortorder.indexOf(b.name);
+              });
             }
             return this.selectVariant();
           }

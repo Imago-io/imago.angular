@@ -119,23 +119,23 @@
 }).call(this);
 
 (function() {
-  var Normalize;
+  var Titlecase;
 
-  Normalize = (function() {
-    function Normalize(imagoUtils) {
+  Titlecase = (function() {
+    function Titlecase(imagoUtils) {
       return function(string) {
         if (!string) {
           return false;
         }
-        return imagoUtils.normalize(string);
+        return imagoUtils.titleCase(string);
       };
     }
 
-    return Normalize;
+    return Titlecase;
 
   })();
 
-  angular.module('imago').filter('normalize', ['imagoUtils', Normalize]);
+  angular.module('imago').filter('titlecase', ['imagoUtils', Titlecase]);
 
 }).call(this);
 
@@ -208,5 +208,26 @@
   })();
 
   angular.module('imago').filter('tagFilter', ['imagoUtils', TagFilter]);
+
+}).call(this);
+
+(function() {
+  var Normalize;
+
+  Normalize = (function() {
+    function Normalize(imagoUtils) {
+      return function(string) {
+        if (!string) {
+          return false;
+        }
+        return imagoUtils.normalize(string);
+      };
+    }
+
+    return Normalize;
+
+  })();
+
+  angular.module('imago').filter('normalize', ['imagoUtils', Normalize]);
 
 }).call(this);
