@@ -13,14 +13,14 @@
     target="_blank"
     ng-if="google || all")
   a.fa.fa-linkedin(
-    ng-href="https://www.linkedin.com/shareArticle?mini=true&url={{imagoshare.location}}&title={{imagoshare.asset | meta:'title'}}&summary=&source={{imagoshare.asset.serving_url}}"
+    ng-href="https://www.linkedin.com/shareArticle?mini=true&url={{imagoshare.location}}&title={{asset.fields.title.value}}&summary=&source={{imagoshare.asset.serving_url}}"
     target="_blank"
     ng-if="linkedin || all")
   a.fa.fa-tumblr(
-    ng-href="http://www.tumblr.com/share/photo?source={{imagoshare.location}}&caption={{imagoshare.asset | meta:'title'}}"
+    ng-href="http://www.tumblr.com/share/photo?source={{imagoshare.location}}&caption={{imagoshare.asset.fields.title.value}}"
     target="_blank"
     ng-if="tumblr|| all")
   a.fa.fa-pinterest(
-    ng-href="http://www.pinterest.com/pin/create/abutton/?url={{imagoshare.location}}/&media={{imagoshare.asset.serving_url}}&description={{imagoshare.asset | meta:'title'}}"
+    ng-href="http://www.pinterest.com/pin/create/abutton/?url={{imagoshare.location}}/&media={{imagoshare.asset.serving_url}}&description={{imagoshare.asset.fields.title.value}}"
     target="_blank" title="Pin It"
     ng-if="pinterest || all")
