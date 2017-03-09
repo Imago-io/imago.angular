@@ -7,7 +7,7 @@ class imagoModel extends Provider
     nextClient = 'public'
     indexRange = 10000
 
-    console.log 'host', host
+    # console.log 'host', host
     config =
       updatePageTitle: true
 

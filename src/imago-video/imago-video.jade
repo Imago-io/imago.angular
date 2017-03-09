@@ -1,8 +1,9 @@
 .imago-video-content(
     ng-class="[imagovideo.opts.align, imagovideo.opts.sizemode, imagovideo.mainSide, imagovideo.state]"
     in-view="imagovideo.visible = $inview"
-    in-view-options="{debounce: 50}")
+    in-view-options="{debounce: 1000}")
   //- pre {{imagovideo.opts.align}} {{imagovideo.opts.sizemode}} {{imagovideo.mainSide}}
+  //- pre {{imagovideo.sources|json}} {{::imagovideo.opts.loop|json}} {{::imagovideo.opts.preload|json}}
   .imago-video-wrapper
     .spacer(ng-style="imagovideo.spacerStyle")
     videogular(
@@ -12,7 +13,7 @@
         vg-update-state="imagovideo.state = $state"
         vg-player-ready="imagovideo.onPlayerReady($API)")
       vg-media(
-        vg-src="::imagovideo.sources"
+        vg-src="imagovideo.sources"
         vg-loop="::imagovideo.opts.loop"
         vg-preload="::imagovideo.opts.preload")
 
