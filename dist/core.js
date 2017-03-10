@@ -339,7 +339,7 @@
                 if (options.title) {
                   $document.prop('title', options.title);
                 } else if (response.length === 1 && ((ref = response[0].fields) != null ? (ref1 = ref.title) != null ? ref1.value : void 0 : void 0)) {
-                  $document.prop('title', response[0].fields.title.value);
+                  $document.prop('title', response[0].fields.title.value.replace(/<[A-Za-z\/][^<>]*>/g, ' ').replace(/\r?\n|\r/g, ''));
                 } else if (response.length === 1 && response[0].name) {
                   $document.prop('title', response[0].name);
                 }

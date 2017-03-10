@@ -231,7 +231,7 @@ class imagoModel extends Provider
               if options.title
                 $document.prop 'title', options.title
               else if response.length is 1 and response[0].fields?.title?.value
-                $document.prop 'title', response[0].fields.title.value
+                $document.prop 'title', response[0].fields.title.value.replace(/<[A-Za-z/][^<>]*>/g, ' ').replace(/\r?\n|\r/g, '')
               else if response.length is 1 and response[0].name
                 $document.prop 'title', response[0].name
 
