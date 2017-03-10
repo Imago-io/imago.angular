@@ -179,6 +179,12 @@
           }
           _this.ready = true;
           _this.resize();
+          _this.asset.fields.formats = _.filter(_this.asset.fields.formats, function(source) {
+            var ref4;
+            if ((ref4 = source.size) !== 'preview') {
+              return true;
+            }
+          });
           if (_this.imagoUtils.isMobile()) {
             _this.asset.fields.formats = _.filter(_this.asset.fields.formats, function(source) {
               var ref4;

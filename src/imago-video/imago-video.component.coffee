@@ -118,6 +118,11 @@ class imagoVideoController extends Controller
       @ready = true
       @resize()
 
+      # remove preview
+      @asset.fields.formats = _.filter @asset.fields.formats, (source) ->
+        return true unless source.size in ['preview']
+
+      # remove 1080p for mobile
       if @imagoUtils.isMobile()
         @asset.fields.formats = _.filter @asset.fields.formats, (source) ->
           return true unless source.size in ['1080p']
