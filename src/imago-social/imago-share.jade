@@ -1,5 +1,8 @@
 .imago-share-content
 
+  a.fa.fa-envelope(
+    ng-href="mailto:?Subject=Share&Body={{imagoshare.location}}"
+    ng-if="mail || all")
   a.fa.fa-facebook(
     ng-href="http://www.facebook.com/share.php?u={{imagoshare.location}}"
     target="_blank"
