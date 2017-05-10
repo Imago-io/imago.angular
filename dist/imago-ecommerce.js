@@ -738,6 +738,7 @@
           var base, i, item, j, k, key, l, len, len1, len2, len3, name, obj, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, variant;
           this.options = {};
           if (this.variants.length === 1) {
+            console.log('one varint');
             ref = this.variants;
             for (i = 0, len = ref.length; i < len; i++) {
               variant = ref[i];
@@ -745,7 +746,7 @@
               variant.presale = (ref4 = variant.fields) != null ? (ref5 = ref4.presale) != null ? ref5.value : void 0 : void 0;
               variant.lowstock = variant.stock <= this.lowStock && variant.stock ? true : false;
             }
-            return this.selected = _.head(this.variants);
+            return this.selectVariant();
           } else {
             ref6 = this.variants;
             for (j = 0, len1 = ref6.length; j < len1; j++) {

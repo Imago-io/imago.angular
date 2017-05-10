@@ -19,12 +19,14 @@ class imagoProduct extends Factory
         @options = {}
 
         if @variants.length is 1
+          console.log 'one varint'
           for variant in @variants
             variant.stock = Number(variant.fields?.stock?.value?[fulfillmentsCenter.selected._id])
             variant.presale = variant.fields?.presale?.value
             variant.lowstock = if variant.stock <= @lowStock and variant.stock then true else false
 
-          @selected = _.head @variants
+          # @selected = _.head @variants
+          @selectVariant() # needed for single variant district vision
 
         else
           for variant in @variants
