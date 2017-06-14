@@ -1,4 +1,4 @@
-.imago-find-price-content
+.imago-find-price-content(ng-if="findprice.highest || findprice.lowest")
   .one-price(ng-show="findprice.highest === findprice.lowest")
     span.currency(ng-bind-html="findprice.imagoCart.currency | currencySymbol")
     span.amount(ng-bind="findprice.highest | price: 0")
