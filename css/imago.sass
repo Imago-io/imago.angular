@@ -34,11 +34,13 @@ imago-slider
     &.small
       opacity: 1
       transition: opacity .25s
-      // width: 100%
-      // height: 100%
     &.large
       opacity: 0
       transition: opacity .75s
+
+  &.crop img.small
+    width: 100%
+    height: 100%
 
   // hide small 3px image disabled. we still need it for sizing though
   &.noplaceholder
