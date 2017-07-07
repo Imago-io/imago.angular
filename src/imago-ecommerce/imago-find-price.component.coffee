@@ -9,7 +9,8 @@ class imagoFindPrice extends Component
         options: '=variants'
         product: '='
         attributes: '@'
-      templateUrl: '/imago/imago-find-price.html'
+      templateUrl: ($attrs) ->
+        return $attrs.templateUrl or '/imago/imago-find-price.html'
 
     }
 

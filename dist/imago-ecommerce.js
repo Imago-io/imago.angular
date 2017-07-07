@@ -611,7 +611,9 @@
           product: '=',
           attributes: '@'
         },
-        templateUrl: '/imago/imago-find-price.html'
+        templateUrl: function($attrs) {
+          return $attrs.templateUrl || '/imago/imago-find-price.html';
+        }
       };
     }
 

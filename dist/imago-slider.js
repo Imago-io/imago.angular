@@ -67,9 +67,9 @@
               ev.stopPropagation();
             }
             if (!scope.imagoslider.conf.loop) {
-              scope.imagoslider.setCurrent(scope.currentIndex > 0 ? scope.currentIndex - 1 : scope.currentIndex);
+              scope.imagoslider.setCurrent((scope.currentIndex > 0) ? scope.currentIndex - 1 : scope.currentIndex);
             } else if (scope.imagoslider.conf.loop && !scope.imagoslider.conf.siblings) {
-              scope.imagoslider.setCurrent(scope.currentIndex > 0 ? scope.currentIndex - 1 : parseInt(scope.imagoslider.length) - 1);
+              scope.imagoslider.setCurrent((scope.currentIndex > 0) ? scope.currentIndex - 1 : parseInt(scope.imagoslider.length) - 1);
             } else if (scope.imagoslider.conf.loop && scope.imagoslider.conf.siblings) {
               if (scope.currentIndex > 0) {
                 scope.imagoslider.setCurrent(scope.currentIndex - 1);
@@ -91,9 +91,9 @@
                 }
               }
               if (!scope.imagoslider.conf.loop) {
-                scope.imagoslider.setCurrent(scope.currentIndex < scope.imagoslider.length - 1 ? scope.currentIndex + 1 : scope.currentIndex);
+                scope.imagoslider.setCurrent((scope.currentIndex < scope.imagoslider.length - 1) ? scope.currentIndex + 1 : scope.currentIndex);
               } else if (scope.imagoslider.conf.loop && !scope.imagoslider.conf.siblings) {
-                scope.imagoslider.setCurrent(scope.currentIndex < scope.imagoslider.length - 1 ? scope.currentIndex + 1 : 0);
+                scope.imagoslider.setCurrent((scope.currentIndex < scope.imagoslider.length - 1) ? scope.currentIndex + 1 : 0);
               } else if (scope.imagoslider.conf.loop && scope.imagoslider.conf.siblings) {
                 if (scope.currentIndex < scope.imagoslider.length - 1) {
                   scope.imagoslider.setCurrent(scope.currentIndex + 1);
