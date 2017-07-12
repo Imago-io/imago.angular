@@ -737,64 +737,52 @@
         }
 
         ProductInstance.prototype.getOptions = function() {
-          var base, i, item, j, k, key, l, len, len1, len2, len3, name, obj, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, variant;
+          var base, i, item, j, k, key, len, len1, len2, name, obj, ref, ref1, ref10, ref11, ref12, ref13, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, variant;
           this.options = {};
-          if (this.variants.length === 1) {
-            console.log('one varint');
-            ref = this.variants;
-            for (i = 0, len = ref.length; i < len; i++) {
-              variant = ref[i];
-              variant.stock = Number((ref1 = variant.fields) != null ? (ref2 = ref1.stock) != null ? (ref3 = ref2.value) != null ? ref3[fulfillmentsCenter.selected._id] : void 0 : void 0 : void 0);
-              variant.presale = (ref4 = variant.fields) != null ? (ref5 = ref4.presale) != null ? ref5.value : void 0 : void 0;
-              variant.lowstock = variant.stock <= this.lowStock && variant.stock ? true : false;
+          ref = this.variants;
+          for (i = 0, len = ref.length; i < len; i++) {
+            variant = ref[i];
+            if (!angular.isDefined((ref1 = variant.fields.price) != null ? (ref2 = ref1.value) != null ? ref2[imagoCart.currency] : void 0 : void 0)) {
+              continue;
             }
-            return this.selectVariant();
-          } else {
-            ref6 = this.variants;
-            for (j = 0, len1 = ref6.length; j < len1; j++) {
-              variant = ref6[j];
-              if (!angular.isDefined((ref7 = variant.fields.price) != null ? (ref8 = ref7.value) != null ? ref8[imagoCart.currency] : void 0 : void 0)) {
+            ref3 = this.optionsWhitelist;
+            for (j = 0, len1 = ref3.length; j < len1; j++) {
+              item = ref3[j];
+              if (!((ref4 = variant.fields[item.name]) != null ? ref4.value : void 0)) {
                 continue;
               }
-              ref9 = this.optionsWhitelist;
-              for (k = 0, len2 = ref9.length; k < len2; k++) {
-                item = ref9[k];
-                if (!((ref10 = variant.fields[item.name]) != null ? ref10.value : void 0)) {
-                  continue;
-                }
-                obj = {};
-                for (key in item) {
-                  obj[key] = (ref11 = variant.fields) != null ? (ref12 = ref11[item[key]]) != null ? ref12.value : void 0 : void 0;
-                }
-                obj.normname = _.kebabCase(obj.name);
-                (base = this.options)[name = item.name] || (base[name] = []);
-                this.options[item.name].push(obj);
+              obj = {};
+              for (key in item) {
+                obj[key] = (ref5 = variant.fields) != null ? (ref6 = ref5[item[key]]) != null ? ref6.value : void 0 : void 0;
               }
-              variant.stock = Number((ref13 = variant.fields) != null ? (ref14 = ref13.stock) != null ? (ref15 = ref14.value) != null ? ref15[fulfillmentsCenter.selected._id] : void 0 : void 0 : void 0);
-              variant.presale = (ref16 = variant.fields) != null ? (ref17 = ref16.presale) != null ? ref17.value : void 0 : void 0;
-              variant.lowstock = variant.stock <= this.lowStock && variant.stock ? true : false;
+              obj.normname = _.kebabCase(obj.name);
+              (base = this.options)[name = item.name] || (base[name] = []);
+              this.options[item.name].push(obj);
             }
-            for (key in this.options) {
-              this.options[key] = _.uniqBy(this.options[key], 'name');
-              if (((ref18 = this.options[key]) != null ? ref18.length : void 0) === 1) {
-                this[key] = _.head(this.options[key]).name;
-              }
-            }
-            ref19 = this.optionsWhitelist;
-            for (l = 0, len3 = ref19.length; l < len3; l++) {
-              item = ref19[l];
-              if (!item.sortorder) {
-                continue;
-              }
-              if (!this.options[item.name]) {
-                continue;
-              }
-              this.options[item.name].sort(function(a, b) {
-                return item.sortorder.indexOf(a.name) - item.sortorder.indexOf(b.name);
-              });
-            }
-            return this.selectVariant();
+            variant.stock = Number((ref7 = variant.fields) != null ? (ref8 = ref7.stock) != null ? (ref9 = ref8.value) != null ? ref9[fulfillmentsCenter.selected._id] : void 0 : void 0 : void 0);
+            variant.presale = (ref10 = variant.fields) != null ? (ref11 = ref10.presale) != null ? ref11.value : void 0 : void 0;
+            variant.lowstock = variant.stock <= this.lowStock && variant.stock ? true : false;
           }
+          for (key in this.options) {
+            this.options[key] = _.uniqBy(this.options[key], 'name');
+            if (((ref12 = this.options[key]) != null ? ref12.length : void 0) === 1) {
+              this[key] = _.head(this.options[key]).name;
+            }
+          }
+          ref13 = this.optionsWhitelist;
+          for (k = 0, len2 = ref13.length; k < len2; k++) {
+            item = ref13[k];
+            if (!item.sortorder) {
+              continue;
+            }
+            if (!this.options[item.name]) {
+              continue;
+            }
+            this.options[item.name].sort(function(a, b) {
+              return item.sortorder.indexOf(a.name) - item.sortorder.indexOf(b.name);
+            });
+          }
+          return this.selectVariant();
         };
 
         ProductInstance.prototype.setOption = function(attr, value) {

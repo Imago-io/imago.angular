@@ -18,53 +18,62 @@ class imagoProduct extends Factory
         # build an object with all values from the variants which are in the option white list
         @options = {}
 
-        if @variants.length is 1
-          console.log 'one varint'
-          for variant in @variants
-            variant.stock = Number(variant.fields?.stock?.value?[fulfillmentsCenter.selected._id])
-            variant.presale = variant.fields?.presale?.value
-            variant.lowstock = if variant.stock <= @lowStock and variant.stock then true else false
+        # if @variants.length is 1
+        #   for variant in @variants
+        #     # build options
+        #     for item in @optionsWhitelist
+        #       continue unless variant.fields[item.name]?.value
+        #       obj = {}
+        #       for key of item
+        #         obj[key] = variant.fields?[item[key]]?.value
+        #       obj.normname = _.kebabCase(obj.name)
+        #       @options[item.name] or= []
+        #       @options[item.name].push obj
 
-          # @selected = _.head @variants
-          @selectVariant() # needed for single variant district vision
+        #     variant.stock = Number(variant.fields?.stock?.value?[fulfillmentsCenter.selected._id])
+        #     variant.presale = variant.fields?.presale?.value
+        #     variant.lowstock = if variant.stock <= @lowStock and variant.stock then true else false
 
-        else
-          for variant in @variants
-            # onmit variants with no price in current currency
-            continue unless angular.isDefined(variant.fields.price?.value?[imagoCart.currency])
+        #   # @selected = _.head @variants
+        #   @selectVariant() # needed for single variant district vision
 
-            # build options
-            for item in @optionsWhitelist
-              continue unless variant.fields[item.name]?.value
-              obj = {}
-              for key of item
-                obj[key] = variant.fields?[item[key]]?.value
-              obj.normname = _.kebabCase(obj.name)
-              @options[item.name] or= []
-              @options[item.name].push obj
+        # else
+        for variant in @variants
+          # onmit variants with no price in current currency
+          continue unless angular.isDefined(variant.fields.price?.value?[imagoCart.currency])
 
-            # save stock and low stock
-            variant.stock = Number(variant.fields?.stock?.value?[fulfillmentsCenter.selected._id])
-            variant.presale = variant.fields?.presale?.value
-            variant.lowstock = if variant.stock <= @lowStock and variant.stock then true else false
-
-          # option massage
-          for key of @options
-            # uniqify options
-            @options[key] = _.uniqBy @options[key], 'name'
-
-            # if an option has only value select it
-            if @options[key]?.length is 1
-              @[key] = _.head(@options[key]).name
-
-          # order values if custom order provided
+          # build options
           for item in @optionsWhitelist
-            continue unless item.sortorder
-            continue unless @options[item.name]
-            @options[item.name].sort (a, b) ->
-              item.sortorder.indexOf(a.name) - item.sortorder.indexOf(b.name)
+            continue unless variant.fields[item.name]?.value
+            obj = {}
+            for key of item
+              obj[key] = variant.fields?[item[key]]?.value
+            obj.normname = _.kebabCase(obj.name)
+            @options[item.name] or= []
+            @options[item.name].push obj
 
-          @selectVariant()
+          # save stock and low stock
+          variant.stock = Number(variant.fields?.stock?.value?[fulfillmentsCenter.selected._id])
+          variant.presale = variant.fields?.presale?.value
+          variant.lowstock = if variant.stock <= @lowStock and variant.stock then true else false
+
+        # option massage
+        for key of @options
+          # uniqify options
+          @options[key] = _.uniqBy @options[key], 'name'
+
+          # if an option has only value select it
+          if @options[key]?.length is 1
+            @[key] = _.head(@options[key]).name
+
+        # order values if custom order provided
+        for item in @optionsWhitelist
+          continue unless item.sortorder
+          continue unless @options[item.name]
+          @options[item.name].sort (a, b) ->
+            item.sortorder.indexOf(a.name) - item.sortorder.indexOf(b.name)
+
+        @selectVariant()
 
       setOption: (attr, value) ->
         @[attr] = value
