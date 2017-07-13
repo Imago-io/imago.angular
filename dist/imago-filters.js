@@ -119,6 +119,27 @@
 }).call(this);
 
 (function() {
+  var NewlineToBr;
+
+  NewlineToBr = (function() {
+    function NewlineToBr(imagoUtils) {
+      return function(string) {
+        if (!string) {
+          return false;
+        }
+        return imagoUtils.replaceNewLines(string);
+      };
+    }
+
+    return NewlineToBr;
+
+  })();
+
+  angular.module('imago').filter('newlineToBr', ['imagoUtils', NewlineToBr]);
+
+}).call(this);
+
+(function() {
   var Titlecase;
 
   Titlecase = (function() {

@@ -20,16 +20,6 @@ class imagoProduct extends Factory
 
         # if @variants.length is 1
         #   for variant in @variants
-        #     # build options
-        #     for item in @optionsWhitelist
-        #       continue unless variant.fields[item.name]?.value
-        #       obj = {}
-        #       for key of item
-        #         obj[key] = variant.fields?[item[key]]?.value
-        #       obj.normname = _.kebabCase(obj.name)
-        #       @options[item.name] or= []
-        #       @options[item.name].push obj
-
         #     variant.stock = Number(variant.fields?.stock?.value?[fulfillmentsCenter.selected._id])
         #     variant.presale = variant.fields?.presale?.value
         #     variant.lowstock = if variant.stock <= @lowStock and variant.stock then true else false
