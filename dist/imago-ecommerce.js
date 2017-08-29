@@ -683,26 +683,20 @@
     imagoFindPriceController.prototype.findPrice = function() {
       var i, len, option, ref, ref1, ref2, ref3, ref4, ref5, ref6;
       this.prices = [];
-      this.discounts = [];
       ref = this.variants;
       for (i = 0, len = ref.length; i < len; i++) {
         option = ref[i];
-        if ((ref1 = option.fields) != null ? (ref2 = ref1.price) != null ? (ref3 = ref2.value) != null ? ref3[this.imagoCart.currency] : void 0 : void 0 : void 0) {
+        if ((ref1 = option.fields) != null ? (ref2 = ref1.discountedPrice) != null ? (ref3 = ref2.value) != null ? ref3[this.imagoCart.currency] : void 0 : void 0 : void 0) {
+          this.prices.push(option.fields.discountedPrice.value[this.imagoCart.currency]);
+        } else if ((ref4 = option.fields) != null ? (ref5 = ref4.price) != null ? (ref6 = ref5.value) != null ? ref6[this.imagoCart.currency] : void 0 : void 0 : void 0) {
           this.prices.push(option.fields.price.value[this.imagoCart.currency]);
-        }
-        if ((ref4 = option.fields) != null ? (ref5 = ref4.discountedPrice) != null ? (ref6 = ref5.value) != null ? ref6[this.imagoCart.currency] : void 0 : void 0 : void 0) {
-          this.discounts.push(option.fields.discountedPrice.value[this.imagoCart.currency]);
         }
       }
       if (!this.prices.length) {
         return;
       }
       this.highest = Math.max.apply(Math, this.prices);
-      if (this.discounts.length) {
-        return this.lowest = Math.max.apply(Math, this.discounts);
-      } else {
-        return this.lowest = Math.min.apply(Math, this.prices);
-      }
+      return this.lowest = Math.min.apply(Math, this.prices);
     };
 
     return imagoFindPriceController;

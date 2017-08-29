@@ -50,22 +50,16 @@ class imagoFindPriceController extends Controller
 
   findPrice: ->
     @prices = []
-    @discounts = []
 
     for option in @variants
-      if option.fields?.price?.value?[@imagoCart.currency]
-        @prices.push option.fields.price.value[@imagoCart.currency]
-
       if option.fields?.discountedPrice?.value?[@imagoCart.currency]
-        @discounts.push option.fields.discountedPrice.value[@imagoCart.currency]
+        @prices.push option.fields.discountedPrice.value[@imagoCart.currency]
+      else if option.fields?.price?.value?[@imagoCart.currency]
+        @prices.push option.fields.price.value[@imagoCart.currency]
 
     return unless @prices.length
     @highest = Math.max.apply(Math, @prices)
-
-    if @discounts.length
-      @lowest = Math.max.apply(Math, @discounts)
-    else
-      @lowest = Math.min.apply(Math, @prices)
+    @lowest  = Math.min.apply(Math, @prices)
 
     # console.log '@prices', @prices
     # console.log '@highest', @highest
