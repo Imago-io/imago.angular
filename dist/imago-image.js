@@ -240,16 +240,16 @@
 
     imagoImageController.prototype.resize = function() {
       var ref;
-      if (window.debug) {
-        console.debug("imago-image: resize " + this.width + "x" + this.height);
-      }
       if ((ref = this.mainSide) !== 'autoheight' && ref !== 'autowidth') {
         this.wrapperRatio = this.width / this.height;
         if (this.opts.sizemode === 'crop') {
-          return this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
+          this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
         } else {
-          return this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
+          this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
         }
+      }
+      if (window.debug) {
+        return console.debug("imago-image: resize " + this.width + "x" + this.height + " @mainSide " + this.mainSide);
       }
     };
 

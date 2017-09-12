@@ -2,7 +2,7 @@
     ng-class="[imagovideo.opts.align, imagovideo.opts.sizemode, imagovideo.mainSide, imagovideo.state]"
     in-view="imagovideo.visible = $inview"
     in-view-options="{debounce: 1000}")
-  //- pre {{imagovideo.opts.align}} {{imagovideo.opts.sizemode}} {{imagovideo.mainSide}}
+
   //- pre {{imagovideo.sources|json}} {{::imagovideo.opts.loop|json}} {{::imagovideo.opts.preload|json}}
   .imago-video-wrapper
     .spacer(ng-style="imagovideo.spacerStyle")
@@ -31,6 +31,9 @@
           vg-mute-button
           vg-volume-bar
         vg-fullscreen-button
+
       vg-overlay-play
+
       vg-poster(vg-url="::imagovideo.poster")
+  //- pre(style="position: absolute; background: red; top: 200px; left: 0; z-index: 1000;") {{imagovideo.opts.align}} {{imagovideo.opts.sizemode}} {{imagovideo.mainSide}} {{imagovideo.opts.controls}}
 

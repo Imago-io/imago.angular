@@ -161,14 +161,13 @@ class imagoImageController extends Controller
     @getServingUrl()
 
   resize: ->
-    console.debug "imago-image: resize #{@width}x#{@height}" if window.debug
     if @mainSide not in ['autoheight', 'autowidth']
       @wrapperRatio = @width / @height
       if @opts.sizemode is 'crop'
         @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
       else
         @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
-      # console.log "resize INNER #{@width}x#{@height}"
+    console.debug "imago-image: resize #{@width}x#{@height} @mainSide #{@mainSide}" if window.debug
 
   getServingUrl: ->
     # @visible = true

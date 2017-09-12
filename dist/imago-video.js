@@ -21,15 +21,18 @@
   })();
 
   imagoVideoController = (function() {
-    function imagoVideoController($rootScope, $attrs1, $scope, $element, $sce, imagoUtils, imagoModel) {
+    function imagoVideoController($rootScope, $attrs1, $scope, $element, $sce, $timeout, imagoUtils, imagoModel) {
       this.$rootScope = $rootScope;
       this.$attrs = $attrs1;
       this.$scope = $scope;
       this.$element = $element;
       this.$sce = $sce;
+      this.$timeout = $timeout;
       this.imagoUtils = imagoUtils;
       this.imagoModel = imagoModel;
+      this.resize = bind(this.resize, this);
       this.onPlayerReady = bind(this.onPlayerReady, this);
+      window.debug = false;
       this.watchers = [];
       this.sources = [];
       this.dpr = Math.ceil(window.devicePixelRatio, 1) || 1;
@@ -242,25 +245,29 @@
     };
 
     imagoVideoController.prototype.resize = function() {
-      var ref;
-      if (window.debug) {
-        console.debug("imago-video: resize " + this.width + "x" + this.height);
-      }
-      if ((ref = this.mainSide) !== 'autoheight' && ref !== 'autowidth') {
-        this.wrapperRatio = this.width / this.height;
-        if (this.opts.sizemode === 'crop') {
-          return this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
-        } else {
-          return this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
-        }
-      }
+      return this.$timeout((function(_this) {
+        return function() {
+          var ref;
+          if ((ref = _this.mainSide) !== 'autoheight' && ref !== 'autowidth') {
+            _this.wrapperRatio = _this.width / _this.height;
+            if (_this.opts.sizemode === 'crop') {
+              _this.mainSide = _this.assetRatio < _this.wrapperRatio ? 'width' : 'height';
+            } else {
+              _this.mainSide = _this.assetRatio > _this.wrapperRatio ? 'width' : 'height';
+            }
+          }
+          if (window.debug) {
+            return console.debug("imago-video: resize " + _this.width + "x" + _this.height + " @mainSide " + _this.mainSide);
+          }
+        };
+      })(this), 0);
     };
 
     return imagoVideoController;
 
   })();
 
-  angular.module('imago').component('imagoVideo', new imagoVideo()).controller('imagoVideoController', ['$rootScope', '$attrs', '$scope', '$element', '$sce', 'imagoUtils', 'imagoModel', imagoVideoController]);
+  angular.module('imago').component('imagoVideo', new imagoVideo()).controller('imagoVideoController', ['$rootScope', '$attrs', '$scope', '$element', '$sce', '$timeout', 'imagoUtils', 'imagoModel', imagoVideoController]);
 
 }).call(this);
 

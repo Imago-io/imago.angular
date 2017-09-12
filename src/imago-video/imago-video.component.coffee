@@ -15,7 +15,9 @@ class imagoVideo extends Component
 
 class imagoVideoController extends Controller
 
-  constructor: (@$rootScope, @$attrs, @$scope, @$element, @$sce, @imagoUtils, @imagoModel) ->
+  constructor: (@$rootScope, @$attrs, @$scope, @$element, @$sce, @$timeout, @imagoUtils, @imagoModel) ->
+
+    window.debug = false
 
     @watchers   = []
     @sources = []
@@ -156,13 +158,14 @@ class imagoVideoController extends Controller
         else
           api.pause()
 
-  resize: ->
-    console.debug "imago-video: resize #{@width}x#{@height}" if window.debug
-    if @mainSide not in ['autoheight', 'autowidth']
-      @wrapperRatio = @width / @height
-      if @opts.sizemode is 'crop'
-        @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
-      else
-        @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
-
+  resize: =>
+    @$timeout =>
+      if @mainSide not in ['autoheight', 'autowidth']
+        @wrapperRatio = @width / @height
+        if @opts.sizemode is 'crop'
+          @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
+        else
+          @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
+      console.debug "imago-video: resize #{@width}x#{@height} @mainSide #{@mainSide}" if window.debug
+    , 0
 
