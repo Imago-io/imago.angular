@@ -152,17 +152,16 @@
       if (this.opts.responsive) {
         this.watchers.push(this.$rootScope.$on('resize', (function(_this) {
           return function() {
-            var old;
-            _this.getSize();
-            _this.resize();
-            old = _this.mainSide;
-            if (old !== _this.mainSide) {
-              return _this.$scope.$digest();
-            }
+            return _this.$timeout(function() {
+              var old;
+              _this.getSize();
+              _this.resize();
+              return old = _this.mainSide;
+            }, 0);
           };
         })(this)));
       }
-      return this.$scope.$applyAsync((function(_this) {
+      return this.$timeout((function(_this) {
         return function() {
           var mp4s, webms;
           _this.getSize();
@@ -214,7 +213,7 @@
             return _this.poster = _this.asset.serving_url + "=s2000-h720";
           }
         };
-      })(this));
+      })(this), 50);
     };
 
     imagoVideoController.prototype.getSize = function() {
@@ -245,22 +244,18 @@
     };
 
     imagoVideoController.prototype.resize = function() {
-      return this.$timeout((function(_this) {
-        return function() {
-          var ref;
-          if ((ref = _this.mainSide) !== 'autoheight' && ref !== 'autowidth') {
-            _this.wrapperRatio = _this.width / _this.height;
-            if (_this.opts.sizemode === 'crop') {
-              _this.mainSide = _this.assetRatio < _this.wrapperRatio ? 'width' : 'height';
-            } else {
-              _this.mainSide = _this.assetRatio > _this.wrapperRatio ? 'width' : 'height';
-            }
-          }
-          if (window.debug) {
-            return console.debug("imago-video: resize " + _this.width + "x" + _this.height + " @mainSide " + _this.mainSide);
-          }
-        };
-      })(this), 0);
+      var ref;
+      if ((ref = this.mainSide) !== 'autoheight' && ref !== 'autowidth') {
+        this.wrapperRatio = this.width / this.height;
+        if (this.opts.sizemode === 'crop') {
+          this.mainSide = this.assetRatio < this.wrapperRatio ? 'width' : 'height';
+        } else {
+          this.mainSide = this.assetRatio > this.wrapperRatio ? 'width' : 'height';
+        }
+      }
+      if (window.debug) {
+        return console.debug("imago-video: resize " + this.width + "x" + this.height + " @mainSide " + this.mainSide);
+      }
     };
 
     return imagoVideoController;

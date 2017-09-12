@@ -96,12 +96,15 @@ class imagoVideoController extends Controller
 
     if @opts.responsive
       @watchers.push @$rootScope.$on 'resize', =>
-        @getSize()
-        @resize()
-        old = @mainSide
-        @$scope.$digest() if old isnt @mainSide
+        @$timeout =>
+          @getSize()
+          @resize()
+          old = @mainSide
+          # @$scope.$digest() if old isnt @mainSide
+        , 0
 
-    @$scope.$applyAsync => # we need this if video in fullsize directive
+    # @$scope.$applyAsync => # we need this if video in fullsize directive
+    @$timeout =>
       @getSize()
 
       if @height is 0 and @width is 0
@@ -141,6 +144,7 @@ class imagoVideoController extends Controller
         type: "video/#{_.head(webms).codec}"
 
       @poster = "#{@asset.serving_url}=s2000-h720" if @asset.serving_url
+    , 50
 
 
   getSize: ->
@@ -159,13 +163,12 @@ class imagoVideoController extends Controller
           api.pause()
 
   resize: =>
-    @$timeout =>
-      if @mainSide not in ['autoheight', 'autowidth']
-        @wrapperRatio = @width / @height
-        if @opts.sizemode is 'crop'
-          @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
-        else
-          @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
-      console.debug "imago-video: resize #{@width}x#{@height} @mainSide #{@mainSide}" if window.debug
-    , 0
+    if @mainSide not in ['autoheight', 'autowidth']
+      @wrapperRatio = @width / @height
+      if @opts.sizemode is 'crop'
+        @mainSide = if @assetRatio < @wrapperRatio then 'width' else 'height'
+      else
+        @mainSide = if @assetRatio > @wrapperRatio then 'width' else 'height'
+    console.debug "imago-video: resize #{@width}x#{@height} @mainSide #{@mainSide}" if window.debug
+
 
