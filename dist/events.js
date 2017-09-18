@@ -1,4 +1,31 @@
 (function() {
+  var FocusElement;
+
+  FocusElement = (function() {
+    function FocusElement($timeout) {
+      return {
+        link: function(scope, element, attrs) {
+          if (!element[0]) {
+            return;
+          }
+          return $timeout((function(_this) {
+            return function() {
+              return element[0].focus();
+            };
+          })(this), 1000);
+        }
+      };
+    }
+
+    return FocusElement;
+
+  })();
+
+  angular.module('imago').directive('focusElement', ['$timeout', FocusElement]);
+
+}).call(this);
+
+(function() {
   var ResponsiveEvents;
 
   ResponsiveEvents = (function() {
