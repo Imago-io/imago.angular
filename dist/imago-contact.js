@@ -5,7 +5,10 @@
     function ImagoContact() {
       return {
         restrict: 'E',
-        scope: true,
+        scope: {
+          status: '=status',
+          error: '=error'
+        },
         controller: 'imagoContactController as contact',
         templateUrl: function(element, attrs) {
           return attrs.templateUrl || '/imago/imago-contact.html';
@@ -18,7 +21,7 @@
   })();
 
   ImagoContactController = (function() {
-    function ImagoContactController(imagoSubmit) {
+    function ImagoContactController($scope, imagoSubmit) {
       this.data = {
         subscribe: false
       };
@@ -28,8 +31,8 @@
             return;
           }
           return imagoSubmit.send(_this.data).then(function(result) {
-            _this.status = result.status;
-            return _this.error = result.message || '';
+            $scope.status = _this.status = result.status;
+            return $scope.message = _this.error = result.message || '';
           });
         };
       })(this);
@@ -39,7 +42,7 @@
 
   })();
 
-  angular.module('imago').directive('imagoContact', [ImagoContact]).controller('imagoContactController', ['imagoSubmit', ImagoContactController]);
+  angular.module('imago').directive('imagoContact', [ImagoContact]).controller('imagoContactController', ['$scope', 'imagoSubmit', ImagoContactController]);
 
 }).call(this);
 
