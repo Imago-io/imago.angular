@@ -1605,10 +1605,14 @@
           return str.replace(/s$/, '');
         },
         titleCase: function(str) {
-          if (typeof str !== 'string') {
+          if (typeof str !== 'string' && !str.length) {
             return str;
           }
-          return str.charAt(0).toUpperCase() + str.slice(1);
+          return str.replace(/\w\S*/g, ((function(_this) {
+            return function(txt) {
+              return txt[0].toUpperCase() + txt.substr(1).toLowerCase();
+            };
+          })(this)));
         },
         normalize: function(s) {
           var key, specialCharMapping, value;

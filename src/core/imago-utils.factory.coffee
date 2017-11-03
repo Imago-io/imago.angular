@@ -819,8 +819,9 @@ class imagoUtils extends Factory
         str.replace(/s$/, '')
 
       titleCase: (str) ->
-        return str if typeof str isnt 'string'
-        str.charAt(0).toUpperCase() + str.slice(1)
+        return str if typeof str isnt 'string' and not str.length
+        # str.charAt(0).toUpperCase() + str.slice(1)
+        str.replace(/\w\S*/g, ((txt) => txt[0].toUpperCase() + txt.substr(1).toLowerCase()))
 
       normalize: (s) ->
         return if typeof s isnt 'string'

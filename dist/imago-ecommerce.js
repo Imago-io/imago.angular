@@ -681,16 +681,17 @@
     };
 
     imagoFindPriceController.prototype.findPrice = function() {
-      var i, len, option, ref, ref1, ref2, ref3, ref4, ref5, ref6;
+      var i, len, option, ref, ref1, ref2, ref3;
       this.prices = [];
+      this.discounted = false;
       ref = this.variants;
       for (i = 0, len = ref.length; i < len; i++) {
         option = ref[i];
         if ((ref1 = option.fields) != null ? (ref2 = ref1.discountedPrice) != null ? (ref3 = ref2.value) != null ? ref3[this.imagoCart.currency] : void 0 : void 0 : void 0) {
           this.prices.push(option.fields.discountedPrice.value[this.imagoCart.currency]);
-        } else if ((ref4 = option.fields) != null ? (ref5 = ref4.price) != null ? (ref6 = ref5.value) != null ? ref6[this.imagoCart.currency] : void 0 : void 0 : void 0) {
-          this.prices.push(option.fields.price.value[this.imagoCart.currency]);
+          this.discounted = true;
         }
+        this.prices.push(option.fields.price.value[this.imagoCart.currency]);
       }
       if (!this.prices.length) {
         return;
