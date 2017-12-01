@@ -271,7 +271,6 @@
         templateUrl: '/imago/imago-field-number.html',
         link: function(scope, element, attrs, ngModelController) {
           var change, checkValidity;
-          console.log('scope.readonly', scope.attrs);
           if (attrs.disabled) {
             scope.disabled = true;
           }

@@ -189,7 +189,10 @@ class imagoCart extends Service
       @subtotal += item.qty * item.price[@currency]
 
   checkout: ->
-    url = "https://#{@tenantSettings.tenant}.imago.io/account/checkout/#{@cart._id}"
+    if window.debug
+      url = "http://localhost:3200/account/checkout/#{@cart._id}"
+    else
+      url = "https://#{@tenantSettings.tenant}.imago.io/account/checkout/#{@cart._id}"
 
     decorated = ''
     ga? (tracker) =>

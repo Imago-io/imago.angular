@@ -15,7 +15,6 @@ class ImagoFieldNumber extends Directive
       templateUrl: '/imago/imago-field-number.html'
       link: (scope, element, attrs, ngModelController) ->
 
-        console.log 'scope.readonly', scope.attrs
         scope.disabled = true if attrs.disabled
 
         attrs.$observe 'disabled', (value) ->

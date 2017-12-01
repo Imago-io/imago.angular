@@ -577,7 +577,11 @@
 
     imagoCart.prototype.checkout = function() {
       var decorated, url;
-      url = "https://" + this.tenantSettings.tenant + ".imago.io/account/checkout/" + this.cart._id;
+      if (window.debug) {
+        url = "http://localhost:3200/account/checkout/" + this.cart._id;
+      } else {
+        url = "https://" + this.tenantSettings.tenant + ".imago.io/account/checkout/" + this.cart._id;
+      }
       decorated = '';
       if (typeof ga === "function") {
         ga((function(_this) {
