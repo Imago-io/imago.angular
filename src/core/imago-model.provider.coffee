@@ -3,7 +3,7 @@ class imagoModel extends Provider
   constructor: ->
 
     sortWorker = 'sort.worker.js'
-    host       =  if window?.debug then 'http://localhost:8000' else 'https://api.imago.io'
+    host       =  if window?.debug then 'http://api.imago.dev' else 'https://api.imago.io'
     nextClient = 'public'
     indexRange = 10000
 

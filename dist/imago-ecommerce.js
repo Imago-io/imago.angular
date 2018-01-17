@@ -577,11 +577,7 @@
 
     imagoCart.prototype.checkout = function() {
       var decorated, url;
-      if (window.debug) {
-        url = "http://localhost:3200/account/checkout/" + this.cart._id;
-      } else {
-        url = "https://" + this.tenantSettings.tenant + ".imago.io/account/checkout/" + this.cart._id;
-      }
+      url = "/account/checkout/" + this.cart._id;
       decorated = '';
       if (typeof ga === "function") {
         ga((function(_this) {
@@ -856,6 +852,7 @@
           }
           variant.price = (ref = variant.fields) != null ? (ref1 = ref.price) != null ? ref1.value : void 0 : void 0;
           variant.discountedPrice = (ref2 = variant.fields) != null ? (ref3 = ref2.discountedPrice) != null ? ref3.value : void 0 : void 0;
+          console.log(variant);
           return this.selected = variant;
         };
 

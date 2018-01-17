@@ -62,7 +62,7 @@
     function imagoModel() {
       var config, host, indexRange, nextClient, sortWorker;
       sortWorker = 'sort.worker.js';
-      host = (typeof window !== "undefined" && window !== null ? window.debug : void 0) ? 'http://localhost:8000' : 'https://api.imago.io';
+      host = (typeof window !== "undefined" && window !== null ? window.debug : void 0) ? 'http://api.imago.dev' : 'https://api.imago.io';
       nextClient = 'public';
       indexRange = 10000;
       config = {
@@ -2118,6 +2118,7 @@
     }
 
     TenantSettings.prototype.get = function() {
+      console.log(this.imagoModel.host + "/api/settings");
       return this.$http.get(this.imagoModel.host + "/api/settings").then((function(_this) {
         return function(response) {
           var ref;
