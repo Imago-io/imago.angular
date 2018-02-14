@@ -113,6 +113,5 @@ class imagoProduct extends Factory
 
         variant.price = variant.fields?.price?.value
         variant.discountedPrice = variant.fields?.discountedPrice?.value
-        console.log variant
         @selected = variant
 

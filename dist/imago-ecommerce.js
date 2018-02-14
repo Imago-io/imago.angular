@@ -852,7 +852,6 @@
           }
           variant.price = (ref = variant.fields) != null ? (ref1 = ref.price) != null ? ref1.value : void 0 : void 0;
           variant.discountedPrice = (ref2 = variant.fields) != null ? (ref3 = ref2.discountedPrice) != null ? ref3.value : void 0 : void 0;
-          console.log(variant);
           return this.selected = variant;
         };
 

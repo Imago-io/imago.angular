@@ -2118,7 +2118,6 @@
     }
 
     TenantSettings.prototype.get = function() {
-      console.log(this.imagoModel.host + "/api/settings");
       return this.$http.get(this.imagoModel.host + "/api/settings").then((function(_this) {
         return function(response) {
           var ref;
