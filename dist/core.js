@@ -1018,7 +1018,6 @@
           scope.scrollPos = [];
           scope.$on('$viewContentLoaded', function() {
             var history;
-            scope.scrollPos.unshift({});
             history = _.find(scope.scrollPos, {
               path: $state.href($state.current, $state.params)
             });
@@ -1034,8 +1033,14 @@
             }, 500);
           });
           return scope.$on('$stateChangeStart', function(evt, newState, newParams, oldState, oldParams, opts) {
+            var path;
+            path = $state.href(oldState, oldParams);
+            if (!path) {
+              return;
+            }
+            scope.scrollPos.unshift({});
             return scope.scrollPos[0] = {
-              path: $state.href(oldState, oldParams),
+              path: path,
               scroll: $window.scrollY
             };
           });
