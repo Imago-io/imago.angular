@@ -25,3 +25,7 @@ class ImagoContactController extends Controller
       imagoSubmit.send(@data).then (result) =>
         $scope.status  = @status = result.status
         $scope.message = @error  = result.message or ''
+
+    $scope.$on '$stateChangeSuccess', (evt) =>
+      @status = false
+      @error = false

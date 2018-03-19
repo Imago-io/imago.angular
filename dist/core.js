@@ -2089,6 +2089,9 @@
   Page = (function() {
     function Page(promiseData) {
       var asset, i, len;
+      if (!promiseData) {
+        return;
+      }
       if (promiseData.length === 1) {
         for (i = 0, len = promiseData.length; i < len; i++) {
           asset = promiseData[i];

@@ -36,6 +36,12 @@
           });
         };
       })(this);
+      $scope.$on('$stateChangeSuccess', (function(_this) {
+        return function(evt) {
+          _this.status = false;
+          return _this.error = false;
+        };
+      })(this));
     }
 
     return ImagoContactController;
