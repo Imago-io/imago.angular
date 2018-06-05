@@ -22,6 +22,15 @@ class TenantSettings extends Service
       tmp[item.name] = item.value
     @data.settings = tmp
 
+    # overwrite status from server
+    for setting in ['createsend', 'mailchimp']
+      if @data[setting]
+        if @data[setting].connected and @data[setting].active
+          @data[setting].status = 'green'
+        else
+          @data[setting].status = 'amber'
+
+
     @$rootScope.tenantSettings = @data
     @loaded = true
     @$rootScope.$emit 'settings:loaded', @data

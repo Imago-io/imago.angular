@@ -2138,7 +2138,7 @@
     };
 
     TenantSettings.prototype.reorder = function(data) {
-      var i, item, j, len, len1, ref, tmp;
+      var i, item, j, k, len, len1, len2, ref, ref1, setting, tmp;
       this.data = {};
       for (i = 0, len = data.length; i < len; i++) {
         item = data[i];
@@ -2151,6 +2151,17 @@
         tmp[item.name] = item.value;
       }
       this.data.settings = tmp;
+      ref1 = ['createsend', 'mailchimp'];
+      for (k = 0, len2 = ref1.length; k < len2; k++) {
+        setting = ref1[k];
+        if (this.data[setting]) {
+          if (this.data[setting].connected && this.data[setting].active) {
+            this.data[setting].status = 'green';
+          } else {
+            this.data[setting].status = 'amber';
+          }
+        }
+      }
       this.$rootScope.tenantSettings = this.data;
       this.loaded = true;
       return this.$rootScope.$emit('settings:loaded', this.data);

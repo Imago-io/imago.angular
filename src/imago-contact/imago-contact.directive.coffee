@@ -27,5 +27,4 @@ class ImagoContactController extends Controller
         $scope.message = @error  = result.message or ''
 
     $scope.$on '$stateChangeSuccess', (evt) =>
-      @status = false
-      @error = false
+      @status = undefined

@@ -161,6 +161,29 @@
 }).call(this);
 
 (function() {
+  var PercisionRound;
+
+  PercisionRound = (function() {
+    function PercisionRound() {
+      return function(number, precision) {
+        var factor;
+        if (precision == null) {
+          precision = 2;
+        }
+        factor = Math.pow(10, precision);
+        return Math.round(number * factor) / factor;
+      };
+    }
+
+    return PercisionRound;
+
+  })();
+
+  angular.module('imago').filter('percisionRound', [PercisionRound]);
+
+}).call(this);
+
+(function() {
   var Price;
 
   Price = (function() {

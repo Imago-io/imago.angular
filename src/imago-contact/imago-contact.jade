@@ -8,6 +8,7 @@
         id="name"
         ng-model="contact.data.name"
         placeholder="Name"
+        required
         )
       label(for="name") Name
 
@@ -33,18 +34,22 @@
         )
       label(for="message") Message
 
-    .imago-field
-      input(
-        type="checkbox"
-        name="subscribe"
-        id="subscribe"
-        ng-model="contact.data.subscribe"
-        checked
-        )
-      label(for="subscribe") Subscribe
+    .legal
+      p This form collects your name and email so that we can add you to our newsletter list for awesome project updates. Check out our privacy policy for the Tull story on how we protect and manage your submitted data!
+
+      .imago-field
+        input(
+          type="checkbox"
+          name="subscribe"
+          id="subscribe"
+          ng-model="contact.data.subscribe"
+          required
+          )
+        label(for="subscribe") I consent to having {{tenantSettings.settings.name}} collect my name and email
+
 
     .imago-actions
-      button.btn.send(type="submit" ng-disabled="imagoContact.$invalid") Send
+      button.btn.send(type="submit") Send
 
   .messages(ng-switch="contact.status")
     .success(ng-switch-when="true")
