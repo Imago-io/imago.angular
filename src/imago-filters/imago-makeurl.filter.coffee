@@ -1,8 +1,9 @@
 class ImagoMakeurl extends Filter
 
-  constructor: () ->
+  constructor: ->
 
     return (link) ->
+      return unless link
       if link.match('^https?://|^/')
         return link
       else

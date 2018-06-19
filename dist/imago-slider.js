@@ -1,8 +1,8 @@
 (function() {
-  var imagoSlider, imagoSliderController;
+  var ImagoSlider, ImagoSliderController;
 
-  imagoSlider = (function() {
-    function imagoSlider($rootScope, $document, $interval, $location) {
+  ImagoSlider = (function() {
+    function ImagoSlider($rootScope, $document, $interval, $location) {
       return {
         restrict: 'E',
         transclude: true,
@@ -79,31 +79,29 @@
             }
             return scope.prefetch('prev');
           };
-          scope.imagoslider.goNext = (function(_this) {
-            return function(ev, clearInterval) {
-              if (clearInterval == null) {
-                clearInterval = true;
+          scope.imagoslider.goNext = function(ev, clearInterval) {
+            if (clearInterval == null) {
+              clearInterval = true;
+            }
+            if (typeof ev === 'object' || clearInterval) {
+              scope.clearInterval();
+              if (ev) {
+                ev.stopPropagation();
               }
-              if (typeof ev === 'object' || clearInterval) {
-                scope.clearInterval();
-                if (ev) {
-                  ev.stopPropagation();
-                }
+            }
+            if (!scope.imagoslider.conf.loop) {
+              scope.imagoslider.setCurrent((scope.currentIndex < scope.imagoslider.length - 1) ? scope.currentIndex + 1 : scope.currentIndex);
+            } else if (scope.imagoslider.conf.loop && !scope.imagoslider.conf.siblings) {
+              scope.imagoslider.setCurrent((scope.currentIndex < scope.imagoslider.length - 1) ? scope.currentIndex + 1 : 0);
+            } else if (scope.imagoslider.conf.loop && scope.imagoslider.conf.siblings) {
+              if (scope.currentIndex < scope.imagoslider.length - 1) {
+                scope.imagoslider.setCurrent(scope.currentIndex + 1);
+              } else {
+                $location.path(scope.imagoslider.conf.next);
               }
-              if (!scope.imagoslider.conf.loop) {
-                scope.imagoslider.setCurrent((scope.currentIndex < scope.imagoslider.length - 1) ? scope.currentIndex + 1 : scope.currentIndex);
-              } else if (scope.imagoslider.conf.loop && !scope.imagoslider.conf.siblings) {
-                scope.imagoslider.setCurrent((scope.currentIndex < scope.imagoslider.length - 1) ? scope.currentIndex + 1 : 0);
-              } else if (scope.imagoslider.conf.loop && scope.imagoslider.conf.siblings) {
-                if (scope.currentIndex < scope.imagoslider.length - 1) {
-                  scope.imagoslider.setCurrent(scope.currentIndex + 1);
-                } else {
-                  $location.path(scope.imagoslider.conf.next);
-                }
-              }
-              return scope.prefetch('next');
-            };
-          })(this);
+            }
+            return scope.prefetch('next');
+          };
           scope.prefetch = function(direction) {
             var idx, image, ref, ref1;
             if (!scope.imagoslider.conf.prefetch || !((ref = scope.imagoslider.assets) != null ? ref.length : void 0)) {
@@ -152,17 +150,15 @@
             return $rootScope.$emit(this.conf.namespace + ":changed", index);
           };
           if (!_.isUndefined(attrs.autoplay)) {
-            scope.$watch(attrs.autoplay, (function(_this) {
-              return function(value) {
-                if (parseInt(value) > 0) {
-                  return scope.imagoslider.conf.interval = $interval(function() {
-                    return scope.imagoslider.goNext('', false);
-                  }, parseInt(value));
-                } else {
-                  return scope.clearInterval();
-                }
-              };
-            })(this));
+            scope.$watch(attrs.autoplay, function(value) {
+              if (parseInt(value) > 0) {
+                return scope.imagoslider.conf.interval = $interval(function() {
+                  return scope.imagoslider.goNext('', false);
+                }, parseInt(value));
+              } else {
+                return scope.clearInterval();
+              }
+            });
           }
           keyboardBinding = function(e) {
             switch (e.keyCode) {
@@ -199,12 +195,12 @@
       };
     }
 
-    return imagoSlider;
+    return ImagoSlider;
 
   })();
 
-  imagoSliderController = (function() {
-    function imagoSliderController($scope) {
+  ImagoSliderController = (function() {
+    function ImagoSliderController($scope) {
       this.conf = {
         animation: 'fade',
         enablekeys: true,
@@ -229,11 +225,11 @@
       })(this);
     }
 
-    return imagoSliderController;
+    return ImagoSliderController;
 
   })();
 
-  angular.module('imago').directive('imagoSlider', ['$rootScope', '$document', '$interval', '$location', imagoSlider]).controller('imagoSliderController', ['$scope', imagoSliderController]);
+  angular.module('imago').directive('imagoSlider', ['$rootScope', '$document', '$interval', '$location', ImagoSlider]).controller('imagoSliderController', ['$scope', ImagoSliderController]);
 
 }).call(this);
 

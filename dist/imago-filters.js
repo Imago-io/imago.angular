@@ -71,6 +71,9 @@
   ImagoMakeurl = (function() {
     function ImagoMakeurl() {
       return function(link) {
+        if (!link) {
+          return;
+        }
         if (link.match('^https?://|^/')) {
           return link;
         } else {

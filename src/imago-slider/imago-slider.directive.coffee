@@ -1,4 +1,4 @@
-class imagoSlider extends Directive
+class ImagoSlider extends Directive
 
   constructor: ($rootScope, $document, $interval, $location) ->
 
@@ -78,7 +78,7 @@ class imagoSlider extends Directive
 
           scope.prefetch('prev')
 
-        scope.imagoslider.goNext = (ev, clearInterval = true) =>
+        scope.imagoslider.goNext = (ev, clearInterval = true) ->
           if typeof ev is 'object' or clearInterval
             scope.clearInterval()
             ev.stopPropagation() if ev
@@ -142,9 +142,9 @@ class imagoSlider extends Directive
           $rootScope.$emit "#{@conf.namespace}:changed", index
 
         if !_.isUndefined attrs.autoplay
-          scope.$watch attrs.autoplay, (value) =>
+          scope.$watch attrs.autoplay, (value) ->
             if parseInt(value) > 0
-              scope.imagoslider.conf.interval = $interval =>
+              scope.imagoslider.conf.interval = $interval ->
                 scope.imagoslider.goNext('', false)
               , parseInt(value)
             else
@@ -177,7 +177,7 @@ class imagoSlider extends Directive
   }
 
 
-class imagoSliderController extends Controller
+class ImagoSliderController extends Controller
 
   constructor: ($scope) ->
 
