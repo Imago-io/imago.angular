@@ -1,6 +1,6 @@
 {
   "name": "imago.angular",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "homepage": "https://github.com/Imago-io/imago.angular",
   "authors": [
     "Nex9"
@@ -9,7 +9,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "angular-inview": "Nex9/angular-inview#master",
+    "angular-inview": "^3.0.0",
     "lodash": "~4",
     "bowser": "*",
     "polyfill-Number.toLocaleString-with-Locales": "https://github.com/willsp/polyfill-Number.toLocaleString-with-Locales.git",
