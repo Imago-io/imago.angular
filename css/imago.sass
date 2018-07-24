@@ -96,64 +96,59 @@ imago-slider
       position: absolute
 
   &.center img
-    left: 50%
-    right: initial
-    top:  50%
-    bottom: initial
-    transform: translateX(-50%) translateY(-50%)
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
 
   &.left.center img
-    top:  50%
-    right: initial
+    top: 0
+    right: auto
+    bottom: 0
     left: 0
-    bottom: initial
-    transform: translateX(0%) translateY(-50%)
+
   &.right.center img
-    top:  50%
+    top: 0
     right: 0
-    left: initial
-    bottom: initial
-    transform: translateX(0%) translateY(-50%)
+    bottom: 0
+    left: auto
 
 
   &.left.top img
     top: 0
-    right: initial
-    bottom: initial
+    right: auto
+    bottom: auto
     left: 0
-    transform: translateX(0%) translateY(0%)
+
   &.center.top img
     top: 0
-    right: initial
-    bottom: initial
-    left: 50%
-    transform: translateX(-50%) translateY(0%)
+    right: 0
+    bottom: auto
+    left: 0
+
   &.right.top img
     top: 0
     right: 0
-    bottom: initial
-    left: initial
-    transform: translateX(0%) translateY(0%)
+    bottom: auto
+    left: auto
 
   &.left.bottom img
-    top: initial
-    right: initial
+    top: auto
+    right: auto
     bottom: 0
     left: 0
-    transform: translateX(0%) translateY(0%)
+
   &.center.bottom img
-    top: initial
-    right: initial
-    bottom: 0
-    left: 50%
-    transform: translateX(-50%) translateY(0%)
-  &.right.bottom img
-    top: initial
+    top: auto
     right: 0
     bottom: 0
-    left: initial
-    transform: translateX(0%) translateY(0%)
+    left: 0
 
+  &.right.bottom img
+    top: auto
+    right: 0
+    bottom: 0
+    left: auto
 
 
 // video
