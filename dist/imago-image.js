@@ -45,7 +45,8 @@
         allowDrag: true,
         width: void 0,
         height: void 0,
-        path: ''
+        path: '',
+        limitScales: true
       };
     }
 
@@ -271,6 +272,9 @@
         }
       }
       servingSize = parseInt(Math.min(servingSize * (Math.ceil(window.devicePixelRatio, 1) || 1), this.opts.maxsize));
+      if (this.opts.limitScales) {
+        servingSize = Math.ceil(servingSize / 250) * 250;
+      }
       if (servingSize === this.servingSize) {
         this.loaded = true;
         return;

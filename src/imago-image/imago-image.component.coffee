@@ -33,6 +33,8 @@ class imagoImageController extends Controller
       width       : undefined
       height      : undefined
       path        : ''
+      limitScales : true
+
 
   $postLink: ->
     for key of @$attrs
@@ -197,6 +199,8 @@ class imagoImageController extends Controller
 
     servingSize = parseInt Math.min(servingSize * (Math.ceil(window.devicePixelRatio, 1) or 1), @opts.maxsize)
 
+    if @opts.limitScales
+      servingSize = Math.ceil(servingSize / 250) * 250
     # make sure we only load a new size
     # console.log 'new size, old size', servingSize, @servingSize, @width, @height
     if servingSize is @servingSize
