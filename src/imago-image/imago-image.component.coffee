@@ -34,6 +34,7 @@ class imagoImageController extends Controller
       height      : undefined
       path        : ''
       limitScales : true
+      webp        : @$rootScope.webp
 
 
   $postLink: ->
@@ -210,6 +211,12 @@ class imagoImageController extends Controller
     @servingSize = Math.max servingSize, 60
 
     @opts.servingUrl = "#{ @asset.serving_url }=s#{ @servingSize * @opts.scale }"
+
+    # use webp for supported browsers
+    if @opts.webp
+      @opts.servingUrl = @opts.servingUrl + '-rw'
+
+
 
     @setServingSize("=s#{ servingSize * @opts.scale }")
 

@@ -46,7 +46,8 @@
         width: void 0,
         height: void 0,
         path: '',
-        limitScales: true
+        limitScales: true,
+        webp: this.$rootScope.webp
       };
     }
 
@@ -281,6 +282,9 @@
       }
       this.servingSize = Math.max(servingSize, 60);
       this.opts.servingUrl = this.asset.serving_url + "=s" + (this.servingSize * this.opts.scale);
+      if (this.opts.webp) {
+        this.opts.servingUrl = this.opts.servingUrl + '-rw';
+      }
       this.setServingSize("=s" + (servingSize * this.opts.scale));
       if (window.debug) {
         console.debug("imago-image: getServingUrl servingSize: " + (servingSize * this.opts.scale));
