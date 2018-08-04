@@ -104,6 +104,11 @@ class imagoImageController extends Controller
           @resize()
           @getServingUrl()
 
+      @watchers.push @$rootScope.$on 'widgetreset', =>
+        @getSize()
+        @resize()
+        @getServingUrl()
+
 
     # console.log '@opts', @opts
     # unless @opts.width or @opts.height

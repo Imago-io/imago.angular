@@ -172,6 +172,13 @@
             });
           };
         })(this)));
+        this.watchers.push(this.$rootScope.$on('widgetreset', (function(_this) {
+          return function() {
+            _this.getSize();
+            _this.resize();
+            return _this.getServingUrl();
+          };
+        })(this)));
       }
       return this.$scope.$applyAsync((function(_this) {
         return function() {
@@ -322,4 +329,4 @@
 
 }).call(this);
 
-angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-image.html','<div ng-class="[{\'loaded\': $ctrl.loaded}, $ctrl.opts.align, $ctrl.opts.sizemode, $ctrl.mainSide, {\'noplaceholder\': !$ctrl.opts.placeholder}]" in-view="$ctrl.inview($inview, $inviewpart)" in-view-options="{debounce: 300, offsetTop: -100, offsetBottom: 100}" class="imago-image-content"><div ng-style="::$ctrl.spacerStyle" class="spacer"></div><img ng-src="{{::$ctrl.placeholderUrl}}" class="small"/><img ng-src="{{$ctrl.imgUrl}}" class="large"/><div ng-if="!$ctrl.opts.allowDrag" class="prevent-drag"></div></div>');}]);
+angular.module('imago').run(['$templateCache', function($templateCache) {$templateCache.put('/imago/imago-image.html','<div ng-class="[{\'loaded\': $ctrl.loaded}, $ctrl.opts.align, $ctrl.opts.sizemode, $ctrl.mainSide, {\'noplaceholder\': !$ctrl.opts.placeholder}]" in-view="$ctrl.inview($inview)" in-view-options="{throttle: 300, offset:[-100, 0, 100, 0]}" class="imago-image-content"><div ng-style="::$ctrl.spacerStyle" class="spacer"></div><img ng-src="{{::$ctrl.placeholderUrl}}" class="small"/><img ng-src="{{$ctrl.imgUrl}}" class="large"/><div ng-if="!$ctrl.opts.allowDrag" class="prevent-drag"></div></div>');}]);

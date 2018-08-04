@@ -1,7 +1,7 @@
 .imago-image-content(
   ng-class="[{'loaded': $ctrl.loaded}, $ctrl.opts.align, $ctrl.opts.sizemode, $ctrl.mainSide, {'noplaceholder': !$ctrl.opts.placeholder}]"
-  in-view="$ctrl.inview($inview, $inviewpart)"
-  in-view-options="{debounce: 300, offsetTop: -100, offsetBottom: 100}"
+  in-view="$ctrl.inview($inview)"
+  in-view-options="{throttle: 300, offset:[-100, 0, 100, 0]}"
   )
   .spacer(ng-style="::$ctrl.spacerStyle")
 
