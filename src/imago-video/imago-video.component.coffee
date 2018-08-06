@@ -135,13 +135,21 @@ class imagoVideoController extends Controller
       webms = _.sortBy(_.filter(@asset.fields.formats, codec: 'webm'), 'height').reverse()
       mp4s  = _.sortBy(_.filter(@asset.fields.formats, codec: 'mp4' ), 'height').reverse()
 
-      @sources.push
-        src: @$sce.trustAsResourceUrl("#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{_.head(mp4s).codec}&size=#{_.head(mp4s).size}")
-        type: "video/#{_.head(mp4s).codec}"
+      mp4 = _.head(mp4s)
+      if mp4
+        @sources.push
+          src: @$sce.trustAsResourceUrl("#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{_.head(mp4s).codec}&size=#{_.head(mp4s).size}")
+          type: "video/#{_.head(mp4s).codec}"
+      else
+        console.error "Cound not find a mp4 for asset #{@asset._id}"
 
-      @sources.push
-        src: @$sce.trustAsResourceUrl("#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{_.head(webms).codec}&size=#{_.head(webms).size}")
-        type: "video/#{_.head(webms).codec}"
+      webm = _.head(webms)
+      if webm
+        @sources.push
+          src: @$sce.trustAsResourceUrl("#{@imagoModel.host}/api/play_redirect?uuid=#{@asset.uuid}&codec=#{_.head(webms).codec}&size=#{_.head(webms).size}")
+          type: "video/#{_.head(webms).codec}"
+      else
+        console.error "Cound not find a webm for asset #{@asset._id}"
 
       @poster = "#{@asset.serving_url}=s2000-h720" if @asset.serving_url
     , 50

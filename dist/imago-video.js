@@ -163,7 +163,7 @@
       }
       return this.$timeout((function(_this) {
         return function() {
-          var mp4s, webms;
+          var mp4, mp4s, webm, webms;
           _this.getSize();
           if (_this.height === 0 && _this.width === 0) {
             return console.log('need width or/and height for static or relative positioning');
@@ -201,14 +201,24 @@
           mp4s = _.sortBy(_.filter(_this.asset.fields.formats, {
             codec: 'mp4'
           }), 'height').reverse();
-          _this.sources.push({
-            src: _this.$sce.trustAsResourceUrl(_this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.head(mp4s).codec) + "&size=" + (_.head(mp4s).size)),
-            type: "video/" + (_.head(mp4s).codec)
-          });
-          _this.sources.push({
-            src: _this.$sce.trustAsResourceUrl(_this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.head(webms).codec) + "&size=" + (_.head(webms).size)),
-            type: "video/" + (_.head(webms).codec)
-          });
+          mp4 = _.head(mp4s);
+          if (mp4) {
+            _this.sources.push({
+              src: _this.$sce.trustAsResourceUrl(_this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.head(mp4s).codec) + "&size=" + (_.head(mp4s).size)),
+              type: "video/" + (_.head(mp4s).codec)
+            });
+          } else {
+            console.error("Cound not find a mp4 for asset " + _this.asset._id);
+          }
+          webm = _.head(webms);
+          if (webm) {
+            _this.sources.push({
+              src: _this.$sce.trustAsResourceUrl(_this.imagoModel.host + "/api/play_redirect?uuid=" + _this.asset.uuid + "&codec=" + (_.head(webms).codec) + "&size=" + (_.head(webms).size)),
+              type: "video/" + (_.head(webms).codec)
+            });
+          } else {
+            console.error("Cound not find a webm for asset " + _this.asset._id);
+          }
           if (_this.asset.serving_url) {
             return _this.poster = _this.asset.serving_url + "=s2000-h720";
           }
