@@ -36,7 +36,8 @@ class imagoVideoController extends Controller
       loop                  : false
       autoplayInview        : false
       responsive            : true
-      theme                 : @$rootScope.videoTheme or 'https://storage.googleapis.com/videoangular-default-theme/videogular.min.css'
+      previewOnly           : false
+      theme                 : @$rootScope.videoTheme or '//themes.imago.io/videoangular-imago-theme/videoangular-imago-theme.min.css'
 
   $postLink: ->
     for key of @$attrs
@@ -132,8 +133,12 @@ class imagoVideoController extends Controller
         @asset.fields.formats = _.filter @asset.fields.formats, (source) ->
           return true unless source.size in ['1080p']
 
-      webms = _.sortBy(_.filter(@asset.fields.formats, codec: 'webm'), 'height').reverse()
-      mp4s  = _.sortBy(_.filter(@asset.fields.formats, codec: 'mp4' ), 'height').reverse()
+      if @opts.previewOnly
+        webms = _.sortBy(_.filter(@asset.fields.formats, size: 'preview', codec: 'webm'), 'height').reverse()
+        mp4s  = _.sortBy(_.filter(@asset.fields.formats, size: 'preview', codec: 'mp4' ), 'height').reverse()
+      else
+        webms = _.sortBy(_.filter(@asset.fields.formats, codec: 'webm'), 'height').reverse()
+        mp4s  = _.sortBy(_.filter(@asset.fields.formats, codec: 'mp4' ), 'height').reverse()
 
       mp4 = _.head(mp4s)
       if mp4

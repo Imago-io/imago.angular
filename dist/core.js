@@ -33,6 +33,38 @@
 }).call(this);
 
 (function() {
+  var HttpInterceptor;
+
+  HttpInterceptor = (function() {
+    function HttpInterceptor($q, $log, $injector) {
+      return {
+        requestError: function(rejection) {
+          $log.error(angular.toJson(rejection));
+          return $q.reject(rejection);
+        },
+        responseError: function(rejection) {
+          var $state;
+          $state = $injector.get('$state');
+          console.log('rejection.status', rejection.status);
+          switch (rejection.status) {
+            case 401:
+              return $state.go('home');
+            case 404:
+              return $state.go('page-not-found');
+          }
+        }
+      };
+    }
+
+    return HttpInterceptor;
+
+  })();
+
+  angular.module('imago').factory('httpInterceptor', ['$q', '$log', '$injector', HttpInterceptor]);
+
+}).call(this);
+
+(function() {
   var ImagoChecktarget;
 
   ImagoChecktarget = (function() {

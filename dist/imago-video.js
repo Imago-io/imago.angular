@@ -49,7 +49,8 @@
         loop: false,
         autoplayInview: false,
         responsive: true,
-        theme: this.$rootScope.videoTheme || 'https://storage.googleapis.com/videoangular-default-theme/videogular.min.css'
+        previewOnly: false,
+        theme: this.$rootScope.videoTheme || '//themes.imago.io/videoangular-imago-theme/videoangular-imago-theme.min.css'
       };
     }
 
@@ -195,12 +196,23 @@
               }
             });
           }
-          webms = _.sortBy(_.filter(_this.asset.fields.formats, {
-            codec: 'webm'
-          }), 'height').reverse();
-          mp4s = _.sortBy(_.filter(_this.asset.fields.formats, {
-            codec: 'mp4'
-          }), 'height').reverse();
+          if (_this.opts.previewOnly) {
+            webms = _.sortBy(_.filter(_this.asset.fields.formats, {
+              size: 'preview',
+              codec: 'webm'
+            }), 'height').reverse();
+            mp4s = _.sortBy(_.filter(_this.asset.fields.formats, {
+              size: 'preview',
+              codec: 'mp4'
+            }), 'height').reverse();
+          } else {
+            webms = _.sortBy(_.filter(_this.asset.fields.formats, {
+              codec: 'webm'
+            }), 'height').reverse();
+            mp4s = _.sortBy(_.filter(_this.asset.fields.formats, {
+              codec: 'mp4'
+            }), 'height').reverse();
+          }
           mp4 = _.head(mp4s);
           if (mp4) {
             _this.sources.push({
