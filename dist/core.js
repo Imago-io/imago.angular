@@ -94,7 +94,7 @@
     function imagoModel() {
       var config, host, indexRange, nextClient, sortWorker;
       sortWorker = 'sort.worker.js';
-      host = (typeof window !== "undefined" && window !== null ? window.debug : void 0) ? 'http://api.imago.dev' : 'https://api.imago.io';
+      host = (typeof window !== "undefined" && window !== null ? window.debug : void 0) ? 'http://0.0.0.0:8000' : 'https://api.imago.io';
       nextClient = 'public';
       indexRange = 10000;
       config = {
