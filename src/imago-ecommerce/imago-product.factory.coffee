@@ -15,7 +15,8 @@ class imagoProduct extends Factory
         @getOptions()
 
       getOptions: ->
-        # build an object with all values from the variants which are in the option white list
+        # build an object with all values from the variants
+        # which are in the option white list
         @options = {}
 
         # if @variants.length is 1

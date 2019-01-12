@@ -4,12 +4,12 @@
     ng-swipe-right="imagoslider.goPrev($event)"
     )
     .prev(
-      ng-show="imagoslider.conf.enablearrows && imagoslider.length > 1"
+      ng-show="imagoslider.conf.enablearrows && (imagoslider.length > 1 || imagoslider.conf.siblings)"
       ng-click="imagoslider.goPrev($event)"
       analytics-on="click" analytics-event="Previous Slide"
       )
     .next(
-      ng-show="imagoslider.conf.enablearrows && imagoslider.length > 1"
+      ng-show="imagoslider.conf.enablearrows && (imagoslider.length > 1 || imagoslider.conf.siblings)"
       ng-click="imagoslider.goNext($event)"
       analytics-on="click" analytics-event="Next Slide"
       )
