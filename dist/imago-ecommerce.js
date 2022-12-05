@@ -101,15 +101,13 @@
     }
 
     GeoIp.prototype.get = function() {
-      return this.$http.get(this.imagoModel.geoip).then((function(_this) {
+      return this.$http.get('https://us-east4-imagoblobs.cloudfunctions.net/imago-geoip').then((function(_this) {
         return function(response) {
-          var code;
+          console.log('response', response);
           if (_.isEmpty(response.data)) {
             return _this.getCookie();
           }
-          code = _this.imagoUtils.getCountryByCode(response.data.country_code);
-          _this.imagoUtils.cookie('countryGeo', response.data.country_code);
-          response.data.country = code;
+          _this.imagoUtils.cookie('countryGeo', response.data.country);
           _this.data = response.data;
           _this.$rootScope.$emit('geoip:loaded', _this.data);
           _this.loaded = true;

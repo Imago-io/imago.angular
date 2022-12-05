@@ -7,11 +7,10 @@ class GeoIp extends Service
     @get()
 
   get: ->
-    @$http.get(@imagoModel.geoip).then (response) =>
+    @$http.get('https://us-east4-imagoblobs.cloudfunctions.net/imago-geoip').then (response) =>
+      console.log 'response', response
       return @getCookie() if _.isEmpty response.data
-      code = @imagoUtils.getCountryByCode(response.data.country_code)
-      @imagoUtils.cookie 'countryGeo', response.data.country_code
-      response.data.country = code
+      @imagoUtils.cookie 'countryGeo', response.data.country
       @data = response.data
       @$rootScope.$emit 'geoip:loaded', @data
       @loaded = true
