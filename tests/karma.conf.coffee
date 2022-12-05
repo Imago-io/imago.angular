@@ -15,10 +15,10 @@ module.exports = (config) ->
 
     # list of files / patterns to load in the browser
     files: [
-      '../bower_components/angular/angular.js',
-      '../bower_components/angular-mocks/angular-mocks.js',
-      '../bower_components/angular-inview/angular-inview.js',
-      '../bower_components/lodash/dist/lodash.js',
+      '../node_modules/angular/angular.js',
+      '../node_modules/angular-mocks/angular-mocks.js',
+      '../node_modules/angular-inview/angular-inview.js',
+      '../node_modules/lodash/dist/lodash.js',
       '../tmp/*.js',
       '../tmp/**/*.js',
       'unit/*.coffee'

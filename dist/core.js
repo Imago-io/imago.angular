@@ -92,9 +92,10 @@
 
   imagoModel = (function() {
     function imagoModel() {
-      var config, host, indexRange, nextClient, sortWorker;
+      var config, geoip, host, indexRange, nextClient, sortWorker;
       sortWorker = 'sort.worker.js';
       host = (typeof window !== "undefined" && window !== null ? window.debug : void 0) ? 'http://0.0.0.0:8000' : 'https://api.imago.io';
+      geoip = 'https://us-east4-imagoblobs.cloudfunctions.net/imago-geoip';
       nextClient = 'public';
       indexRange = 10000;
       config = {

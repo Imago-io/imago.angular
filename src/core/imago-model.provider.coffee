@@ -4,10 +4,10 @@ class imagoModel extends Provider
 
     sortWorker = 'sort.worker.js'
     host       =  if window?.debug then 'http://0.0.0.0:8000' else 'https://api.imago.io'
+    geoip      = 'https://us-east4-imagoblobs.cloudfunctions.net/imago-geoip'
     nextClient = 'public'
     indexRange = 10000
 
-    # console.log 'host', host
     config =
       updatePageTitle: true
 
