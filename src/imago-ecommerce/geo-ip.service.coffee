@@ -7,7 +7,7 @@ class GeoIp extends Service
     @get()
 
   get: ->
-    @$http.get("#{@imagoModel.geoip}").then (response) =>
+    @$http.get(@imagoModel.geoip).then (response) =>
       return @getCookie() if _.isEmpty response.data
       code = @imagoUtils.getCountryByCode(response.data.country_code)
       @imagoUtils.cookie 'countryGeo', response.data.country_code

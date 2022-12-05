@@ -101,7 +101,7 @@
     }
 
     GeoIp.prototype.get = function() {
-      return this.$http.get("" + this.imagoModel.geoip).then((function(_this) {
+      return this.$http.get(this.imagoModel.geoip).then((function(_this) {
         return function(response) {
           var code;
           if (_.isEmpty(response.data)) {
