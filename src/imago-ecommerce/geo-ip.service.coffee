@@ -8,7 +8,6 @@ class GeoIp extends Service
 
   get: ->
     @$http.get('https://us-east4-imagoblobs.cloudfunctions.net/imago-geoip').then (response) =>
-      console.log 'response', response
       return @getCookie() if _.isEmpty response.data
       @imagoUtils.cookie 'countryGeo', response.data.country
       @data = response.data
