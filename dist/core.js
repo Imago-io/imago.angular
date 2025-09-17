@@ -157,7 +157,11 @@
               return $http["delete"](host + "/api/assets/" + id);
             },
             deleteMany: function(assetIds) {
-              return $http["delete"](host + "/api/assets", assetIds);
+              return $http["delete"](host + "/api/assets", {
+                data: {
+                  assetIds: assetIds
+                }
+              });
             },
             trash: function(assets) {
               return $http.post(host + "/api/assets/trash", assets);
@@ -676,6 +680,7 @@
             })(this));
           },
           deleteMany: function(assetIds) {
+            console.log('*** imagoModel deleteMany...', assetIds);
             return this.assets.deleteMany(assetIds);
           },
           trash: function(assets) {
