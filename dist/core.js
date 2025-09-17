@@ -88,7 +88,8 @@
 }).call(this);
 
 (function() {
-  var imagoModel;
+  var imagoModel,
+    indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   imagoModel = (function() {
     function imagoModel() {
@@ -156,11 +157,7 @@
             "delete": function(id) {
               return $http["delete"](host + "/api/assets/" + id);
             },
-            deleteMany: function(assets) {
-              var assetIds;
-              assetIds = assets.map(function(asset) {
-                return asset._id;
-              });
+            deleteMany: function(assetIds) {
               return $http.post(host + "/api/assets/deleteMany", {
                 assetIds: assetIds
               });
@@ -681,13 +678,25 @@
               };
             })(this));
           },
-          deleteMany: function(assets, options) {
+          deleteMany: function(assetIds, options) {
             if (options == null) {
               options = {};
             }
-            this.assets.deleteMany(assets);
+            if (!(assetIds != null ? assetIds.length : void 0)) {
+              return;
+            }
+            if (_.isUndefined(options.stream)) {
+              options.stream = true;
+            }
+            _.remove(this.data, function(item) {
+              var ref;
+              return ref = item._id, indexOf.call(assetIds, ref) >= 0;
+            });
+            if (options.save) {
+              this.assets.deleteMany(assetIds);
+            }
             if (options.stream) {
-              return $rootScope.$emit('assets:delete', assets);
+              return $rootScope.$emit('assets:deleteMany', assetIds);
             }
           },
           trash: function(assets) {
