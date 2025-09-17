@@ -63,10 +63,7 @@ class imagoModel extends Provider
             $http.delete "#{host}/api/assets/#{id}"
 
           deleteMany: (assetIds) ->
-            data =
-              assets: assetIds
-            console.log '*** xxx deleteMany...', data
-            $http.delete "#{host}/api/assets", data
+            $http.delete "#{host}/api/assets", assetIds
 
           trash: (assets) ->
             $http.post "#{host}/api/assets/trash", assets
@@ -408,6 +405,9 @@ class imagoModel extends Provider
               resolve(assets)
 
             $rootScope.$emit('assets:delete', assets) if options.stream
+
+        deleteMany: (assetIds) ->
+          @assets.deleteMany(assetIds)
 
         trash: (assets) ->
           request = []

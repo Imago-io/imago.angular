@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/christofhaemmerle/dev/imago.admin.angular/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
