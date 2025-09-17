@@ -161,7 +161,9 @@
               assetIds = assets.map(function(asset) {
                 return asset._id;
               });
-              return $http.post(host + "/api/assets/deleteMany", assetIds);
+              return $http.post(host + "/api/assets/deleteMany", {
+                assetIds: assetIds
+              });
             },
             trash: function(assets) {
               return $http.post(host + "/api/assets/trash", assets);
