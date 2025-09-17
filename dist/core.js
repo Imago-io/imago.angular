@@ -159,6 +159,10 @@
             deleteMany: function(assetIds) {
               return $http["delete"](host + "/api/assets", {
                 assetIds: assetIds
+              }, {
+                headers: {
+                  'Content-Type': 'application/json'
+                }
               });
             },
             trash: function(assets) {
