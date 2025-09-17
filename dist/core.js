@@ -161,7 +161,8 @@
               data = {
                 assets: assetIds
               };
-              return $http.post(host + "/api/assets/delete", data);
+              console.log('*** xxx deleteMany...', data);
+              return $http["delete"](host + "/api/assets", data);
             },
             trash: function(assets) {
               return $http.post(host + "/api/assets/trash", assets);

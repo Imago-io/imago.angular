@@ -65,7 +65,8 @@ class imagoModel extends Provider
           deleteMany: (assetIds) ->
             data =
               assets: assetIds
-            $http.post "#{host}/api/assets/delete", data
+            console.log '*** xxx deleteMany...', data
+            $http.delete "#{host}/api/assets", data
 
           trash: (assets) ->
             $http.post "#{host}/api/assets/trash", assets
