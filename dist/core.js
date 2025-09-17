@@ -156,14 +156,12 @@
             "delete": function(id) {
               return $http["delete"](host + "/api/assets/" + id);
             },
-            deleteMany: function(assetIds) {
-              return $http["delete"](host + "/api/assets", {
-                assetIds: assetIds
-              }, {
-                headers: {
-                  'Content-Type': 'application/json'
-                }
+            deleteMany: function(assets) {
+              var assetIds;
+              assetIds = assets.map(function(asset) {
+                return asset._id;
               });
+              return $http.post(host + "/api/assets/deleteMany", assetIds);
             },
             trash: function(assets) {
               return $http.post(host + "/api/assets/trash", assets);
@@ -681,9 +679,14 @@
               };
             })(this));
           },
-          deleteMany: function(assetIds) {
-            console.log('*** imagoModel deleteMany...', assetIds);
-            return this.assets.deleteMany(assetIds);
+          deleteMany: function(assets, options) {
+            if (options == null) {
+              options = {};
+            }
+            this.assets.deleteMany(assets);
+            if (options.stream) {
+              return $rootScope.$emit('assets:delete', assets);
+            }
           },
           trash: function(assets) {
             var asset, j, len, request;
