@@ -158,9 +158,7 @@
             },
             deleteMany: function(assetIds) {
               return $http["delete"](host + "/api/assets", {
-                data: {
-                  assetIds: assetIds
-                }
+                assetIds: assetIds
               });
             },
             trash: function(assets) {
