@@ -103,7 +103,6 @@
     GeoIp.prototype.get = function() {
       return this.$http.get('https://us-east4-imagoblobs.cloudfunctions.net/imago-geoip').then((function(_this) {
         return function(response) {
-          console.log('response', response);
           if (_.isEmpty(response.data)) {
             return _this.getCookie();
           }

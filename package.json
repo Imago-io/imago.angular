@@ -1,14 +1,18 @@
 {
   "name": "imago.angular",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Imago Package for Angular.js",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "gulp",
+    "build": "gulp build"
   },
   "author": "Nex9 LLC",
   "license": "MIT",
   "dependencies": {
+    "coffee-script": "npm:coffeescript@^1.12.7",
+    "coffeescript": "^1.12.7",
     "angular-inview": "https://github.com/reco/angular-inview.git",
     "lodash": "~4",
     "bowser": "*",

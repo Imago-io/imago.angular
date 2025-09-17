@@ -156,6 +156,13 @@
             "delete": function(id) {
               return $http["delete"](host + "/api/assets/" + id);
             },
+            deleteMany: function(assetIds) {
+              var data;
+              data = {
+                assets: assetIds
+              };
+              return $http.post(host + "/api/assets/delete", data);
+            },
             trash: function(assets) {
               return $http.post(host + "/api/assets/trash", assets);
             },
